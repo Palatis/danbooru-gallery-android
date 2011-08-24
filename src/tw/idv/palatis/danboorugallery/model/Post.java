@@ -25,7 +25,8 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Post {
+public class Post
+{
 	public String preview_url;
 	public String file_url;
 	public String author;

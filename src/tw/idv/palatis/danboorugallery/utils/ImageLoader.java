@@ -41,7 +41,8 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.widget.ImageView;
 
-public class ImageLoader {
+public class ImageLoader
+{
 	private BitmapMemCache memCache;
 	private FileCache fileCache;
 	private Map<ImageView, String> imageViews = Collections

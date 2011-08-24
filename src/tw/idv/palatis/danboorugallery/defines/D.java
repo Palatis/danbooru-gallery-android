@@ -23,7 +23,8 @@ package tw.idv.palatis.danboorugallery.defines;
 import android.app.Activity;
 import android.widget.Toast;
 
-public class D {
+public class D
+{
 	public static final String LOGTAG = "DanbooruGallery";
 	public static final String CACHEDIR = "DanbooruGallery/cache";
 	public static final String SAVEDIR = "DanbooruGallery";
