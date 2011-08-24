@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+** This file is part of Danbooru Gallery
+**
+** Copyright 2011
+**   - Victor Tseng <palatis@gmail.com>
+**
+** Danbooru Gallery is free software: you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** Danbooru Gallery is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License
+** along with Danbooru Gallery.  If not, see <http://www.gnu.org/licenses/>.
+**/
+-->
+<resources>
+
+    <!-- Application-wize -->
+    <string name="app_name">Danbooru Gallery</string>
+    <string name="app_name_preferences">Danbooru Gallery Preferences</string>
+	 <string name="error_dialog_title">He\'s dead, Jim!</string>
+	 <string name="error_dialog_message">An problem occurred in the program, please send an e-mail with\n\n\"%1$s\"\n\nas the attachment to %2$s.\n\nSorry for the inconvenience and appreciate your help for make this program better.</string>
+
+    <!-- Main Activity -->
+    <string name="main_loading_next_page">Loading next page...</string>
+
+    <string name="main_menu_goto">Go to</string>
+    <string name="main_menu_goto_page">Page</string>
+    <string name="main_menu_goto_tags">Tags</string>
+    <string name="main_menu_preferences">Preferences</string>
+    <string name="main_menu_refresh">Refresh</string>
+
+	 <string name="main_goto_page_dialog_title">Go to page...</string>
+	 <string name="main_goto_tags_dialog_title">Go to tags...</string>
+
+    <!-- View Image Activity -->
+    <string name="view_image_drawer_handle">Picture Informations</string>
+    <string name="view_image_pic_info">Tags: %1$s\nSize: %2$dx%3$d\nAuthor: %4$s\nCreated At: %5$s</string>
+
+	 <string name="view_image_menu_refresh">Refresh</string>
+	 <string name="view_image_menu_save">Save</string>
+
+	 <!-- Preferences -->
+	 <string name="preferences_category_hosts">Hosts</string>
+	 <string name="preferences_hosts_select">Select host</string>
+	 <string name="preferences_hosts_selected_host">Current: %1$s</string>
+	 <string name="preferences_hosts_manage">Manage hosts</string>
+	 <string name="preferences_hosts_manage_description">Click here to manage your hosts</string>
+	 <string name="preferences_hosts_manage_category_new">New Host</string>
+	 <string name="preferences_hosts_manage_new">New host...</string>
+	 <string name="preferences_hosts_manage_new_description">Click here to add a new host</string>
+	 <string name="preferences_hosts_manage_category_manage">Manage Host</string>
+
+	 <string name="preferences_hosts_dialog_title">Host</string>
+	 <string name="preferences_hosts_dialog_host_name">An name for this host:</string>
+	 <string name="preferences_hosts_dialog_url">The URL of the host:</string>
+	 <string name="preferences_hosts_dialog_url_example">http://</string>
+	 <string name="preferences_hosts_dialog_button_delete">Delete</string>
+
+	 <string name="preferences_hosts_dialog_delete_confirm">Host: %1$s\n\nAre you sure you want to delete the host:</string>
+
+	 <string name="preferences_category_options">Options</string>
+    <string name="preferences_options_rating">Rating</string>
+	 <string name="preferences_options_rating_description">Filter the posts by ratings</string>
+    <string name="preferences_options_page_limit">Posts per page</string>
+	 <string name="preferences_options_page_limit_description">Posts to retrieve at once</string>
+
+	 <string name="preferences_category_about">About</string>
+	 <string name="preferences_about_copyright">Copyright (c) 2011</string>
+	 <string name="preferences_about_author">Victor Tseng &lt;palatis@gmail.com&gt;</string>
+	 <string name="preferences_about_version">Version</string>
+	 <string name="preferences_about_version_description">$Id$</string>
+	 <string name="preferences_about_license">License</string>
+	 <string name="preferences_about_license_description">GNU General Public License</string>
+	 <string name="preferences_about_license_dialog_title">GNU General Public License</string>
+	 <string name="preferences_about_license_dialog_content">This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</string>
+
+	 <!-- translators, add your language and name below. -->
+	 <!-- for example: -->
+	 <!-- <string name="preferences_about_translator">[YOUR_LANGUAGE] Translator</string> -->
+	 <!-- <string name="preferences_about_translator_author">[YOUR_NAME] &lt;[YOUR_EMAIL_ADDRESS]&gt;</string> -->
+	 <string name="preferences_about_translator">English Translator</string>
+	 <string name="preferences_about_translator_author">Victor Tseng &lt;palatis@gmail.com&gt;</string>
+
+</resources>

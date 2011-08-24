@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+** This file is part of Danbooru Gallery
+**
+** Copyright 2011
+**   - Victor Tseng <palatis@gmail.com>
+**
+** Danbooru Gallery is free software: you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** Danbooru Gallery is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License
+** along with Danbooru Gallery.  If not, see <http://www.gnu.org/licenses/>.
+**/
+-->
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/main_menu_goto"
+        android:title="@string/main_menu_goto" android:icon="@android:drawable/ic_menu_directions">
+
+        <menu>
+
+            <item
+                android:id="@+id/main_menu_goto_page"
+                android:title="@string/main_menu_goto_page"
+                android:icon="@drawable/icon" />
+
+            <item
+                android:icon="@drawable/icon"
+                android:id="@+id/main_menu_goto_tags"
+                android:title="@string/main_menu_goto_tags" />
+
+        </menu>
+
+    </item>
+
+    <item
+        android:id="@+id/main_menu_refresh"
+        android:title="@string/main_menu_refresh" android:icon="@android:drawable/ic_menu_rotate"/>
+
+    <item
+        android:id="@+id/main_menu_preferences"
+        android:title="@string/main_menu_preferences" android:icon="@android:drawable/ic_menu_preferences"/>
+
+</menu>
