@@ -129,6 +129,7 @@ public class MainActivity extends Activity
 
 		if ( !preferences.contains("serialized_hosts") )
 		{
+			hosts = new Hosts();
 			hosts.add( "Danbooru", "http://danbooru.donmai.us/" );
 			hosts.add( "Danbooru (mirror)", "http://hijiribe.donmai.us/" );
 			hosts.add( "Konachan", "http://konachan.com/" );
