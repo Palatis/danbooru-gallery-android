@@ -23,6 +23,7 @@ public class ImageViewTouchBase extends ImageView
 		Center, Move, Zoom, Layout, Reset,
 	};
 
+	protected ScrollRunnable			mScrollRunnable		= new ScrollRunnable();
 	protected Matrix					mBaseMatrix			= new Matrix();
 	protected Matrix					mSuppMatrix			= new Matrix();
 	protected Handler					mHandler			= new Handler();
@@ -57,6 +58,57 @@ public class ImageViewTouchBase extends ImageView
 	protected void init()
 	{
 		setScaleType( ImageView.ScaleType.MATRIX );
+	}
+
+	private class ScrollRunnable implements Runnable
+	{
+		float	dx			= 0;
+		float	dy			= 0;
+		float	old_x		= 0;
+		float	old_y		= 0;
+		float	dms			= 0;
+		long	st			= 0;
+		boolean canceled	= false;
+
+		public void reset( float distanceX, float distanceY, long startTime, float durationMs )
+		{
+			old_x = 0;
+			old_y = 0;
+			dx = distanceX;
+			dy = distanceY;
+			st = startTime;
+			dms = durationMs;
+			canceled = false;
+		}
+
+		public void run()
+		{
+			long now = System.currentTimeMillis();
+			float currentMs = Math.min( dms, now - st );
+			float x = Cubic.easeOut( currentMs, 0, dx, dms );
+			float y = Cubic.easeOut( currentMs, 0, dy, dms );
+			postTranslate( ( x - old_x ), ( y - old_y ) );
+			old_x = x;
+			old_y = y;
+
+			if ( canceled )
+				return;
+
+			if ( currentMs < dms )
+				mHandler.post( this );
+			else
+				center( true, true, 500 );
+		}
+
+		public void cancel()
+		{
+			canceled = true;
+		}
+	}
+
+	public void cancelScroll()
+	{
+		mScrollRunnable.cancel();
 	}
 
 	public void clear()
@@ -228,10 +280,20 @@ public class ImageViewTouchBase extends ImageView
 
 	protected void center( boolean horizontal, boolean vertical )
 	{
-		if ( mBitmapDisplayed.getBitmap() == null ) return;
-		RectF rect = getCenter( horizontal, vertical );
+		center( horizontal, vertical, 0 );
+	}
+
+	protected void center( boolean horizontal, boolean vertical, final float durationMs )
+	{
+		if ( mBitmapDisplayed.getBitmap() == null )
+			return;
+
+		final RectF rect = getCenter( horizontal, vertical );
 		if ( rect.left != 0 || rect.top != 0 )
-			postTranslate( rect.left, rect.top );
+			if ( durationMs == 0 )
+				postTranslate( rect.left, rect.top );
+			else
+				scrollBy( rect.left, rect.top, durationMs );
 	}
 
 	protected void setImageMatrix( Command command, Matrix matrix )
@@ -310,67 +372,14 @@ public class ImageViewTouchBase extends ImageView
 
 	public void scrollBy( float x, float y )
 	{
-		panBy( x, y );
-	}
-
-	protected void panBy( float dx, float dy )
-	{
-		RectF rect = getBitmapRect();
-		RectF srect = new RectF( dx, dy, 0, 0 );
-		updateRect( rect, srect );
-		postTranslate( srect.left, srect.top );
-		center( true, true );
-	}
-
-	protected void updateRect( RectF bitmapRect, RectF scrollRect )
-	{
-		float width = getWidth();
-		float height = getHeight();
-
-		if ( bitmapRect.top >= 0 && bitmapRect.bottom <= height )
-			scrollRect.top = 0;
-		if ( bitmapRect.left >= 0 && bitmapRect.right <= width )
-			scrollRect.left = 0;
-		if ( bitmapRect.top + scrollRect.top >= 0 && bitmapRect.bottom > height )
-			scrollRect.top = (int)( 0 - bitmapRect.top );
-		if ( bitmapRect.bottom + scrollRect.top <= ( height - 0 ) && bitmapRect.top < 0 )
-			scrollRect.top = (int)( ( height - 0 ) - bitmapRect.bottom );
-		if ( bitmapRect.left + scrollRect.left >= 0 )
-			scrollRect.left = (int)( 0 - bitmapRect.left );
-		if ( bitmapRect.right + scrollRect.left <= ( width - 0 ) )
-			scrollRect.left = (int)( ( width - 0 ) - bitmapRect.right );
+		mScrollRunnable.cancel();
+		postTranslate( x, y );
 	}
 
 	protected void scrollBy( float distanceX, float distanceY, final float durationMs )
 	{
-		final float dx = distanceX;
-		final float dy = distanceY;
-		final long startTime = System.currentTimeMillis();
-
-		mHandler.post(
-			new Runnable()
-			{
-				float	old_x	= 0;
-				float	old_y	= 0;
-
-				public void run()
-				{
-					long now = System.currentTimeMillis();
-					float currentMs = Math.min( durationMs, now - startTime );
-					float x = Cubic.easeOut( currentMs, 0, dx, durationMs );
-					float y = Cubic.easeOut( currentMs, 0, dy, durationMs );
-					panBy( ( x - old_x ), ( y - old_y ) );
-					old_x = x;
-					old_y = y;
-					if ( currentMs < durationMs )
-						mHandler.post( this );
-					else {
-						RectF centerRect = getCenter( true, true );
-						if ( centerRect.left != 0 || centerRect.top != 0 ) scrollBy( centerRect.left, centerRect.top );
-					}
-				}
-			}
-		);
+		mScrollRunnable.reset(distanceX, distanceY, System.currentTimeMillis(), durationMs);
+		mHandler.post( mScrollRunnable );
 	}
 
 	protected void zoomTo( float scale, final float centerX, final float centerY, final float durationMs )

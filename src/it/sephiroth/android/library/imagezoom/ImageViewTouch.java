@@ -54,11 +54,15 @@ public class ImageViewTouch extends ImageViewTouchBase
 		int action = event.getAction();
 		switch ( action & MotionEvent.ACTION_MASK )
 		{
+		case MotionEvent.ACTION_DOWN:
+			cancelScroll();
+			break;
 		case MotionEvent.ACTION_UP:
 			if ( getScale() < 1f )
 				zoomTo( 1f, 500 );
 			if ( getScale() > getMaxZoom() )
 				zoomTo( getMaxZoom(), 500 );
+			center( true, true, 500 );
 			break;
 		}
 		return true;
@@ -106,20 +110,15 @@ public class ImageViewTouch extends ImageViewTouchBase
 			return super.onDoubleTap( e );
 		}
 
-
 		@Override
 		public boolean onScroll( MotionEvent e1, MotionEvent e2, float distanceX, float distanceY )
 		{
-			/*
 			if ( e1 == null || e2 == null )
 				return false;
 			if ( e1.getPointerCount() > 1 || e2.getPointerCount() > 1 )
 				return false;
 			if ( mScaleDetector.isInProgress() )
 				return false;
-			if ( getScale() == 1f )
-				return false;
-			*/
 
 			scrollBy( -distanceX, -distanceY );
 			invalidate();
@@ -129,16 +128,16 @@ public class ImageViewTouch extends ImageViewTouchBase
 		@Override
 		public boolean onFling( MotionEvent e1, MotionEvent e2, float velocityX, float velocityY )
 		{
-			if ( e1.getPointerCount() > 1 || e2.getPointerCount() > 1 ) return false;
-			if ( mScaleDetector.isInProgress() ) return false;
+			if ( e1.getPointerCount() > 1 || e2.getPointerCount() > 1 )
+				return false;
+			if ( mScaleDetector.isInProgress() )
+				return false;
 
 			float diffX = e2.getX() - e1.getX();
 			float diffY = e2.getY() - e1.getY();
 
-			if ( Math.abs( velocityX ) > 800 || Math.abs( velocityY ) > 800 ) {
-				scrollBy( diffX / 2, diffY / 2, 300 );
-				invalidate();
-			}
+			scrollBy( diffX, diffY, 500 );
+			invalidate();
 			return super.onFling( e1, e2, velocityX, velocityY );
 		}
 	}
