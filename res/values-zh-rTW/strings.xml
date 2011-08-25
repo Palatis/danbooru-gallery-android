@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+** This file is part of Danbooru Gallery
+**
+** Copyright 2011
+**   - Victor Tseng <palatis@gmail.com>
+**
+** Danbooru Gallery is free software: you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** Danbooru Gallery is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License
+** along with Danbooru Gallery.  If not, see <http://www.gnu.org/licenses/>.
+**/
+-->
+<resources>
+
+	<!-- Application-wize -->
+	<string name="app_name">紙箱人畫廊</string>
+	<string name="app_name_preferences">紙箱人畫廊 喜好設定</string>
+	<string name="error_dialog_title">噢！他掛了！</string>
+	<string name="error_dialog_message">這程式在執行時發生了個問題，請寄封電子郵件至\n\n\"%2$s\"\n\n附上\n\n%1$s作為附件。\n\n抱歉造成您的不便，並且感謝您的幫助，讓這個程式更好。</string>
+
+	<!-- Main Activity -->
+	<string name="main_loading_next_page">正在載入下一頁...</string>
+
+	<string name="main_menu_goto">移至...</string>
+	<string name="main_menu_goto_page">頁面...</string>
+	<string name="main_menu_goto_tags">標籤...</string>
+	<string name="main_menu_preferences">喜好設定</string>
+	<string name="main_menu_refresh">重新整理</string>
+
+	<string name="main_goto_page_dialog_title">跳至頁面...</string>
+	<string name="main_goto_tags_dialog_title">跳至標籤...</string>
+
+	<!-- View Image Activity -->
+	<string name="view_image_drawer_handle">圖片資訊</string>
+	<string name="view_image_pic_info">標籤：%1$s\n大小：%2$dx%3$d\n作者：%4$s\n建立時間：%5$s</string>
+	<string name="view_image_file_saved">檔案已經儲存至：\n%1$s</string>
+	<string name="view_image_download_failed">下載失敗！</string>
+	<string name="view_image_file_save_failed">檔案儲存失敗！</string>
+	<string name="view_image_user_canceled">使用者取消</string>
+
+	<string name="view_image_menu_refresh">重新整理</string>
+	<string name="view_image_menu_save">儲存</string>
+
+	<!-- Preferences -->
+	<string name="preferences_category_hosts">站台</string>
+	<string name="preferences_hosts_select">選取站台</string>
+	<string name="preferences_hosts_selected_host">目前：%1$s</string>
+	<string name="preferences_hosts_manage">管理站台</string>
+	<string name="preferences_hosts_manage_description">點這裡管理您的站台</string>
+	<string name="preferences_hosts_manage_category_new">新增站台</string>
+	<string name="preferences_hosts_manage_new">新增站台...</string>
+	<string name="preferences_hosts_manage_new_description">點這裡新增一個站台</string>
+	<string name="preferences_hosts_manage_category_manage">管理站台</string>
+
+	<string name="preferences_hosts_dialog_title">站台</string>
+	<string name="preferences_hosts_dialog_host_name">站台名稱：</string>
+	<string name="preferences_hosts_dialog_url">站台網址：</string>
+	<string name="preferences_hosts_dialog_url_example">http://</string>
+	<string name="preferences_hosts_dialog_button_delete">刪除</string>
+
+	<string name="preferences_hosts_dialog_delete_confirm">站台：%1$s\n\n您確定要刪除這個站台嗎？</string>
+
+	<string name="preferences_category_options">選項</string>
+	<string name="preferences_options_rating">等級</string>
+	<string name="preferences_options_rating_description">依照等級過濾圖片</string>
+	<string name="preferences_options_page_limit">每頁圖片</string>
+	<string name="preferences_options_page_limit_description">每次要下載多少圖片</string>
+
+	<string name="preferences_category_about">關於</string>
+	<string name="preferences_about_copyright">Copyright (c) 2011</string>
+	<string name="preferences_about_author">Victor Tseng &lt;palatis@gmail.com&gt;</string>
+	<string name="preferences_about_version">版本</string>
+	<string name="preferences_about_version_description">沒有版本資訊</string>
+	<string name="preferences_about_license">授權</string>
+	<string name="preferences_about_license_description">GNU General Public License</string>
+	<string name="preferences_about_license_dialog_title">GNU General Public License</string>
+	<string name="preferences_about_license_dialog_content">This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</string>
+
+	<!-- translators, add your language and name below. -->
+	<!-- for example: -->
+	<!-- <string name="preferences_about_translator">[YOUR_LANGUAGE] Translator</string> -->
+	<!-- <string name="preferences_about_translator_author">[YOUR_NAME] &lt;[YOUR_EMAIL_ADDRESS]&gt;</string> -->
+	<string name="preferences_about_translator">中文翻譯</string>
+	<string name="preferences_about_translator_author">帕拉提斯 &lt;palatis@gmail.com&gt;</string>
+
+</resources>
