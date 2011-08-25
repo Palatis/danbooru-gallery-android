@@ -31,6 +31,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Date;
 
 import tw.idv.palatis.danboorugallery.defines.D;
@@ -220,9 +222,9 @@ public class ViewImageActivity extends Activity {
 		String filename = url.getPath();
 		filename = filename.substring(filename.lastIndexOf('/'));
 		if (filename == "")
-			filename = url.toExternalForm().replace('/', '_');
+			filename = URLEncoder.encode(url.toExternalForm());
 
-		return new File(downloaddir, filename);
+		return new File(downloaddir, URLDecoder.decode(filename));
 	}
 
 	private class ProgressOnCancelListener implements OnCancelListener
