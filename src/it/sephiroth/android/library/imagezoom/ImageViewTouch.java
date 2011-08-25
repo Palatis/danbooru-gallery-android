@@ -105,7 +105,7 @@ public class ImageViewTouch extends ImageViewTouchBase
 			targetScale = onDoubleTapPost( scale, getMaxZoom() );
 			targetScale = Math.min( getMaxZoom(), Math.max( targetScale, MIN_ZOOM ) );
 			mCurrentScaleFactor = targetScale;
-			zoomTo( targetScale, e.getX(), e.getY(), 200 );
+			zoomTo( targetScale, e.getX(), e.getY(), 500 );
 			invalidate();
 			return super.onDoubleTap( e );
 		}
