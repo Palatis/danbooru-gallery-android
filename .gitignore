@@ -1,0 +1,6 @@
+.classpath
+.externalToolBuilders/
+.project
+.settings/
+bin/
+proguard.cfg
