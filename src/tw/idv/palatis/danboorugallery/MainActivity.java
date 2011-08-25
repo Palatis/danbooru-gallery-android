@@ -44,7 +44,6 @@ import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -74,8 +73,6 @@ public class MainActivity extends Activity
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		Log.d(D.LOGTAG, "onCreate()");
-
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
@@ -123,8 +120,6 @@ public class MainActivity extends Activity
 
 	public void loadPreferences()
 	{
-		Log.d(D.LOGTAG, "loadPreferences()");
-
 		Editor prefeditor = preferences.edit();
 
 		if ( !preferences.contains("preference_version") )
@@ -156,7 +151,6 @@ public class MainActivity extends Activity
 	@Override
 	public void onStart()
 	{
-		Log.d(D.LOGTAG, "onStart(): selected_host = " + preferences.getInt("selected_host", 0) + ", page_limit = " + preferences.getInt("page_limit", 16) + ", rating = " + preferences.getString("rating", "s"));
 		try
 		{
 			hosts = Hosts.fromCSV( preferences.getString("serialized_hosts", "") );
@@ -178,7 +172,6 @@ public class MainActivity extends Activity
 
 		if ( reset )
 		{
-			Log.d(D.LOGTAG, "something changed, clear posts, stop lazyadapter, restart fetcher.");
 			fetcher.setPage(1);
 			fetcher.cancel();
 			posts.clear();

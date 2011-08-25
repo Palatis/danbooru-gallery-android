@@ -20,6 +20,8 @@ package tw.idv.palatis.danboorugallery;
  * along with Danbooru Gallery.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import it.sephiroth.android.library.imagezoom.ImageViewTouch;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -51,7 +53,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ImageView;
 import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -82,9 +83,6 @@ public class ViewImageActivity extends Activity {
 		if ( intent.hasExtra("post.created_at") )
 			post.created_at = new Date(intent.getLongExtra("post.created_at", 0));
 
-		ImageView image = (ImageView)findViewById( R.id.view_image_image );
-		image.setImageBitmap( D.getBitmapFromFile( filecache.getFile(post.preview_url) ) );
-
 		SlidingDrawer infodrawer = (SlidingDrawer)findViewById( R.id.view_image_drawer );
 		TextView infopane = (TextView)findViewById( R.id.view_image_pic_info );
 		infopane.setText(
@@ -96,23 +94,24 @@ public class ViewImageActivity extends Activity {
 		);
 		infopane.setOnClickListener(new InfoPaneOnClickListener( infodrawer ));
 
+		ImageViewTouch image = (ImageViewTouch)findViewById( R.id.view_image_image );
+		//image.setOnTouchListener( new ImageOnTouchListener(display) );
 		File file = filecache.getFile(post.file_url);
 		if ( file.exists() )
-		{
 			bitmap = D.getBitmapFromFile(file);
-			image.setImageBitmap( bitmap );
-		}
 		else
 		{
 			ProgressDialog dialog = new ProgressDialog(this);
+			loader = new AsyncImageLoader(image, dialog, file);
 			dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 			dialog.setMax(1);
-
-			loader = new AsyncImageLoader(image, dialog, file);
 			dialog.setOnCancelListener(new ProgressOnCancelListener(this, loader));
-
 			loader.execute(post.file_url);
+
+			bitmap = D.getBitmapFromFile( filecache.getFile(post.preview_url) );
 		}
+
+		image.setImageBitmapReset( bitmap, true );
 	}
 
 	@Override
@@ -159,7 +158,7 @@ public class ViewImageActivity extends Activity {
 				dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 				dialog.setMax(1);
 
-				ImageView image = (ImageView)findViewById( R.id.view_image_image );
+				ImageViewTouch image = (ImageViewTouch)findViewById( R.id.view_image_image );
 				loader = new AsyncImageLoader(image, dialog, file);
 				dialog.setOnCancelListener(new ProgressOnCancelListener(this, loader));
 
@@ -183,11 +182,15 @@ public class ViewImageActivity extends Activity {
 					in.close();
 					out.close();
 
-					// TODO: localize me
-					Toast.makeText(this, outfile.getPath() + " saved.", Toast.LENGTH_SHORT).show();
+					Toast.makeText(
+						this,
+						String.format(
+							getText( R.string.view_image_file_saved ).toString(),
+							outfile.getPath()
+						),
+						Toast.LENGTH_SHORT
+					).show();
 
-					// FIXME: maybe we just have to inform the media scanner to scan
-					//		our folder in MainActivity::onStop()?
 					sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + outfile.getParent())));
 				}
 				catch (Exception e)
@@ -260,14 +263,14 @@ public class ViewImageActivity extends Activity {
 		private static final int RESULT_FAILED			= 0x01;
 		private static final int RESULT_CANCELLED		= 0x02;
 
-		ImageView image;
+		ImageViewTouch image;
 		ProgressDialog dialog;
 		File file;
 
-		public AsyncImageLoader( ImageView i, ProgressDialog d, File f )
+		public AsyncImageLoader( ImageViewTouch i, ProgressDialog p, File f )
 		{
 			image = i;
-			dialog = d;
+			dialog = p;
 			file = f;
 		}
 
@@ -329,17 +332,15 @@ public class ViewImageActivity extends Activity {
 			{
 			case RESULT_SUCCESS:
 				bitmap = D.getBitmapFromFile( file );
-				image.setImageBitmap( bitmap );
+				image.setImageBitmapReset( bitmap, true );
 				dialog.dismiss();
 				break;
 			case RESULT_FAILED:
-				// FIXME: translation
-				Toast.makeText(image.getContext(), "Download failed.", Toast.LENGTH_SHORT).show();
+				Toast.makeText(image.getContext(), R.string.view_image_download_failed, Toast.LENGTH_SHORT).show();
 				dialog.dismiss();
 				break;
 			case RESULT_CANCELLED:
-				// FIXME: translation
-				Toast.makeText(image.getContext(), "User canceled.", Toast.LENGTH_SHORT).show();
+				Toast.makeText(image.getContext(), R.string.view_image_user_canceled, Toast.LENGTH_SHORT).show();
 				dialog.cancel();
 				break;
 			default:

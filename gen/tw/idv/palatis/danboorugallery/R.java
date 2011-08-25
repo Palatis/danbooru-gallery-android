@@ -78,50 +78,54 @@ public final class R {
         public static final int main_menu_goto_tags=0x7f080007;
         public static final int main_menu_preferences=0x7f080008;
         public static final int main_menu_refresh=0x7f080009;
-        public static final int preferences_about_author=0x7f080026;
-        public static final int preferences_about_copyright=0x7f080025;
-        public static final int preferences_about_license=0x7f080029;
-        public static final int preferences_about_license_description=0x7f08002a;
-        public static final int preferences_about_license_dialog_content=0x7f08002c;
-        public static final int preferences_about_license_dialog_title=0x7f08002b;
+        public static final int preferences_about_author=0x7f08002a;
+        public static final int preferences_about_copyright=0x7f080029;
+        public static final int preferences_about_license=0x7f08002d;
+        public static final int preferences_about_license_description=0x7f08002e;
+        public static final int preferences_about_license_dialog_content=0x7f080030;
+        public static final int preferences_about_license_dialog_title=0x7f08002f;
         /**  translators, add your language and name below. 
  for example: 
  <string name="preferences_about_translator">[YOUR_LANGUAGE] Translator</string> 
  <string name="preferences_about_translator_author">[YOUR_NAME] &lt;[YOUR_EMAIL_ADDRESS]&gt;</string> 
          */
-        public static final int preferences_about_translator=0x7f08002d;
-        public static final int preferences_about_translator_author=0x7f08002e;
-        public static final int preferences_about_version=0x7f080027;
-        public static final int preferences_about_version_description=0x7f080028;
-        public static final int preferences_category_about=0x7f080024;
+        public static final int preferences_about_translator=0x7f080031;
+        public static final int preferences_about_translator_author=0x7f080032;
+        public static final int preferences_about_version=0x7f08002b;
+        public static final int preferences_about_version_description=0x7f08002c;
+        public static final int preferences_category_about=0x7f080028;
         /**  Preferences 
          */
-        public static final int preferences_category_hosts=0x7f080010;
-        public static final int preferences_category_options=0x7f08001f;
-        public static final int preferences_hosts_dialog_button_delete=0x7f08001d;
-        public static final int preferences_hosts_dialog_delete_confirm=0x7f08001e;
-        public static final int preferences_hosts_dialog_host_name=0x7f08001a;
-        public static final int preferences_hosts_dialog_title=0x7f080019;
-        public static final int preferences_hosts_dialog_url=0x7f08001b;
-        public static final int preferences_hosts_dialog_url_example=0x7f08001c;
-        public static final int preferences_hosts_manage=0x7f080013;
-        public static final int preferences_hosts_manage_category_manage=0x7f080018;
-        public static final int preferences_hosts_manage_category_new=0x7f080015;
-        public static final int preferences_hosts_manage_description=0x7f080014;
-        public static final int preferences_hosts_manage_new=0x7f080016;
-        public static final int preferences_hosts_manage_new_description=0x7f080017;
-        public static final int preferences_hosts_select=0x7f080011;
-        public static final int preferences_hosts_selected_host=0x7f080012;
-        public static final int preferences_options_page_limit=0x7f080022;
-        public static final int preferences_options_page_limit_description=0x7f080023;
-        public static final int preferences_options_rating=0x7f080020;
-        public static final int preferences_options_rating_description=0x7f080021;
+        public static final int preferences_category_hosts=0x7f080014;
+        public static final int preferences_category_options=0x7f080023;
+        public static final int preferences_hosts_dialog_button_delete=0x7f080021;
+        public static final int preferences_hosts_dialog_delete_confirm=0x7f080022;
+        public static final int preferences_hosts_dialog_host_name=0x7f08001e;
+        public static final int preferences_hosts_dialog_title=0x7f08001d;
+        public static final int preferences_hosts_dialog_url=0x7f08001f;
+        public static final int preferences_hosts_dialog_url_example=0x7f080020;
+        public static final int preferences_hosts_manage=0x7f080017;
+        public static final int preferences_hosts_manage_category_manage=0x7f08001c;
+        public static final int preferences_hosts_manage_category_new=0x7f080019;
+        public static final int preferences_hosts_manage_description=0x7f080018;
+        public static final int preferences_hosts_manage_new=0x7f08001a;
+        public static final int preferences_hosts_manage_new_description=0x7f08001b;
+        public static final int preferences_hosts_select=0x7f080015;
+        public static final int preferences_hosts_selected_host=0x7f080016;
+        public static final int preferences_options_page_limit=0x7f080026;
+        public static final int preferences_options_page_limit_description=0x7f080027;
+        public static final int preferences_options_rating=0x7f080024;
+        public static final int preferences_options_rating_description=0x7f080025;
+        public static final int view_image_download_failed=0x7f08000f;
         /**  View Image Activity 
          */
         public static final int view_image_drawer_handle=0x7f08000c;
-        public static final int view_image_menu_refresh=0x7f08000e;
-        public static final int view_image_menu_save=0x7f08000f;
+        public static final int view_image_file_save_failed=0x7f080010;
+        public static final int view_image_file_saved=0x7f08000e;
+        public static final int view_image_menu_refresh=0x7f080012;
+        public static final int view_image_menu_save=0x7f080013;
         public static final int view_image_pic_info=0x7f08000d;
+        public static final int view_image_user_canceled=0x7f080011;
     }
     public static final class xml {
         public static final int danbooru_gallery_preference=0x7f050000;
