@@ -162,10 +162,8 @@ public class LazyPostFetcher
 
 			try
 			{
-				for (int i = 0;i < params.length; ++i)
+				for (URLEnclosure enclosure: params)
 				{
-					URLEnclosure enclosure = params[i];
-
 					while ( fetched_posts_count < enclosure.limit )
 					{
 						URL url = new URL(String.format(enclosure.url_format, enclosure.page, enclosure.tags, enclosure.limit));
@@ -190,8 +188,9 @@ public class LazyPostFetcher
 						{
 							ArrayList<Post> posts = new ArrayList<Post>();
 							JSONArray json_posts = new JSONArray( output.toString() );
-							posts.ensureCapacity(json_posts.length());
-							for (int j = 0;j < json_posts.length(); ++j)
+							int len = json_posts.length();
+							posts.ensureCapacity(len);
+							for (int j = 0;j < len; ++j)
 							{
 								JSONObject json_post = json_posts.getJSONObject(j);
 
