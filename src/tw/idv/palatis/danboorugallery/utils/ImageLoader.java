@@ -61,14 +61,14 @@ public class ImageLoader
 	// final int stub_id=R.drawable.stub;
 	final int stub_id = R.drawable.icon;
 
-	public void DisplayImage(String url, Activity activity, ImageView image, int itemSize)
+	public void DisplayImage(String url, Activity activity, ImageView image)
 	{
 		// This ImageView may be used for other images before. So there may be
 		// some old tasks in the queue. We need to discard them.
 		loader.discard(image);
 		imageViews.put(image, url);
 
-		Bitmap bitmap = getBitmapCache( url, itemSize );
+		Bitmap bitmap = getBitmapCache( url );
 		if (bitmap != null)
 		{
 			MainActivity.GalleryItemDisplayer displayer = new MainActivity.GalleryItemDisplayer();
@@ -76,7 +76,7 @@ public class ImageLoader
 			return;
 		}
 
-		queuePhoto( url, activity, image, itemSize );
+		queuePhoto( url, activity, image );
 		image.setImageResource(stub_id);
 	}
 
@@ -89,9 +89,9 @@ public class ImageLoader
 		}
 	}
 
-	private void queuePhoto(String url, Activity activity, ImageView imageView, int itemSize)
+	private void queuePhoto(String url, Activity activity, ImageView imageView)
 	{
-		PhotoToLoad p = new PhotoToLoad(url, imageView, itemSize);
+		PhotoToLoad p = new PhotoToLoad(url, imageView);
 		synchronized (loader.photosToLoad)
 		{
 			loader.photosToLoad.push(p);
@@ -117,7 +117,7 @@ public class ImageLoader
 		}
 	}
 
-	private Bitmap getBitmapCache( String url, int itemSize )
+	private Bitmap getBitmapCache( String url )
 	{
 		try
 		{
@@ -127,7 +127,7 @@ public class ImageLoader
 				return bitmap;
 
 			// from SD cache
-			bitmap = D.getBitmapFromFile(fileCache.getFile(url), itemSize);
+			bitmap = D.getBitmapFromFile(fileCache.getFile(url));
 			if ( bitmap != null )
 				memCache.put(url, bitmap);
 
@@ -140,7 +140,7 @@ public class ImageLoader
 		return null;
 	}
 
-	private Bitmap getBitmapWeb(String url, int itemSize)
+	private Bitmap getBitmapWeb(String url)
 	{
 		try {
 			// from web
@@ -151,7 +151,7 @@ public class ImageLoader
 			CopyStream(is, os);
 			os.close();
 
-			return D.getBitmapFromFile(fileCache.getFile(url), itemSize);
+			return D.getBitmapFromFile(fileCache.getFile(url));
 		} catch (Exception ex) {
 			Log.d(D.LOGTAG, "image " + url + " download failed!");
 			Log.d(D.LOGTAG, ex.getMessage());
@@ -164,13 +164,11 @@ public class ImageLoader
 	private class PhotoToLoad {
 		public String url;
 		public ImageView imageView;
-		public int itemSize;
 
-		public PhotoToLoad(String u, ImageView i, int sz)
+		public PhotoToLoad(String u, ImageView i)
 		{
 			url = u;
 			imageView = i;
-			itemSize = sz;
 		}
 	}
 
@@ -187,15 +185,15 @@ public class ImageLoader
 		{
 			synchronized(photosToLoad)
 			{
-				for (int j = 0; j < photosToLoad.size();) {
+				for (int j = 0; j < photosToLoad.size();)
 					if (photosToLoad.get(j).imageView == image)
 						photosToLoad.remove(j);
 					else
 						++j;
-				}
 			}
 		}
 
+		@Override
 		public void run() {
 			try {
 				while (true) {
@@ -214,7 +212,7 @@ public class ImageLoader
 							photoToLoad = photosToLoad.pop();
 						}
 
-						Bitmap bmp = getBitmapWeb(photoToLoad.url, photoToLoad.itemSize);
+						Bitmap bmp = getBitmapWeb(photoToLoad.url);
 
 						// check if we still want the bitmap
 						String tag = imageViews.get(photoToLoad.imageView);

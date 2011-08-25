@@ -83,7 +83,7 @@ public class ViewImageActivity extends Activity {
 			post.created_at = new Date(intent.getLongExtra("post.created_at", 0));
 
 		ImageView image = (ImageView)findViewById( R.id.view_image_image );
-		image.setImageBitmap( D.getBitmapFromFile( filecache.getFile(post.preview_url), -1 ) );
+		image.setImageBitmap( D.getBitmapFromFile( filecache.getFile(post.preview_url) ) );
 
 		SlidingDrawer infodrawer = (SlidingDrawer)findViewById( R.id.view_image_drawer );
 		TextView infopane = (TextView)findViewById( R.id.view_image_pic_info );
@@ -99,7 +99,7 @@ public class ViewImageActivity extends Activity {
 		File file = filecache.getFile(post.file_url);
 		if ( file.exists() )
 		{
-			bitmap = D.getBitmapFromFile(file, -1);
+			bitmap = D.getBitmapFromFile(file);
 			image.setImageBitmap( bitmap );
 		}
 		else
@@ -328,7 +328,7 @@ public class ViewImageActivity extends Activity {
 			switch (result)
 			{
 			case RESULT_SUCCESS:
-				bitmap = D.getBitmapFromFile( file, -1 );
+				bitmap = D.getBitmapFromFile( file );
 				image.setImageBitmap( bitmap );
 				dialog.dismiss();
 				break;
