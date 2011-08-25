@@ -58,6 +58,7 @@ import android.view.View.OnClickListener;
 import android.widget.SlidingDrawer;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ImageView.ScaleType;
 
 public class ViewImageActivity extends Activity {
 	FileCache filecache;
@@ -111,6 +112,7 @@ public class ViewImageActivity extends Activity {
 			loader.execute(post.file_url);
 
 			bitmap = D.getBitmapFromFile( filecache.getFile(post.preview_url) );
+			image.setScaleType(ScaleType.FIT_CENTER);
 		}
 
 		image.setImageBitmapReset( bitmap, true );
@@ -335,6 +337,7 @@ public class ViewImageActivity extends Activity {
 			case RESULT_SUCCESS:
 				bitmap = D.getBitmapFromFile( file );
 				image.setImageBitmapReset( bitmap, true );
+				image.setScaleType(ScaleType.MATRIX);
 				dialog.dismiss();
 				break;
 			case RESULT_FAILED:
