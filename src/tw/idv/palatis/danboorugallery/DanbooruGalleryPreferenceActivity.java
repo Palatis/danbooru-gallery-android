@@ -29,6 +29,8 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -56,11 +58,23 @@ public class DanbooruGalleryPreferenceActivity extends PreferenceActivity
 		preferences = getSharedPreferences("DanbooruGallery", MODE_PRIVATE);
 		host_dialog_listener = new HostDialogOnClickListener( this );
 
-		try {
+		try
+		{
 			hosts = Hosts.fromCSV( preferences.getString("serialized_hosts", "") );
 		}
-		catch (IOException e) {
+		catch (IOException e)
+		{
 			hosts = new Hosts();
+		}
+
+		try
+		{
+		    PackageInfo manager = getPackageManager().getPackageInfo(getPackageName(), 0);
+		    findPreference("preferences_about_version").setSummary(manager.versionName);
+		}
+		catch (NameNotFoundException e)
+		{
+		    //Handle exception
 		}
 
 		ListPreference pref_hosts = (ListPreference) findPreference("preferences_hosts_select");

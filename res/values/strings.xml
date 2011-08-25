@@ -76,7 +76,7 @@
 	 <string name="preferences_about_copyright">Copyright (c) 2011</string>
 	 <string name="preferences_about_author">Victor Tseng &lt;palatis@gmail.com&gt;</string>
 	 <string name="preferences_about_version">Version</string>
-	 <string name="preferences_about_version_description">$Id$</string>
+	 <string name="preferences_about_version_description">No version informations</string>
 	 <string name="preferences_about_license">License</string>
 	 <string name="preferences_about_license_description">GNU General Public License</string>
 	 <string name="preferences_about_license_dialog_title">GNU General Public License</string>
