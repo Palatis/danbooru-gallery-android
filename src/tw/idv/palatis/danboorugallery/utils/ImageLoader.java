@@ -20,7 +20,6 @@ package tw.idv.palatis.danboorugallery.utils;
  * along with Danbooru Gallery.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,7 +36,6 @@ import tw.idv.palatis.danboorugallery.defines.D;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -57,20 +55,20 @@ public class ImageLoader
 		loader.start();
 
 		fileCache = new FileCache(context);
-		memCache = new BitmapMemCache();
+		memCache = BitmapMemCache.getInstance();
 	}
 
 	// final int stub_id=R.drawable.stub;
 	final int stub_id = R.drawable.icon;
 
-	public void DisplayImage(String url, Activity activity, ImageView image)
+	public void DisplayImage(String url, Activity activity, ImageView image, int itemSize)
 	{
 		// This ImageView may be used for other images before. So there may be
 		// some old tasks in the queue. We need to discard them.
 		loader.discard(image);
 		imageViews.put(image, url);
 
-		Bitmap bitmap = getBitmapCache( url );
+		Bitmap bitmap = getBitmapCache( url, itemSize );
 		if (bitmap != null)
 		{
 			MainActivity.GalleryItemDisplayer displayer = new MainActivity.GalleryItemDisplayer();
@@ -78,7 +76,7 @@ public class ImageLoader
 			return;
 		}
 
-		queuePhoto( url, activity, image );
+		queuePhoto( url, activity, image, itemSize );
 		image.setImageResource(stub_id);
 	}
 
@@ -91,9 +89,9 @@ public class ImageLoader
 		}
 	}
 
-	private void queuePhoto(String url, Activity activity, ImageView imageView)
+	private void queuePhoto(String url, Activity activity, ImageView imageView, int itemSize)
 	{
-		PhotoToLoad p = new PhotoToLoad(url, imageView);
+		PhotoToLoad p = new PhotoToLoad(url, imageView, itemSize);
 		synchronized (loader.photosToLoad)
 		{
 			loader.photosToLoad.push(p);
@@ -119,7 +117,7 @@ public class ImageLoader
 		}
 	}
 
-	private Bitmap getBitmapCache( String url )
+	private Bitmap getBitmapCache( String url, int itemSize )
 	{
 		try
 		{
@@ -129,7 +127,7 @@ public class ImageLoader
 				return bitmap;
 
 			// from SD cache
-			bitmap = BitmapFactory.decodeStream(new FileInputStream(fileCache.getFile(url)));
+			bitmap = D.getBitmapFromFile(fileCache.getFile(url), itemSize);
 			if ( bitmap != null )
 				memCache.put(url, bitmap);
 
@@ -142,7 +140,8 @@ public class ImageLoader
 		return null;
 	}
 
-	private Bitmap getBitmapWeb(String url) {
+	private Bitmap getBitmapWeb(String url, int itemSize)
+	{
 		try {
 			// from web
 			URL imageUrl = new URL(url);
@@ -152,7 +151,7 @@ public class ImageLoader
 			CopyStream(is, os);
 			os.close();
 
-			return BitmapFactory.decodeStream(new FileInputStream(fileCache.getFile(url)));
+			return D.getBitmapFromFile(fileCache.getFile(url), itemSize);
 		} catch (Exception ex) {
 			Log.d(D.LOGTAG, "image " + url + " download failed!");
 			Log.d(D.LOGTAG, ex.getMessage());
@@ -165,11 +164,13 @@ public class ImageLoader
 	private class PhotoToLoad {
 		public String url;
 		public ImageView imageView;
+		public int itemSize;
 
-		public PhotoToLoad(String u, ImageView i)
+		public PhotoToLoad(String u, ImageView i, int sz)
 		{
 			url = u;
 			imageView = i;
+			itemSize = sz;
 		}
 	}
 
@@ -213,7 +214,7 @@ public class ImageLoader
 							photoToLoad = photosToLoad.pop();
 						}
 
-						Bitmap bmp = getBitmapWeb(photoToLoad.url);
+						Bitmap bmp = getBitmapWeb(photoToLoad.url, photoToLoad.itemSize);
 
 						// check if we still want the bitmap
 						String tag = imageViews.get(photoToLoad.imageView);

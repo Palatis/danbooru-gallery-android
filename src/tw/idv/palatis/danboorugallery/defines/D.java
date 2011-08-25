@@ -20,7 +20,16 @@ package tw.idv.palatis.danboorugallery.defines;
  * along with Danbooru Gallery.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import tw.idv.palatis.danboorugallery.utils.BitmapMemCache;
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
 import android.widget.Toast;
 
 public class D
@@ -61,5 +70,53 @@ public class D
 				}
 			}.initialize(activity, message, length)
 		);
+	}
+
+	public static Bitmap getBitmapFromFile( File file, int itemSize )
+	{
+		boolean retry = true;
+		while ( true )
+			try
+			{
+				BitmapFactory.Options opt = new BitmapFactory.Options();
+				if ( itemSize > 0 )
+				{
+					opt.inJustDecodeBounds = true;
+					BitmapFactory.decodeFile( file.getAbsolutePath(), opt );
+
+					int width = opt.outWidth;
+					int height = opt.outHeight;
+
+					opt = new BitmapFactory.Options();
+					opt.inSampleSize = (int) Math.floor( Math.min((double)width / itemSize, (double)height / itemSize) );
+				}
+				opt.inTempStorage = new byte[32*1024];
+				opt.inPreferredConfig = Bitmap.Config.RGB_565;
+
+				// decodeFile() gets OutOfMemoryError very often, try decodeFileDescriptor()
+				// return BitmapFactory.decodeFile( file.getAbsolutePath(), opt );
+				FileInputStream input = new FileInputStream(file);
+				return BitmapFactory.decodeFileDescriptor( input.getFD(), null, opt );
+			}
+			catch ( OutOfMemoryError ex )
+			{
+				BitmapMemCache.getInstance().clear();
+				Log.d(D.LOGTAG, "decode failed, OutOfMemory occured.");
+
+				if ( retry == false )
+					return null;
+
+				retry = false;
+			}
+			catch (FileNotFoundException ex)
+			{
+				// ok for file not found, get from web anyway.
+				return null;
+			}
+			catch (IOException ex)
+			{
+				// ok for io exception, get from web anyway.
+				return null;
+			}
 	}
 }
