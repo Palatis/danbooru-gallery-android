@@ -39,7 +39,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
-import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -59,6 +59,7 @@ public class ViewImageActivity extends Activity {
 	FileCache filecache;
 	Post post;
 	AsyncImageLoader loader;
+	Bitmap bitmap;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -81,7 +82,7 @@ public class ViewImageActivity extends Activity {
 			post.created_at = new Date(intent.getLongExtra("post.created_at", 0));
 
 		ImageView image = (ImageView)findViewById( R.id.view_image_image );
-		image.setImageURI( Uri.fromFile( filecache.getFile(post.preview_url) ) );
+		image.setImageBitmap( D.getBitmapFromFile( filecache.getFile(post.preview_url), -1 ) );
 
 		SlidingDrawer infodrawer = (SlidingDrawer)findViewById( R.id.view_image_drawer );
 		TextView infopane = (TextView)findViewById( R.id.view_image_pic_info );
@@ -96,7 +97,10 @@ public class ViewImageActivity extends Activity {
 
 		File file = filecache.getFile(post.file_url);
 		if ( file.exists() )
-			image.setImageBitmap( BitmapFactory.decodeFile( file.getAbsolutePath() ) );
+		{
+			bitmap = D.getBitmapFromFile(file, -1);
+			image.setImageBitmap( bitmap );
+		}
 		else
 		{
 			ProgressDialog dialog = new ProgressDialog(this);
@@ -116,6 +120,9 @@ public class ViewImageActivity extends Activity {
 		if ( loader != null )
 			if ( loader.getStatus() == Status.RUNNING )
 				loader.cancel(true);
+
+		if ( bitmap != null )
+			bitmap.recycle();
 
 		super.onDestroy();
 	}
@@ -321,8 +328,8 @@ public class ViewImageActivity extends Activity {
 			switch (result)
 			{
 			case RESULT_SUCCESS:
-
-				image.setImageBitmap( BitmapFactory.decodeFile( file.getAbsolutePath() ) );
+				bitmap = D.getBitmapFromFile( file, -1 );
+				image.setImageBitmap( bitmap );
 				dialog.dismiss();
 				break;
 			case RESULT_FAILED:
