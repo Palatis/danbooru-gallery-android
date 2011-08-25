@@ -21,6 +21,8 @@ package tw.idv.palatis.danboorugallery;
  */
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +51,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.View.OnFocusChangeListener;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -203,9 +206,11 @@ public class MainActivity extends Activity
 		{
 		case R.id.main_menu_goto_page:
 		{
-			builder = new AlertDialog.Builder( this );
 			final EditText input = new EditText(this);
 			input.setInputType(InputType.TYPE_CLASS_NUMBER);
+			input.setText( String.valueOf(fetcher.enclosure.page) );
+
+			builder = new AlertDialog.Builder( this );
 			builder.setView(input);
 			builder.setTitle( R.string.main_goto_page_dialog_title );
 			builder.setPositiveButton( android.R.string.ok,
@@ -222,16 +227,30 @@ public class MainActivity extends Activity
 						}
 					}
 				}
-
 			);
 			builder.setNegativeButton( android.R.string.cancel, null );
-			builder.create().show();
+
+			final AlertDialog dialog = builder.create();
+			dialog.show();
+			input.setOnFocusChangeListener(
+				new OnFocusChangeListener()
+				{
+					@Override
+					public void onFocusChange(View v, boolean hasFocus)
+					{
+						dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+					}
+				}
+			);
+			input.requestFocus();
 		}
 		break;
 		case R.id.main_menu_goto_tags:
 		{
-			builder = new AlertDialog.Builder( this );
 			final EditText input = new EditText(this);
+			input.setText( URLDecoder.decode(fetcher.enclosure.tags) );
+
+			builder = new AlertDialog.Builder( this );
 			builder.setView(input);
 			builder.setTitle( R.string.main_goto_tags_dialog_title );
 			builder.setPositiveButton( android.R.string.ok,
@@ -240,7 +259,7 @@ public class MainActivity extends Activity
 					@Override
 					public void onClick(DialogInterface dialog, int which)
 					{
-						if ( fetcher.setTags(input.getText().toString()) )
+						if ( fetcher.setTags( URLEncoder.encode(input.getText().toString()) ) )
 						{
 							fetcher.cancel();
 							fetcher.setPage(1);
@@ -252,7 +271,20 @@ public class MainActivity extends Activity
 				}
 			);
 			builder.setNegativeButton( android.R.string.cancel, null );
-			builder.create().show();
+
+			final AlertDialog dialog = builder.create();
+			dialog.show();
+			input.setOnFocusChangeListener(
+				new OnFocusChangeListener()
+				{
+					@Override
+					public void onFocusChange(View v, boolean hasFocus)
+					{
+						dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+					}
+				}
+			);
+			input.requestFocus();
 		}
 		break;
 		case R.id.main_menu_refresh:
@@ -342,8 +374,8 @@ public class MainActivity extends Activity
 		}
 
 		@Override
-		public void onScroll(AbsListView view, int firstVisibleItem,
-				int visibleItemCount, int totalItemCount) {
+		public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+		{
 			if ( firstVisibleItem + visibleItemCount > totalItemCount - fetch_threshold )
 			{
 				toast_loading.show();
