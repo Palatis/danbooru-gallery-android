@@ -112,7 +112,7 @@ public class MainActivity extends Activity
 				fetcher,
 				adapter,
 				Toast.makeText(this, R.string.main_loading_next_page, Toast.LENGTH_SHORT),
-				preferences.getInt("page_limit", 16) / 4
+				preferences.getInt("page_limit", 16) / 3
 			)
 		);
 		grid.setOnItemClickListener(new GalleryOnItemClickListener(posts, this));
