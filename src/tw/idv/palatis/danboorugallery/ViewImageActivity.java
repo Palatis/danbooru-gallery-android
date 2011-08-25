@@ -39,6 +39,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -67,7 +68,7 @@ public class ViewImageActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.view_image);
 
-		filecache = new FileCache( this.getApplicationContext() );
+		filecache = new FileCache( getApplicationContext() );
 		post = new Post();
 
 		Intent intent = getIntent();
@@ -178,9 +179,7 @@ public class ViewImageActivity extends Activity {
 					byte[] buf = new byte[1024];
 					int len;
 					while ((len = in.read(buf)) > 0)
-					{
 						out.write(buf, 0, len);
-					}
 					in.close();
 					out.close();
 
@@ -319,6 +318,7 @@ public class ViewImageActivity extends Activity {
 		@Override
 		public void onPreExecute()
 		{
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
 			dialog.show();
 		}
 
@@ -346,6 +346,7 @@ public class ViewImageActivity extends Activity {
 				Log.e(D.LOGTAG, "AsyncImageLoader::onPostExecute(): Unknown result: " + result);
 				dialog.dismiss();
 			}
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 		}
 
 		@Override
