@@ -33,6 +33,8 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Looper;
 import android.util.Log;
 
@@ -65,7 +67,15 @@ public class DanbooruUncaughtExceptionHandler implements UncaughtExceptionHandle
 				logfile = File.createTempFile(D.ERRORLOG_PREFIX, D.ERRORLOG_SUFFIX, logdir);
 				BufferedWriter out = new BufferedWriter( new FileWriter( logfile ) );
 
-				out.write(activity.getText(R.string.preferences_about_version_description).toString());
+				try
+				{
+					PackageInfo manager = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0);
+					out.write(manager.packageName + " v" + manager.versionName + "\n\n");
+				}
+				catch (NameNotFoundException e)
+				{
+
+				}
 
 				out.write(Log.getStackTraceString(ex));
 				if ( ex.getCause() != null )
