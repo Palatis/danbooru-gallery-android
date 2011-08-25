@@ -157,6 +157,7 @@ public class DanbooruGalleryPreferenceActivity extends PreferenceActivity
 		prefeditor.putInt("selected_host", Integer.parseInt(selected_host));
 		prefeditor.putInt("page_limit", Integer.parseInt(page_limit));
 		prefeditor.putString("rating", rating);
+		prefeditor.putString("serialized_hosts", hosts.toCSV());
 		prefeditor.apply();
 
 		super.onPause();
