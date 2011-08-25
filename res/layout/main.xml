@@ -29,6 +29,7 @@
         android:id="@+id/gallery_grid"
         android:verticalSpacing="3dip"
         android:horizontalSpacing="5dip"
+        android:fastScrollEnabled="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
