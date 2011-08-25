@@ -79,7 +79,7 @@
 
 	<string name="preferences_category_about">關於</string>
 	<string name="preferences_about_copyright">Copyright (c) 2011</string>
-	<string name="preferences_about_author">Victor Tseng &lt;palatis@gmail.com&gt;</string>
+	<string name="preferences_about_author">Victor Tseng &lt;palatis@gmail.com&gt;\nhttp://code.google.com/p/danbooru-gallery-android</string>
 	<string name="preferences_about_version">版本</string>
 	<string name="preferences_about_version_description">沒有版本資訊</string>
 	<string name="preferences_about_license">授權</string>
