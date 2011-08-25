@@ -38,7 +38,7 @@
         </activity>
         <activity android:label="@string/app_name" android:name="tw.idv.palatis.danboorugallery.ViewImageActivity" android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
         </activity>
-        <activity android:name="tw.idv.palatis.danboorugallery.DanbooruGalleryPreferenceActivity" android:label="@string/app_name_preferences"></activity>
+        <activity android:name="tw.idv.palatis.danboorugallery.DanbooruGalleryPreferenceActivity" android:screenOrientation="portrait" android:label="@string/app_name_preferences"></activity>
 
     </application>
 </manifest>
