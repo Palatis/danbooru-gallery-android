@@ -105,9 +105,6 @@ public class LazyImageAdapter extends BaseAdapter
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent)
 	{
-		// FIXME: always inflate a new view here because reusing the convertView
-		//		seems to  "overdisplay" other's image.
-		//		i think it's some problem with ImageLoader::discard()
 		ImageView image = null;
 		if ( convertView != null )
 		{
