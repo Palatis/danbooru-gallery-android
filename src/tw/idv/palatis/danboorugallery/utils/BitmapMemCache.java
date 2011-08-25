@@ -27,9 +27,16 @@ import android.graphics.Bitmap;
 
 public class BitmapMemCache
 {
+	private static BitmapMemCache instance = new BitmapMemCache();
+
+	public static BitmapMemCache getInstance()
+	{
+		return instance;
+	}
+
 	private Map< String, Bitmap > cache;
 
-	public BitmapMemCache()
+	private BitmapMemCache()
 	{
 		cache = new WeakHashMap< String, Bitmap >();
 	}
@@ -47,5 +54,12 @@ public class BitmapMemCache
 		{
 			cache.put( key, bitmap );
 		}
+	}
+
+	public void clear()
+	{
+		for (Map.Entry<String, Bitmap> entry : cache.entrySet())
+			entry.getValue().recycle();
+		cache.clear();
 	}
 }
