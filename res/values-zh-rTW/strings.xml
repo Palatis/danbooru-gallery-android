@@ -68,7 +68,8 @@
 	<string name="preferences_hosts_dialog_url_example">http://</string>
 	<string name="preferences_hosts_dialog_button_delete">刪除</string>
 
-	<string name="preferences_hosts_dialog_delete_confirm">站台：%1$s\n\n您確定要刪除這個站台嗎？</string>
+	<string name="preferences_hosts_dialog_delete_confirm_title">刪除站台</string>
+	<string name="preferences_hosts_dialog_delete_confirm_message">站台：%1$s\n網址：%2$s\n\n您確定要刪除這個站台嗎？</string>
 
 	<string name="preferences_category_options">選項</string>
 	<string name="preferences_options_rating">等級</string>

@@ -252,21 +252,38 @@ public class DanbooruGalleryPreferenceActivity extends PreferenceActivity
 		@Override
 		public void onClick(DialogInterface idialog, int which)
 		{
-			AlertDialog dialog = (AlertDialog)idialog;
-			EditText edit_name = (EditText)dialog.findViewById( R.id.preferences_hosts_dialog_hosts_name_input );
-			EditText edit_url = (EditText)dialog.findViewById( R.id.preferences_hosts_dialog_url_input );
+			final AlertDialog dialog = (AlertDialog)idialog;
+			final EditText edit_name = (EditText)dialog.findViewById( R.id.preferences_hosts_dialog_hosts_name_input );
+			final EditText edit_url = (EditText)dialog.findViewById( R.id.preferences_hosts_dialog_url_input );
 			switch (which)
 			{
 			case DialogInterface.BUTTON_POSITIVE: // OK
-				Log.v(D.LOGTAG, "Host Dialog OK clicked.");
 				if ( edit_name.getTag() == null )
 					activity.newHost(edit_name.getText().toString() , edit_url.getText().toString());
 				else
 					activity.editHost((Integer)edit_name.getTag(), edit_name.getText().toString(), edit_url.getText().toString());
 				break;
 			case DialogInterface.BUTTON_NEUTRAL: // Delete
-				Log.v(D.LOGTAG, "Host Dialog Delete clicked.");
-				activity.deleteHost((Integer)edit_name.getTag());
+				Builder builder = new AlertDialog.Builder(dialog.getContext());
+				builder.setTitle( R.string.preferences_hosts_dialog_delete_confirm_title );
+				builder.setMessage(
+					String.format(
+						dialog.getContext().getText( R.string.preferences_hosts_dialog_delete_confirm_message ).toString(),
+						hosts.get((Integer)edit_name.getTag())[ Hosts.HOST_NAME ],
+						hosts.get((Integer)edit_name.getTag())[ Hosts.HOST_URL ]
+					)
+				);
+				builder.setPositiveButton( android.R.string.ok,
+					new OnClickListener()
+					{
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							activity.deleteHost((Integer)edit_name.getTag());
+						}
+					}
+				);
+				builder.setNegativeButton( android.R.string.cancel, null );
+				builder.create().show();
 				break;
 			}
 		}
