@@ -50,7 +50,9 @@ public class ImageViewTouch extends ImageViewTouchBase
 	public boolean onTouchEvent( MotionEvent event )
 	{
 		mScaleDetector.onTouchEvent( event );
-		if ( !mScaleDetector.isInProgress() ) mGestureDetector.onTouchEvent( event );
+		if ( !mScaleDetector.isInProgress() )
+			mGestureDetector.onTouchEvent( event );
+
 		int action = event.getAction();
 		switch ( action & MotionEvent.ACTION_MASK )
 		{
