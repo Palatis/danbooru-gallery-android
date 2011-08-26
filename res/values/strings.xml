@@ -30,16 +30,17 @@
 
     <!-- Main Activity -->
     <string name="main_loading_next_page">Loading next page...</string>
+    <string name="main_fetch_reach_end">No more posts.</string>
     <string name="main_query">Tags: %1$s</string>
 
     <string name="main_menu_goto">Go to</string>
     <string name="main_menu_goto_page">Page</string>
     <string name="main_menu_goto_tags">Tags</string>
+    <string name="main_menu_goto_reset_tags">Reset tags</string>
     <string name="main_menu_preferences">Preferences</string>
     <string name="main_menu_refresh">Refresh</string>
 
 	 <string name="main_goto_page_dialog_title">Go to page...</string>
-	 <string name="main_goto_tags_dialog_title">Go to tags...</string>
 
     <!-- View Image Activity -->
     <string name="view_image_drawer_handle">Picture Informations</string>
@@ -94,6 +95,7 @@
     <!-- searchable -->
     <string name="search_hint">Search tags</string>
     <string name="search_settings_description">Search Danbooru Gallery for tags</string>
+    <string name="search_suggestion_description">(%1$s posts)</string>
 
 	 <!-- translators, add your language and name below. -->
 	 <!-- for example: -->

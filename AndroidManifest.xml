@@ -23,7 +23,7 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="tw.idv.palatis.danboorugallery"
-	android:versionName="v0.1.1-9-ga09dcd4"
+	android:versionName="v0.1.1-11-ge0ac6a1"
 	android:versionCode="1" >
 
 	<uses-sdk android:minSdkVersion="10" />

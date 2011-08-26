@@ -43,11 +43,36 @@ public class D
 	public static final String ERRORLOG_PREFIX = "Error";
 	public static final String ERRORLOG_SUFFIX = ".txt";
 
+	public static final String SHAREDPREFERENCES_NAME = "DanbooruGallery";
 	public static final int PREFERENCE_VERSION = 1;
 
 	public static final String URL_POST = "/post/index.json?page=%1$s&tags=%2$s&limit=%3$s";
-	// public static final String URL_TAGS = "";
+	public static final String URL_TAGS = "/tag/index.json?order=count&name=%1$s&limit=100";
 	// public static final String URL_SEARCH = "";
+
+	public static void makeToastOnUiThread( Activity activity, int resourceId, int length )
+	{
+		activity.runOnUiThread(
+			new Runnable() {
+				Activity activity;
+				int resourceId;
+				int duration;
+
+				public Runnable initialize( Activity a, int r, int d )
+				{
+					activity = a;
+					resourceId = r;
+					duration = d;
+					return this;
+				}
+
+				@Override
+				public void run() {
+					Toast.makeText(activity, resourceId, duration).show();
+				}
+			}.initialize(activity, resourceId, length)
+		);
+	}
 
 	public static void makeToastOnUiThread( Activity activity, String message, int length )
 	{

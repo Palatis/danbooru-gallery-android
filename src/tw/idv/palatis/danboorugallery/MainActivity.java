@@ -21,8 +21,6 @@ package tw.idv.palatis.danboorugallery;
  */
 
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +41,7 @@ import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -82,7 +81,7 @@ public class MainActivity extends Activity
 		Thread.setDefaultUncaughtExceptionHandler( new DanbooruUncaughtExceptionHandler(this) );
 
 		GalleryItemDisplayer.setActivity(this);
-		preferences = getSharedPreferences("DanbooruGallery", MODE_PRIVATE);
+		preferences = getSharedPreferences(D.SHAREDPREFERENCES_NAME, MODE_PRIVATE);
 		loadPreferences();
 
 		Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
@@ -126,20 +125,36 @@ public class MainActivity extends Activity
     protected void onNewIntent(Intent intent)
 	{
 		handleIntent(intent);
-		setIntent(intent);
 	}
 
 	private void handleIntent(Intent intent)
 	{
-		if ( intent.getAction().equals( Intent.ACTION_SEARCH ))
+		Log.d(D.LOGTAG, "handleIntent(): action = " + intent.getAction());
+		boolean dosearch = false;
+		String query = "";
+		if ( intent.getAction().equals( Intent.ACTION_SEARCH ) )
 		{
-			String query = intent.getStringExtra(SearchManager.QUERY);
+			query = intent.getStringExtra(SearchManager.QUERY);
+			dosearch = true;
+		}
+		else if ( intent.getAction().equals( Intent.ACTION_VIEW ) )
+		{
+			Uri uri = intent.getData();
+			if ( uri != null )
+			{
+				query = uri.toString();
+				dosearch = true;
+			}
+		}
+
+		if ( dosearch )
+		{
 			Log.d(D.LOGTAG, "query = " + query);
 			Toast.makeText(
 				this,
 				String.format(
 					getText(R.string.main_query).toString(),
-					query
+					Uri.encode(query)
 				),
 				Toast.LENGTH_SHORT
 			).show();
@@ -154,6 +169,7 @@ public class MainActivity extends Activity
 				fetcher.fetchNextPage(adapter);
 			}
 		}
+		setIntent(intent);
 	}
 
 	@Override
@@ -284,47 +300,18 @@ public class MainActivity extends Activity
 		}
 		break;
 		case R.id.main_menu_goto_tags:
-		{
-			final EditText input = new EditText(this);
-			input.setText( URLDecoder.decode(fetcher.enclosure.tags) );
-
-			builder = new AlertDialog.Builder( this );
-			builder.setView(input);
-			builder.setTitle( R.string.main_goto_tags_dialog_title );
-			builder.setPositiveButton( android.R.string.ok,
-				new OnClickListener()
-				{
-					@Override
-					public void onClick(DialogInterface dialog, int which)
-					{
-						if ( fetcher.setTags( URLEncoder.encode(input.getText().toString()) ) )
-						{
-							fetcher.cancel();
-							fetcher.setPage(1);
-							posts.clear();
-							adapter.notifyDataSetChanged();
-							fetcher.fetchNextPage(adapter);
-						}
-					}
-				}
-			);
-			builder.setNegativeButton( android.R.string.cancel, null );
-
-			final AlertDialog dialog = builder.create();
-			dialog.show();
-			input.setOnFocusChangeListener(
-				new OnFocusChangeListener()
-				{
-					@Override
-					public void onFocusChange(View v, boolean hasFocus)
-					{
-						dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-					}
-				}
-			);
-			input.requestFocus();
-		}
-		break;
+			return onSearchRequested();
+		case R.id.main_menu_goto_reset_tags:
+			if ( fetcher.setTags("") )
+			{
+				fetcher.setPage(1);
+				fetcher.cancel();
+				posts.clear();
+				adapter.cancelAll();
+				adapter.notifyDataSetChanged();
+				fetcher.fetchNextPage(adapter);
+			}
+			break;
 		case R.id.main_menu_refresh:
 			fetcher.cancel();
 			fetcher.setPage(1);

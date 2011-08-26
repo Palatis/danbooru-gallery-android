@@ -31,13 +31,15 @@
 
             <item
                 android:id="@+id/main_menu_goto_page"
-                android:title="@string/main_menu_goto_page"
-                android:icon="@drawable/icon" />
+                android:title="@string/main_menu_goto_page" />
 
             <item
-                android:icon="@drawable/icon"
                 android:id="@+id/main_menu_goto_tags"
                 android:title="@string/main_menu_goto_tags" />
+
+				<item
+					 android:id="@+id/main_menu_goto_reset_tags"
+					 android:title="@string/main_menu_goto_reset_tags" />
 
         </menu>
 

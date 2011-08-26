@@ -1,23 +1,34 @@
 package tw.idv.palatis.danboorugallery;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.net.URL;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import tw.idv.palatis.danboorugallery.defines.D;
+import tw.idv.palatis.danboorugallery.model.Hosts;
 import android.app.SearchManager;
 import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.net.Uri;
+import android.provider.BaseColumns;
 
 public class TagProvider extends ContentProvider
 {
 	public static String AUTHORITY = "tw.idv.palatis.danboorugallery.TagProvider";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/tag");
-
-    // MIME types used for searching tags or looking up a single tag
-    public static final String WORDS_MIME_TYPE =
-    	ContentResolver.CURSOR_DIR_BASE_TYPE + "/tw.idv.palatis.danboorugallery";
-    public static final String DEFINITION_MIME_TYPE =
-    	ContentResolver.CURSOR_ITEM_BASE_TYPE + "/tw.idv.palatis.danboorugallery";
 
     // UriMatcher stuff
     private static final int SEARCH_TAG = 0;
@@ -29,7 +40,8 @@ public class TagProvider extends ContentProvider
     /**
      * Builds up a UriMatcher for search suggestion and shortcut refresh queries.
      */
-    private static UriMatcher buildUriMatcher() {
+    private static UriMatcher buildUriMatcher()
+    {
         UriMatcher matcher =  new UriMatcher(UriMatcher.NO_MATCH);
         // to get definitions...
         matcher.addURI(AUTHORITY, "tag", SEARCH_TAG);
@@ -49,10 +61,12 @@ public class TagProvider extends ContentProvider
         return matcher;
     }
 
+    SharedPreferences preferences = null;
 
 	@Override
 	public boolean onCreate()
 	{
+		preferences = getContext().getSharedPreferences(D.SHAREDPREFERENCES_NAME, Context.MODE_PRIVATE);
 		return true;
 	}
 
@@ -80,7 +94,15 @@ public class TagProvider extends ContentProvider
 	@Override
 	public String getType(Uri uri)
 	{
-		return null;
+        switch (sURIMatcher.match(uri))
+        {
+        case SEARCH_SUGGEST:
+            return SearchManager.SUGGEST_MIME_TYPE;
+        case REFRESH_SHORTCUT:
+            return SearchManager.SHORTCUT_MIME_TYPE;
+        default:
+            throw new IllegalArgumentException("Unknown URL " + uri);
+        }
 	}
 
 	@Override
@@ -90,15 +112,78 @@ public class TagProvider extends ContentProvider
         {
         case SEARCH_SUGGEST:
             if (selectionArgs == null)
-				throw new IllegalArgumentException(
-				      "selectionArgs must be provided for the Uri: " + uri);
-            //return getSuggestions(selectionArgs[0]);
+				throw new IllegalArgumentException("selectionArgs must be provided for the Uri: " + uri);
+            return getSuggestions(selectionArgs[0]);
         case SEARCH_TAG:
             if (selectionArgs == null)
-				throw new IllegalArgumentException(
-				      "selectionArgs must be provided for the Uri: " + uri);
+				throw new IllegalArgumentException("selectionArgs must be provided for the Uri: " + uri);
     	}
 		return null;
 	}
 
+	Cursor getSuggestions(String query)
+	{
+		try
+		{
+			// get prefered host
+			int selected_host = preferences.getInt("selected_host", 0);
+			Hosts hosts = Hosts.fromCSV( preferences.getString("serialized_hosts", "") );
+			String host = null;
+			if ( hosts == null )
+				host = "http://konachan.com/";
+			else
+				host = hosts.get(selected_host)[ Hosts.HOST_URL ];
+
+			// get data from network...
+			char buffer[] = new char[8192];
+			URL url = new URL(String.format(host + D.URL_TAGS, query));
+			Reader input = new BufferedReader( new InputStreamReader( url.openStream(), "UTF-8" ) );
+			Writer output = new StringWriter();
+
+			int count = 0;
+			while ((count = input.read(buffer)) > 0)
+				output.write(buffer, 0, count);
+			buffer = null; // indicates that the GC shall recover these 8192 bytes
+
+			// get the JSONArray into an MatrixCursor
+			JSONArray array = new JSONArray( output.toString() );
+			int length = array.length();
+			MatrixCursor cursor = new MatrixCursor(
+				new String[] {
+					BaseColumns._ID,
+					SearchManager.SUGGEST_COLUMN_TEXT_1,
+					SearchManager.SUGGEST_COLUMN_TEXT_2,
+					SearchManager.SUGGEST_COLUMN_INTENT_DATA,
+				},
+				length
+			);
+
+			for (int i = 0;i < length;++i)
+			{
+				JSONObject obj = array.optJSONObject(i);
+				cursor.addRow(
+					new Object[] {
+						i,
+						obj.optString("name"),
+						String.format(
+							getContext().getString( R.string.search_suggestion_description ),
+							obj.optInt("count")
+						),
+						obj.optString("name"),
+					}
+				);
+			}
+
+			return cursor;
+		}
+		catch (IOException ex)
+		{
+
+		}
+		catch (JSONException e)
+		{
+
+		}
+		return null;
+	}
 }

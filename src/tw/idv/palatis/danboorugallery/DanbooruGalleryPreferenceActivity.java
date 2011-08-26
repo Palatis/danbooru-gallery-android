@@ -55,7 +55,7 @@ public class DanbooruGalleryPreferenceActivity extends PreferenceActivity
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.danbooru_gallery_preference);
 
-		preferences = getSharedPreferences("DanbooruGallery", MODE_PRIVATE);
+		preferences = getSharedPreferences(D.SHAREDPREFERENCES_NAME, MODE_PRIVATE);
 		host_dialog_listener = new HostDialogOnClickListener( this );
 
 		try

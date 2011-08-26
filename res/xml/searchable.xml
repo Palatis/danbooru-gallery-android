@@ -6,7 +6,5 @@
 	android:searchSettingsDescription="@string/search_settings_description"
 	android:searchSuggestAuthority="tw.idv.palatis.danboorugallery.TagProvider"
 	android:searchSuggestIntentAction="android.intent.action.VIEW"
-	android:searchSuggestIntentData="content://tw.idv.palatis.danboorugallery.TagProvider/tag"
-	android:searchSuggestSelection=" ?"
-	android:searchSuggestThreshold="1"
+	android:searchSuggestSelection="tag MATCH ?"
 	android:includeInGlobalSearch="true" />
