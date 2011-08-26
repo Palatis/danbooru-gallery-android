@@ -46,7 +46,7 @@ public class FileCache {
 
 		if(!cachedir.exists())
 			cachedir.mkdirs();
-		
+
 		SecretKeySpec key;
 		try {
 			key = new SecretKeySpec(("Danbooru Gallery").getBytes("UTF-8"), "HmacSHA1");
@@ -76,9 +76,9 @@ public class FileCache {
 		{
 			filename = String.valueOf(url.hashCode());
 			Log.e(D.LOGTAG, url + " cannot be encoded to sha1, using " + filename);
-			Log.d(D.LOGTAG, ex.getMessage());
+			Log.d(D.LOGTAG, Log.getStackTraceString(ex));
 		}
-		
+
 		return new File(cachedir, filename);
 	}
 
