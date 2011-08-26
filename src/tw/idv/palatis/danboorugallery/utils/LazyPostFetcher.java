@@ -33,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import tw.idv.palatis.danboorugallery.R;
 import tw.idv.palatis.danboorugallery.defines.D;
 import tw.idv.palatis.danboorugallery.model.Post;
 import android.os.AsyncTask;
@@ -44,6 +45,7 @@ public class LazyPostFetcher
 {
 	private AsyncPostFetcher fetcher = null;
 	public URLEnclosure enclosure = null;
+	boolean reached_end = false;
 
 	public LazyPostFetcher()
 	{
@@ -59,6 +61,8 @@ public class LazyPostFetcher
 	{
 		boolean result = enclosure.url_format.equals(url);
 		enclosure.url_format = url;
+		if ( !result )
+			reached_end = false;
 		return !result;
 	}
 
@@ -67,6 +71,8 @@ public class LazyPostFetcher
 		page = (page < 1) ? 1 : page;
 		boolean result = (enclosure.page == page);
 		enclosure.page = page;
+		if ( !result )
+			reached_end = false;
 		return !result;
 	}
 
@@ -74,6 +80,8 @@ public class LazyPostFetcher
 	{
 		boolean result = enclosure.tags.equals(tags);
 		enclosure.tags = tags;
+		if ( !result )
+			reached_end = false;
 		return !result;
 	}
 
@@ -81,6 +89,8 @@ public class LazyPostFetcher
 	{
 		boolean result = (enclosure.limit == limit);
 		enclosure.limit = limit;
+		if ( !result )
+			reached_end = false;
 		return !result;
 	}
 
@@ -88,6 +98,8 @@ public class LazyPostFetcher
 	{
 		boolean result = enclosure.rating.equals(rating);
 		enclosure.rating = rating;
+		if ( !result )
+			reached_end = false;
 		return !result;
 	}
 
@@ -101,8 +113,7 @@ public class LazyPostFetcher
 		if ( fetcher != null && fetcher.getStatus() == Status.RUNNING )
 			return;
 
-		fetcher = new AsyncPostFetcher();
-		fetcher.setAdapter(adapter);
+		fetcher = new AsyncPostFetcher( adapter, this );
 		fetcher.execute( enclosure );
 	}
 
@@ -113,6 +124,16 @@ public class LazyPostFetcher
 			fetcher.cancel(true);
 			fetcher = null;
 		}
+	}
+
+	public boolean hasMorePost()
+	{
+		return !reached_end;
+	}
+
+	public void noMorePosts()
+	{
+		reached_end = true;
 	}
 
 	public class URLEnclosure
@@ -145,10 +166,12 @@ public class LazyPostFetcher
 	private class AsyncPostFetcher extends AsyncTask<URLEnclosure, Integer, Integer>
 	{
 		LazyImageAdapter adapter;
+		LazyPostFetcher fetcher;
 
-		public void setAdapter( LazyImageAdapter a )
+		AsyncPostFetcher( LazyImageAdapter a, LazyPostFetcher f )
 		{
 			adapter = a;
+			fetcher = f;
 		}
 
 		@Override
@@ -183,9 +206,15 @@ public class LazyPostFetcher
 
 						try
 						{
-							ArrayList<Post> posts = new ArrayList<Post>();
 							JSONArray json_posts = new JSONArray( output.toString() );
 							int len = json_posts.length();
+							if ( len == 0 )
+							{
+								D.makeToastOnUiThread(adapter.getActivity(), R.string.main_fetch_reach_end, Toast.LENGTH_SHORT);
+								fetcher.noMorePosts();
+								return fetched_posts_count;
+							}
+							ArrayList<Post> posts = new ArrayList<Post>();
 							posts.ensureCapacity(len);
 							for (int j = 0;j < len; ++j)
 							{
