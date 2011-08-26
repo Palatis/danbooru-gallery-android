@@ -34,7 +34,7 @@ import android.widget.Toast;
 public class D
 {
 	public static final String LOGTAG = "DanbooruGallery";
-	public static final String CACHEDIR = "DanbooruGallery/cache";
+	public static final String CACHEDIR = "DanbooruGallery/.cache";
 	public static final String SAVEDIR = "DanbooruGallery";
 
 	public static final String ERRORLOG_DIRECTORY = "DanbooruGallery";
