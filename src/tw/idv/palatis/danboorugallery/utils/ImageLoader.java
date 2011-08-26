@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.WeakHashMap;
 
-import tw.idv.palatis.danboorugallery.MainActivity;
 import tw.idv.palatis.danboorugallery.R;
+import tw.idv.palatis.danboorugallery.MainActivity.GalleryItemDisplayer;
 import tw.idv.palatis.danboorugallery.defines.D;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -86,6 +86,7 @@ public class ImageLoader
 		{
 			diskloader.queuePhoto(new PhotoToLoad(url, image));
 			image.setImageResource(stub_id);
+			image.setTag(this);
 		}
 	}
 
@@ -215,15 +216,14 @@ public class ImageLoader
 						// check if we still want the bitmap
 						String tag = imageViews.get(photoToLoad.imageView);
 						if (tag != null && tag.equals(photoToLoad.url))
-						{
-							MainActivity.GalleryItemDisplayer displayer = new MainActivity.GalleryItemDisplayer();
-							displayer.display(photoToLoad.imageView, bmp);
-						}
+							new GalleryItemDisplayer( photoToLoad.imageView, bmp, ScaleType.CENTER_CROP, true ).display();
 					}
 					if (Thread.interrupted())
 						break;
 				}
-			} catch (InterruptedException e) {
+			}
+			catch (InterruptedException e)
+			{
 				// allow thread to exit
 			}
 		}
@@ -255,16 +255,14 @@ public class ImageLoader
 						// check if we still want the bitmap
 						String tag = imageViews.get(photoToLoad.imageView);
 						if (tag != null && tag.equals(photoToLoad.url))
-						{
-							MainActivity.GalleryItemDisplayer displayer = new MainActivity.GalleryItemDisplayer();
-							memCache.put(photoToLoad.url, bmp);
-							displayer.display(photoToLoad.imageView, bmp);
-						}
+							new GalleryItemDisplayer( photoToLoad.imageView, bmp, ScaleType.CENTER_CROP, true ).display();
 					}
 					if (Thread.interrupted())
 						break;
 				}
-			} catch (InterruptedException e) {
+			}
+			catch (InterruptedException e)
+			{
 				// allow thread to exit
 			}
 		}

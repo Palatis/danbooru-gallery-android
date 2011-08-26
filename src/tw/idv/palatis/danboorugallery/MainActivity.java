@@ -52,6 +52,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.View.OnFocusChangeListener;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -423,28 +424,63 @@ public class MainActivity extends Activity
 	{
 		private static Activity activity;
 
-		ImageView image;
-		Bitmap bitmap;
+		final ImageView image;
+		final Integer res_id;
+		final Bitmap bitmap;
+		final ScaleType scale_type;
+		final boolean do_animation;
 
 		static public void setActivity( Activity a )
 		{
 			activity = a;
 		}
 
-		public void display( ImageView v, Bitmap b )
+		public GalleryItemDisplayer( ImageView v, Bitmap b, ScaleType t, boolean anim )
 		{
+			res_id = null;
 			image = v;
 			bitmap = b;
+			scale_type = t;
+			do_animation = anim;
+		}
+
+		public GalleryItemDisplayer( ImageView v, int rid, ScaleType t, boolean anim )
+		{
+			res_id = rid;
+			image = v;
+			bitmap = null;
+			scale_type = t;
+			do_animation = anim;
+		}
+
+		public void display()
+		{
 			activity.runOnUiThread(this);
 		}
 
 		@Override
 		public void run()
 		{
-			if ( bitmap != null )
+			if ( image.getTag() == null )
+				return;
+
+			if ( bitmap != null || res_id != null )
 			{
-				image.setImageBitmap(bitmap);
-				image.setScaleType(ScaleType.CENTER_CROP);
+				if ( bitmap != null )
+					image.setImageBitmap(bitmap);
+
+				if ( res_id != null )
+					image.setImageResource( res_id );
+
+				image.setScaleType( scale_type );
+
+				if ( do_animation )
+				{
+					image.clearAnimation();
+					image.startAnimation(AnimationUtils.loadAnimation(image.getContext(), R.anim.fade_in));
+				}
+
+				image.setTag(null);
 			}
 		}
 	}
