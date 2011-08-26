@@ -378,6 +378,12 @@ public class ImageViewTouchBase extends ImageView
 
 	protected void scrollBy( float distanceX, float distanceY, final float durationMs )
 	{
+		if ( Math.abs(distanceX) < 1 && Math.abs(distanceY) < 1 )
+		{
+			scrollBy( distanceX, distanceY );
+			return;
+		}
+
 		mScrollRunnable.reset(distanceX, distanceY, System.currentTimeMillis(), durationMs);
 		mHandler.post( mScrollRunnable );
 	}
