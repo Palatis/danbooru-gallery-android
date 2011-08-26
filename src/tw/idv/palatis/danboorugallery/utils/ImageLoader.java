@@ -37,6 +37,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 
 public class ImageLoader
 {
@@ -78,6 +79,7 @@ public class ImageLoader
 		if ( bitmap != null )
 		{
 			image.setImageBitmap( bitmap );
+			image.setScaleType( ScaleType.CENTER_CROP );
 			memCache.put( url, bitmap );
 		}
 		else
