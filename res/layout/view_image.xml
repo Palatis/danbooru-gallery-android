@@ -20,40 +20,8 @@
 ** along with Danbooru Gallery.  If not, see <http://www.gnu.org/licenses/>.
 **/
 -->
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <it.sephiroth.android.library.imagezoom.ImageViewTouch
-        android:id="@+id/view_image_image"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent" />
-
-    <SlidingDrawer
-        android:id="@+id/view_image_drawer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:handle="@+id/view_image_drawer_handle"
-        android:content="@+id/view_image_pic_info">
-
-        <TextView
-            android:id="@+id/view_image_drawer_handle"
-            android:text="@string/view_image_drawer_handle"
-            android:background="@color/view_image_drawer_background"
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/view_image_pic_info"
-            android:background="@color/view_image_drawer_background"
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </SlidingDrawer>
-
-</FrameLayout>
+<it.sephiroth.android.library.imagezoom.ImageViewTouch
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/view_image_image"
+	android:layout_height="match_parent"
+	android:layout_width="match_parent" />

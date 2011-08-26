@@ -40,7 +40,9 @@ import tw.idv.palatis.danboorugallery.model.Hosts;
 import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.utils.FileCache;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
@@ -54,14 +56,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.SlidingDrawer;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageView.ScaleType;
 
-public class ViewImageActivity extends Activity {
+public class ViewImageActivity extends Activity
+{
 	FileCache filecache;
 	Post post;
 	AsyncImageLoader loader;
@@ -93,19 +92,7 @@ public class ViewImageActivity extends Activity {
 		if ( intent.hasExtra("post.created_at") )
 			post.created_at = new Date(intent.getLongExtra("post.created_at", 0));
 
-		SlidingDrawer infodrawer = (SlidingDrawer)findViewById( R.id.view_image_drawer );
-		TextView infopane = (TextView)findViewById( R.id.view_image_pic_info );
-		infopane.setText(
-			String.format(
-				getText( R.string.view_image_pic_info ).toString(),
-				post.tags, post.width, post.height, post.author,
-				post.created_at == null ? "" : post.created_at.toLocaleString()
-			)
-		);
-		infopane.setOnClickListener(new InfoPaneOnClickListener( infodrawer ));
-
 		ImageViewTouch image = (ImageViewTouch)findViewById( R.id.view_image_image );
-		//image.setOnTouchListener( new ImageOnTouchListener(display) );
 		File file = filecache.getFile(post.file_url);
 		if ( file.exists() )
 			bitmap = D.getBitmapFromFile(file);
@@ -138,22 +125,6 @@ public class ViewImageActivity extends Activity {
 		super.onDestroy();
 	}
 
-	private class InfoPaneOnClickListener implements OnClickListener
-	{
-		SlidingDrawer drawer;
-
-		public InfoPaneOnClickListener( SlidingDrawer d )
-		{
-			drawer = d;
-		}
-
-		@Override
-		public void onClick(View v)
-		{
-			drawer.animateClose();
-		}
-	}
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -162,63 +133,77 @@ public class ViewImageActivity extends Activity {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch(item.getItemId()) {
-			case R.id.view_image_menu_refresh:
-				File file = filecache.getFile(post.file_url);
-				ProgressDialog dialog = new ProgressDialog(this);
-				dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-				dialog.setMax(1);
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch(item.getItemId())
+		{
+		case R.id.view_image_menu_info:
+			Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(
+				String.format(
+					getText( R.string.view_image_pic_info ).toString(),
+					post.tags, post.width, post.height, post.author,
+					post.created_at == null ? "" : post.created_at.toLocaleString()
+				)
+			);
+			builder.setPositiveButton(android.R.string.ok, null);
+			builder.create().show();
+			break;
+		case R.id.view_image_menu_refresh:
+			File file = filecache.getFile(post.file_url);
+			ProgressDialog dialog = new ProgressDialog(this);
+			dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			dialog.setMax(1);
 
-				ImageViewTouch image = (ImageViewTouch)findViewById( R.id.view_image_image );
-				loader = new AsyncImageLoader(image, dialog, file);
-				dialog.setOnCancelListener(new ProgressOnCancelListener(this, loader));
+			ImageViewTouch image = (ImageViewTouch)findViewById( R.id.view_image_image );
+			loader = new AsyncImageLoader(image, dialog, file);
+			dialog.setOnCancelListener(new ProgressOnCancelListener(this, loader));
 
-				loader.execute(post.file_url);
-				break;
-			case R.id.view_image_menu_save:
-				// FIXME: do this in the background, don't block the UI thread.
-				try {
-					File cachefile = filecache.getFile(post.file_url);
-					File outfile = getOutputFile(new URL(post.file_url));
+			loader.execute(post.file_url);
+			break;
+		case R.id.view_image_menu_save:
+			// FIXME: do this in the background, don't block the UI thread.
+			try {
+				File cachefile = filecache.getFile(post.file_url);
+				File outfile = getOutputFile(new URL(post.file_url));
 
-					outfile.delete();
+				outfile.delete();
 
-					InputStream in = new FileInputStream(cachefile);
-					OutputStream out = new FileOutputStream(outfile);
+				InputStream in = new FileInputStream(cachefile);
+				OutputStream out = new FileOutputStream(outfile);
 
-					byte[] buf = new byte[1024];
-					int len;
-					while ((len = in.read(buf)) > 0)
-						out.write(buf, 0, len);
-					in.close();
-					out.close();
+				byte[] buf = new byte[1024];
+				int len;
+				while ((len = in.read(buf)) > 0)
+					out.write(buf, 0, len);
+				in.close();
+				out.close();
 
-					Toast.makeText(
-						this,
-						String.format(
-							getText( R.string.view_image_file_saved ).toString(),
-							outfile.getPath()
-						),
-						Toast.LENGTH_SHORT
-					).show();
+				Toast.makeText(
+					this,
+					String.format(
+						getText( R.string.view_image_file_saved ).toString(),
+						outfile.getPath()
+					),
+					Toast.LENGTH_SHORT
+				).show();
 
-					sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + outfile.getParent())));
-				}
-				catch (Exception e)
-				{
-					Log.d(D.LOGTAG, Log.getStackTraceString(e));
-					Toast.makeText(this, R.string.view_image_file_save_failed, Toast.LENGTH_SHORT).show();
-				}
-				break;
-			case R.id.view_image_menu_share:
-				Intent intent = new Intent(Intent.ACTION_SEND);
-				intent.setType("text/plain");
-				intent.putExtra(android.content.Intent.EXTRA_TEXT, post.file_url);
-				startActivity(Intent.createChooser(intent, getText(R.string.view_image_menu_share_chooser_title)));
-				break;
-			default:
-				return super.onOptionsItemSelected(item);
+				sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + outfile.getParent())));
+			}
+			catch (Exception e)
+			{
+				Log.d(D.LOGTAG, Log.getStackTraceString(e));
+				Toast.makeText(this, R.string.view_image_file_save_failed, Toast.LENGTH_SHORT).show();
+			}
+			break;
+		case R.id.view_image_menu_share:
+			Intent intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("text/plain");
+			intent.putExtra(android.content.Intent.EXTRA_TEXT, post.file_url);
+			startActivity(Intent.createChooser(intent, getText(R.string.view_image_menu_share_chooser_title)));
+			break;
+		default:
+			return super.onOptionsItemSelected(item);
 		}
 		return true;
 	}
