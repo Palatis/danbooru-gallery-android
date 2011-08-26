@@ -35,7 +35,6 @@ import org.json.JSONObject;
 
 import tw.idv.palatis.danboorugallery.defines.D;
 import tw.idv.palatis.danboorugallery.model.Post;
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.util.Log;
@@ -58,7 +57,6 @@ public class LazyPostFetcher
 
 	public boolean setUrl(String url)
 	{
-		Log.e(D.LOGTAG, "setting url to " + url);
 		boolean result = enclosure.url_format.equals(url);
 		enclosure.url_format = url;
 		return !result;
@@ -102,7 +100,7 @@ public class LazyPostFetcher
 	{
 		if ( fetcher != null && fetcher.getStatus() == Status.RUNNING )
 			return;
-	
+
 		fetcher = new AsyncPostFetcher();
 		fetcher.setAdapter(adapter);
 		fetcher.execute( enclosure );
@@ -163,7 +161,6 @@ public class LazyPostFetcher
 			try
 			{
 				for (URLEnclosure enclosure: params)
-				{
 					while ( fetched_posts_count < enclosure.limit )
 					{
 						URL url = new URL(String.format(enclosure.url_format, enclosure.page, enclosure.tags, enclosure.limit));
@@ -226,30 +223,10 @@ public class LazyPostFetcher
 
 						++enclosure.page;
 					}
-				}
 			}
 			catch (IOException ex)
 			{
-				adapter.getActivity().runOnUiThread(
-					new Runnable() {
-						Activity activity;
-						String message;
-						int duration;
-
-						public Runnable initialize( Activity a, String m, int d )
-						{
-							activity = a;
-							message = m;
-							duration = d;
-							return this;
-						}
-
-						@Override
-						public void run() {
-							Toast.makeText(activity, message, duration).show();
-						}
-					}.initialize(adapter.getActivity(), ex.getLocalizedMessage(), Toast.LENGTH_LONG)
-				);
+				D.makeToastOnUiThread(adapter.getActivity(), ex.getMessage(), Toast.LENGTH_LONG);
 			}
 
 			return fetched_posts_count;
