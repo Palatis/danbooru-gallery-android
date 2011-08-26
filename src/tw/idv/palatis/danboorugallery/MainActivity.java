@@ -111,7 +111,6 @@ public class MainActivity extends Activity
 			new GalleryOnScrollListener(
 				fetcher,
 				adapter,
-				Toast.makeText(this, R.string.main_loading_next_page, Toast.LENGTH_SHORT),
 				preferences.getInt("page_limit", 16) / 3
 			)
 		);
@@ -346,6 +345,10 @@ public class MainActivity extends Activity
 			if ( posts.get(position).created_at != null )
 				intent.putExtra("post.created_at", posts.get(position).created_at.getTime());
 
+			String host[] = hosts.get( preferences.getInt("selected_host", 0) );
+			intent.putExtra("host_name", host[ Hosts.HOST_NAME ]);
+			intent.putExtra("host_url", host[ Hosts.HOST_URL ]);
+
 			activity.startActivity(intent);
 			activity.overridePendingTransition(R.anim.zoom_up, R.anim.zoom_exit);
 		}
@@ -358,11 +361,11 @@ public class MainActivity extends Activity
 		Toast toast_loading;
 		int fetch_threshold;
 
-		public GalleryOnScrollListener( LazyPostFetcher f, LazyImageAdapter a, Toast t, int l )
+		public GalleryOnScrollListener( LazyPostFetcher f, LazyImageAdapter a, int l )
 		{
 			fetcher = f;
 			adapter = a;
-			toast_loading = t;
+			toast_loading = Toast.makeText( a.getActivity(), R.string.main_loading_next_page, Toast.LENGTH_SHORT);
 			fetch_threshold = l;
 		}
 

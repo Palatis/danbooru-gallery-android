@@ -36,6 +36,7 @@ import java.net.URLEncoder;
 import java.util.Date;
 
 import tw.idv.palatis.danboorugallery.defines.D;
+import tw.idv.palatis.danboorugallery.model.Hosts;
 import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.utils.FileCache;
 import android.app.Activity;
@@ -66,6 +67,8 @@ public class ViewImageActivity extends Activity {
 	AsyncImageLoader loader;
 	Bitmap bitmap;
 
+	String host[];
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -82,6 +85,10 @@ public class ViewImageActivity extends Activity {
 		post.tags = intent.getStringExtra("post.tags");
 		post.width = intent.getIntExtra("post.width", 0);
 		post.height = intent.getIntExtra("post.height", 0);
+
+		host = new String[2];
+		host[ Hosts.HOST_NAME ] = intent.getStringExtra("host_name");
+		host[ Hosts.HOST_URL ] = intent.getStringExtra("host_url");
 
 		if ( intent.hasExtra("post.created_at") )
 			post.created_at = new Date(intent.getLongExtra("post.created_at", 0));
@@ -199,8 +206,8 @@ public class ViewImageActivity extends Activity {
 				}
 				catch (Exception e)
 				{
-					// TODO: localize me
-					Toast.makeText(this, "Unable to save file!", Toast.LENGTH_SHORT).show();
+					Log.d(D.LOGTAG, Log.getStackTraceString(e));
+					Toast.makeText(this, R.string.view_image_file_save_failed, Toast.LENGTH_SHORT).show();
 				}
 				break;
 			case R.id.view_image_menu_share:
@@ -224,6 +231,7 @@ public class ViewImageActivity extends Activity {
 		else
 			return null;
 
+		downloaddir = new File(downloaddir, host[ Hosts.HOST_NAME ]);
 		if(!downloaddir.exists())
 			downloaddir.mkdirs();
 
