@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -108,6 +110,24 @@ public class D
 	        return upperBound;
 	}
 
+	public static void CopyStream(InputStream is, OutputStream os)
+	{
+		final int buffer_size = 1024;
+
+		try {
+			byte[] bytes = new byte[buffer_size];
+			for (;;) {
+				int count = is.read(bytes, 0, buffer_size);
+				if (count == -1)
+					break;
+				os.write(bytes, 0, count);
+			}
+		}
+		catch (Exception ex)
+		{
+
+		}
+	}
 
 	public static Bitmap getBitmapFromFile( File file )
 	{
@@ -121,6 +141,7 @@ public class D
 
 			opt.inSampleSize = computeSampleSize(opt, -1, 2048 * 2048);
 			opt.inJustDecodeBounds = false;
+			opt.inPurgeable = true;
 
 			// decodeFile() gets OutOfMemoryError very often, try decodeFileDescriptor()
 			// return BitmapFactory.decodeFile( file.getAbsolutePath(), opt );
@@ -129,7 +150,7 @@ public class D
 		}
 		catch (OutOfMemoryError ex)
 		{
-			Log.d(D.LOGTAG, "decode failed, OutOfMemory occured, try free");
+			Log.d(D.LOGTAG, "decode failed, OutOfMemory occured.");
 		}
 		catch (FileNotFoundException ex)
 		{

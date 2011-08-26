@@ -33,7 +33,6 @@ import java.util.WeakHashMap;
 import tw.idv.palatis.danboorugallery.MainActivity;
 import tw.idv.palatis.danboorugallery.R;
 import tw.idv.palatis.danboorugallery.defines.D;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
@@ -45,14 +44,19 @@ public class ImageLoader
 	private FileCache fileCache;
 	private Map<ImageView, String> imageViews = Collections
 			.synchronizedMap(new WeakHashMap<ImageView, String>());
-	private PhotosLoader loader;
+	private PhotosLoaderWeb webloader;
+	private PhotosLoaderDisk diskloader;
 
 	public ImageLoader( Context context ) {
 		// Make the background thread low priority. This way it will not affect
 		// the UI performance
-		loader = new PhotosLoader();
-		loader.setPriority(Thread.MIN_PRIORITY);
-		loader.start();
+		webloader = new PhotosLoaderWeb();
+		webloader.setPriority(Thread.MIN_PRIORITY);
+		webloader.start();
+
+		diskloader = new PhotosLoaderDisk();
+		diskloader.setPriority(Thread.MIN_PRIORITY);
+		diskloader.start();
 
 		fileCache = new FileCache(context);
 		memCache = BitmapMemCache.getInstance();
@@ -61,94 +65,57 @@ public class ImageLoader
 	// final int stub_id=R.drawable.stub;
 	final int stub_id = R.drawable.icon;
 
-	public void DisplayImage(String url, Activity activity, ImageView image)
+	public void DisplayImage(String url, ImageView image)
 	{
 		// This ImageView may be used for other images before. So there may be
 		// some old tasks in the queue. We need to discard them.
-		loader.discard(image);
+		diskloader.discard(image);
+		webloader.discard(image);
+
 		imageViews.put(image, url);
 
 		Bitmap bitmap = getBitmapCache( url );
-		if (bitmap != null)
+		if ( bitmap != null )
 		{
-			MainActivity.GalleryItemDisplayer displayer = new MainActivity.GalleryItemDisplayer();
-			displayer.display(image, bitmap);
-			return;
+			image.setImageBitmap( bitmap );
+			memCache.put( url, bitmap );
 		}
-
-		queuePhoto( url, activity, image );
-		image.setImageResource(stub_id);
+		else
+		{
+			diskloader.queuePhoto(new PhotoToLoad(url, image));
+			image.setImageResource(stub_id);
+		}
 	}
 
 	public void cancelAll()
 	{
-		synchronized(loader.photosToLoad)
-		{
-			loader.photosToLoad.clear();
-			loader.photosToLoad.notifyAll();
-		}
+		diskloader.cancelAll();
+		webloader.cancelAll();
 	}
 
-	private void queuePhoto(String url, Activity activity, ImageView imageView)
-	{
-		PhotoToLoad p = new PhotoToLoad(url, imageView);
-		synchronized (loader.photosToLoad)
-		{
-			loader.photosToLoad.push(p);
-			loader.photosToLoad.notifyAll();
-		}
-	}
-
-	private void CopyStream(InputStream is, OutputStream os) {
-		final int buffer_size = 1024;
-
-		try {
-			byte[] bytes = new byte[buffer_size];
-			for (;;) {
-				int count = is.read(bytes, 0, buffer_size);
-				if (count == -1)
-					break;
-				os.write(bytes, 0, count);
-			}
-		}
-		catch (Exception ex)
-		{
-
-		}
-	}
-
+	// from Memory cache
 	private Bitmap getBitmapCache( String url )
 	{
-		try
-		{
-			// from Memory cache
-			Bitmap bitmap = memCache.get(url);
-			if ( bitmap != null )
-				return bitmap;
-
-			// from SD cache
-			bitmap = D.getBitmapFromFile(fileCache.getFile(url));
-			if ( bitmap != null )
-				memCache.put(url, bitmap);
-
-			return bitmap;
-		}
-		catch (Exception ex)
-		{
-			// fail OK, we fetch the picture from web...
-		}
-		return null;
+		return memCache.get(url);
 	}
 
-	private Bitmap getBitmapWeb(String url)
+	// from SD cache
+	private Bitmap getBitmapDisk( String url )
+	{
+		Bitmap bitmap = D.getBitmapFromFile(fileCache.getFile(url));
+		memCache.put(url, bitmap);
+		return bitmap;
+	}
+
+	// from web
+	private Bitmap getBitmapWeb( String url )
 	{
 		try {
-			// from web
 			URL imageUrl = new URL(url);
 			HttpURLConnection conn = (HttpURLConnection) imageUrl.openConnection();
 			InputStream is = conn.getInputStream();
 			OutputStream os = new FileOutputStream(fileCache.getFile(url));
-			CopyStream(is, os);
+			D.CopyStream(is, os);
 			os.close();
 
 			return D.getBitmapFromFile(fileCache.getFile(url));
@@ -174,25 +141,94 @@ public class ImageLoader
 
 	public void stopThread()
 	{
-		loader.interrupt();
+		diskloader.interrupt();
+		webloader.interrupt();
 	}
 
-	private class PhotosLoader extends Thread
+	private abstract class PhotosLoaderBase extends Thread
 	{
-		private Stack<PhotoToLoad> photosToLoad = new Stack<PhotoToLoad>();
+		protected Stack<PhotoToLoad> photosToLoad = new Stack<PhotoToLoad>();
 
 		public void discard(ImageView image)
 		{
 			synchronized(photosToLoad)
 			{
-				for (int j = 0; j < photosToLoad.size();)
-					if (photosToLoad.get(j).imageView == image)
-						photosToLoad.remove(j);
+				for (int i = 0;i < photosToLoad.size();)
+					if (photosToLoad.get(i).imageView == image)
+						photosToLoad.remove(i);
 					else
-						++j;
+						++i;
 			}
 		}
 
+		public void queuePhoto(PhotoToLoad photo)
+		{
+			synchronized (photosToLoad)
+			{
+				photosToLoad.push(photo);
+				photosToLoad.notifyAll();
+			}
+		}
+
+		public void cancelAll()
+		{
+			synchronized(photosToLoad)
+			{
+				photosToLoad.clear();
+				photosToLoad.notifyAll();
+			}
+		}
+
+		@Override
+		abstract public void run();
+	}
+
+	private class PhotosLoaderDisk extends PhotosLoaderBase
+	{
+		@Override
+		public void run() {
+			try {
+				while (true) {
+					// thread waits until there are any images to load in the queue
+					if (photosToLoad.empty())
+						synchronized (photosToLoad)
+						{
+							photosToLoad.wait();
+						}
+
+					if (!photosToLoad.empty())
+					{
+						PhotoToLoad photoToLoad;
+						synchronized (photosToLoad)
+						{
+							photoToLoad = photosToLoad.pop();
+						}
+
+						Bitmap bmp = getBitmapDisk(photoToLoad.url);
+						if ( bmp == null )
+							webloader.queuePhoto(photoToLoad);
+
+						memCache.put(photoToLoad.url, bmp);
+
+						// check if we still want the bitmap
+						String tag = imageViews.get(photoToLoad.imageView);
+						if (tag != null && tag.equals(photoToLoad.url))
+						{
+							MainActivity.GalleryItemDisplayer displayer = new MainActivity.GalleryItemDisplayer();
+							displayer.display(photoToLoad.imageView, bmp);
+						}
+					}
+					if (Thread.interrupted())
+						break;
+				}
+			} catch (InterruptedException e) {
+				// allow thread to exit
+			}
+		}
+	}
+
+	private class PhotosLoaderWeb extends PhotosLoaderBase
+	{
 		@Override
 		public void run() {
 			try {

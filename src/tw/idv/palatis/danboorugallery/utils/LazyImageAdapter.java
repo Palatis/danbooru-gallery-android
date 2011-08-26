@@ -119,7 +119,7 @@ public class LazyImageAdapter extends BaseAdapter
 		}
 
 		image.setImageResource( R.drawable.icon );
-		loader.DisplayImage(posts.get(position).preview_url, activity, image);
+		loader.DisplayImage(posts.get(position).preview_url, image);
 
 		return image;
 	}
