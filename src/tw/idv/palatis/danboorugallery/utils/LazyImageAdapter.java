@@ -118,7 +118,6 @@ public class LazyImageAdapter extends BaseAdapter
 			image.setLayoutParams(new GridView.LayoutParams(item_size, item_size));
 		}
 
-		image.setImageResource( R.drawable.icon );
 		loader.DisplayImage(posts.get(position).preview_url, image);
 
 		return image;
