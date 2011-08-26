@@ -111,7 +111,7 @@ public class MainActivity extends Activity
 			new GalleryOnScrollListener(
 				fetcher,
 				adapter,
-				preferences.getInt("page_limit", 16) / 3
+				preferences.getInt("page_limit", 16)
 			)
 		);
 		grid.setOnItemClickListener(new GalleryOnItemClickListener(posts, this));
