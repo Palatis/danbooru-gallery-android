@@ -148,7 +148,8 @@ public class ViewImageActivity extends Activity {
 		}
 
 		@Override
-		public void onClick(View v) {
+		public void onClick(View v)
+		{
 			drawer.animateClose();
 		}
 	}
