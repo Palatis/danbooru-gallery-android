@@ -34,6 +34,7 @@ import tw.idv.palatis.danboorugallery.utils.LazyImageAdapter;
 import tw.idv.palatis.danboorugallery.utils.LazyPostFetcher;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -44,6 +45,7 @@ import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -115,6 +117,53 @@ public class MainActivity extends Activity
 			)
 		);
 		grid.setOnItemClickListener(new GalleryOnItemClickListener(posts, this));
+
+		if ( conf == null )
+			handleIntent(getIntent());
+	}
+
+	@Override
+    protected void onNewIntent(Intent intent)
+	{
+		Log.d(D.LOGTAG, "onNewIntent() " + intent);
+		handleIntent(intent);
+	}
+
+	private void handleIntent(Intent intent)
+	{
+		Log.d(D.LOGTAG, "intent.getAction()      : " + intent.getAction());
+		Log.d(D.LOGTAG, "getIntent().getAction() : " + getIntent().getAction());
+		Log.d(D.LOGTAG, "intent == getIntent(): "  + (intent == getIntent()));
+		if ( intent.getAction().equals( Intent.ACTION_SEARCH ))
+		{
+			String query = intent.getStringExtra(SearchManager.QUERY);
+			Log.d(D.LOGTAG, "query = " + query);
+			Toast.makeText(
+				this,
+				String.format(
+					getText(R.string.main_query).toString(),
+					query
+				),
+				Toast.LENGTH_SHORT
+			).show();
+
+			if ( fetcher.setTags(query) )
+			{
+				fetcher.setPage(1);
+				fetcher.cancel();
+				posts.clear();
+				adapter.cancelAll();
+				adapter.notifyDataSetChanged();
+				fetcher.fetchNextPage(adapter);
+			}
+		}
+	}
+
+	@Override
+	public boolean onSearchRequested()
+	{
+		startSearch(fetcher.getURLEnclosure().tags, false, null, false);
+		return true;
 	}
 
 	public void loadPreferences()

@@ -30,6 +30,7 @@
 
     <!-- Main Activity -->
     <string name="main_loading_next_page">Loading next page...</string>
+    <string name="main_query">Tags: %1$s</string>
 
     <string name="main_menu_goto">Go to</string>
     <string name="main_menu_goto_page">Page</string>
@@ -89,6 +90,10 @@
 	 <string name="preferences_about_license_description">GNU General Public License</string>
 	 <string name="preferences_about_license_dialog_title">GNU General Public License</string>
 	 <string name="preferences_about_license_dialog_content">This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.\n\nThis program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.\n\nYou should have received a copy of the GNU General Public License along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</string>
+
+    <!-- searchable -->
+    <string name="search_hint">Search tags</string>
+    <string name="search_settings_description">Search Danbooru Gallery for tags</string>
 
 	 <!-- translators, add your language and name below. -->
 	 <!-- for example: -->

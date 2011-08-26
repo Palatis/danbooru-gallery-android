@@ -23,7 +23,7 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="tw.idv.palatis.danboorugallery"
-	android:versionName="v0.1.1-5-g515cb20"
+	android:versionName="v0.1.1-9-ga09dcd4"
 	android:versionCode="1" >
 
 	<uses-sdk android:minSdkVersion="10" />
@@ -36,6 +36,7 @@
 
 		<activity
 			android:name="tw.idv.palatis.danboorugallery.MainActivity"
+			android:launchMode="singleInstance"
 			android:label="@string/app_name"
 			android:theme="@android:style/Theme.NoTitleBar" >
 
@@ -43,6 +44,14 @@
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
+
+			<intent-filter>
+				<action android:name="android.intent.action.SEARCH" />
+			</intent-filter>
+
+			<meta-data
+				android:name="android.app.searchable"
+				android:resource="@xml/searchable" />
 
 		</activity>
 
@@ -55,6 +64,14 @@
 			android:label="@string/app_name_preferences"
 			android:name="tw.idv.palatis.danboorugallery.DanbooruGalleryPreferenceActivity"
 			android:screenOrientation="portrait" />
+
+		<provider
+			android:name=".TagProvider"
+			android:authorities="tw.idv.palatis.danboorugallery.TagProvider" />
+
+		<meta-data
+			android:name="android.app.default_searchable"
+			android:value=".MainActivity" />
 
 	</application>
 </manifest>
