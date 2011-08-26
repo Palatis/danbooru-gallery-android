@@ -61,6 +61,7 @@ public class BitmapMemCache
 		cache.clear();
 	}
 
+	@SuppressWarnings("serial")
 	private class LruCache<K, V> extends LinkedHashMap<K, V>
 	{
 		private final int maxEntries;
