@@ -48,8 +48,11 @@
 	<string name="view_image_file_save_failed">檔案儲存失敗！</string>
 	<string name="view_image_user_canceled">使用者取消</string>
 
+	<string name="view_image_menu_share">分享</string>
 	<string name="view_image_menu_refresh">重新整理</string>
 	<string name="view_image_menu_save">儲存</string>
+
+	<string name="view_image_menu_share_chooser_title">分享至...</string>
 
 	<!-- Preferences -->
 	<string name="preferences_category_hosts">站台</string>

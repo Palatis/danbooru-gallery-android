@@ -203,6 +203,12 @@ public class ViewImageActivity extends Activity {
 					Toast.makeText(this, "Unable to save file!", Toast.LENGTH_SHORT).show();
 				}
 				break;
+			case R.id.view_image_menu_share:
+				Intent intent = new Intent(Intent.ACTION_SEND);
+				intent.setType("text/plain");
+				intent.putExtra(android.content.Intent.EXTRA_TEXT, post.file_url);
+				startActivity(Intent.createChooser(intent, getText(R.string.view_image_menu_share_chooser_title)));
+				break;
 			default:
 				return super.onOptionsItemSelected(item);
 		}

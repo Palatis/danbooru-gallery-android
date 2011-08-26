@@ -24,6 +24,11 @@
   xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/view_image_menu_share"
+        android:title="@string/view_image_menu_share"
+        android:icon="@android:drawable/ic_menu_share" />
+
+    <item
         android:id="@+id/view_image_menu_refresh"
         android:title="@string/view_image_menu_refresh"
         android:icon="@android:drawable/ic_menu_rotate" />
