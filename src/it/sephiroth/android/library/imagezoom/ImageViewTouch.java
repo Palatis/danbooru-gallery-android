@@ -55,9 +55,11 @@ public class ImageViewTouch extends ImageViewTouchBase
 		switch ( action & MotionEvent.ACTION_MASK )
 		{
 		case MotionEvent.ACTION_DOWN:
+		case MotionEvent.ACTION_POINTER_DOWN:
 			cancelScroll();
 			break;
 		case MotionEvent.ACTION_UP:
+		case MotionEvent.ACTION_POINTER_UP:
 			if ( getScale() < 1f )
 				zoomTo( 1f, 500 );
 			if ( getScale() > getMaxZoom() )
