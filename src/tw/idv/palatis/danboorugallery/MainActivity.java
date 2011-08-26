@@ -405,7 +405,7 @@ public class MainActivity extends Activity
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
 		{
-			if ( firstVisibleItem + visibleItemCount > totalItemCount - fetch_threshold )
+			if ( fetcher.hasMorePost() && firstVisibleItem + visibleItemCount > totalItemCount - fetch_threshold )
 			{
 				toast_loading.show();
 				fetcher.fetchNextPage(adapter);
