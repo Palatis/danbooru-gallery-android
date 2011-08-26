@@ -125,15 +125,12 @@ public class MainActivity extends Activity
 	@Override
     protected void onNewIntent(Intent intent)
 	{
-		Log.d(D.LOGTAG, "onNewIntent() " + intent);
 		handleIntent(intent);
+		setIntent(intent);
 	}
 
 	private void handleIntent(Intent intent)
 	{
-		Log.d(D.LOGTAG, "intent.getAction()      : " + intent.getAction());
-		Log.d(D.LOGTAG, "getIntent().getAction() : " + getIntent().getAction());
-		Log.d(D.LOGTAG, "intent == getIntent(): "  + (intent == getIntent()));
 		if ( intent.getAction().equals( Intent.ACTION_SEARCH ))
 		{
 			String query = intent.getStringExtra(SearchManager.QUERY);
