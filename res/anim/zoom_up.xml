@@ -27,4 +27,9 @@
         android:pivotX="50%p" android:pivotY="50%p"
         android:duration="@android:integer/config_mediumAnimTime" />
 
+    <alpha
+        android:fromAlpha="0.3"
+        android:toAlpha="1.0"
+        android:duration="@android:integer/config_mediumAnimTime" />
+
 </set>
