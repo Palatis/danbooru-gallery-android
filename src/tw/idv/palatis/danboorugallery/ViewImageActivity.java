@@ -48,6 +48,7 @@ import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
+import android.graphics.PointF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -65,6 +66,7 @@ public class ViewImageActivity extends Activity
 	Post post;
 	AsyncImageLoader loader;
 	Bitmap bitmap;
+	ImageViewTouch image;
 
 	String host[];
 
@@ -92,7 +94,7 @@ public class ViewImageActivity extends Activity
 		if ( intent.hasExtra("post.created_at") )
 			post.created_at = new Date(intent.getLongExtra("post.created_at", 0));
 
-		ImageViewTouch image = (ImageViewTouch)findViewById( R.id.view_image_image );
+		image = (ImageViewTouch)findViewById( R.id.view_image_image );
 		File file = filecache.getFile(post.file_url);
 		if ( file.exists() )
 			bitmap = D.getBitmapFromFile(file);
@@ -110,6 +112,43 @@ public class ViewImageActivity extends Activity
 		}
 
 		image.setImageBitmapReset( bitmap, true );
+		if ( savedInstanceState != null )
+		{
+			Log.d(D.LOGTAG, "onCreate(): loading instance state, scale = " +
+				savedInstanceState.getFloat("image_scale") + ", x = " +
+				savedInstanceState.getFloat("image_center_x") + ", y = " +
+				savedInstanceState.getFloat("image_center_y")
+			);
+
+			final float scale = savedInstanceState.getFloat("image_scale");
+			final float center_x = savedInstanceState.getFloat("image_center_x");
+			final float center_y = savedInstanceState.getFloat("image_center_y");
+
+			image.post(
+				new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						float scale15 = scale / 1.5f;
+						image.zoomTo(scale15 < 1.0f ? 1.0f : scale15);
+						image.zoomTo(scale, 500);
+					}
+				}
+			);
+			image.post(
+				new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						PointF from_pt = image.getMappedCenter();
+						float new_scale = image.getScale();
+						image.zoomAwareScrollBy( from_pt.x / new_scale * scale - center_x, from_pt.y / new_scale * scale - center_y, scale, 500);
+					}
+				}
+			);
+		}
 	}
 
 	@Override
@@ -126,7 +165,24 @@ public class ViewImageActivity extends Activity
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public void onStart()
+	{
+		super.onStart();
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState)
+	{
+		PointF pt = image.getMappedCenter();
+		outState.putFloat("image_scale", image.getScale());
+		outState.putFloat("image_center_x", pt.x);
+		outState.putFloat("image_center_y", pt.y);
+		super.onSaveInstanceState(outState);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.view_image_menu, menu);
 		return super.onCreateOptionsMenu(menu);
@@ -250,7 +306,8 @@ public class ViewImageActivity extends Activity
 	}
 
 	@Override
-	public void onBackPressed() {
+	public void onBackPressed()
+	{
 		finish();
 		overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
 		super.onBackPressed();
