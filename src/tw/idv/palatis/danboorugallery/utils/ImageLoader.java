@@ -81,6 +81,8 @@ public class ImageLoader
 			image.setImageBitmap( bitmap );
 			image.setScaleType( ScaleType.CENTER_CROP );
 			memCache.put( url, bitmap );
+			image.clearAnimation();
+			image.setTag(null);
 		}
 		else
 		{
