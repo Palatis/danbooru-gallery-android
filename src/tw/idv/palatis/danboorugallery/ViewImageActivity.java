@@ -114,12 +114,6 @@ public class ViewImageActivity extends Activity
 		image.setImageBitmapReset( bitmap, true );
 		if ( savedInstanceState != null )
 		{
-			Log.d(D.LOGTAG, "onCreate(): loading instance state, scale = " +
-				savedInstanceState.getFloat("image_scale") + ", x = " +
-				savedInstanceState.getFloat("image_center_x") + ", y = " +
-				savedInstanceState.getFloat("image_center_y")
-			);
-
 			final float scale = savedInstanceState.getFloat("image_scale");
 			final float center_x = savedInstanceState.getFloat("image_center_x");
 			final float center_y = savedInstanceState.getFloat("image_center_y");
@@ -173,10 +167,17 @@ public class ViewImageActivity extends Activity
 	@Override
 	public void onSaveInstanceState(Bundle outState)
 	{
-		PointF pt = image.getMappedCenter();
-		outState.putFloat("image_scale", image.getScale());
-		outState.putFloat("image_center_x", pt.x);
-		outState.putFloat("image_center_y", pt.y);
+		try
+		{
+			PointF pt = image.getMappedCenter();
+			outState.putFloat("image_scale", image.getScale());
+			outState.putFloat("image_center_x", pt.x);
+			outState.putFloat("image_center_y", pt.y);
+		}
+		catch ( NullPointerException ex )
+		{
+
+		}
 		super.onSaveInstanceState(outState);
 	}
 
