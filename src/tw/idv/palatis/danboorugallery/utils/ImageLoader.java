@@ -48,7 +48,8 @@ public class ImageLoader
 	private PhotosLoaderWeb webloader;
 	private PhotosLoaderDisk diskloader;
 
-	public ImageLoader( Context context ) {
+	public ImageLoader( Context context )
+	{
 		// Make the background thread low priority. This way it will not affect
 		// the UI performance
 		webloader = new PhotosLoaderWeb();
@@ -80,7 +81,6 @@ public class ImageLoader
 		{
 			image.setImageBitmap( bitmap );
 			image.setScaleType( ScaleType.CENTER_CROP );
-			memCache.put( url, bitmap );
 			image.clearAnimation();
 			image.setTag(null);
 		}
@@ -106,6 +106,9 @@ public class ImageLoader
 	// from Memory cache
 	private Bitmap getBitmapCache( String url )
 	{
+		Bitmap bitmap = memCache.get(url);
+		if ( bitmap != null )
+			memCache.put( url, bitmap );
 		return memCache.get(url);
 	}
 
@@ -113,14 +116,16 @@ public class ImageLoader
 	private Bitmap getBitmapDisk( String url )
 	{
 		Bitmap bitmap = D.getBitmapFromFile(fileCache.getFile(url));
-		memCache.put(url, bitmap);
+		if ( bitmap != null )
+			memCache.put( url, bitmap );
 		return bitmap;
 	}
 
 	// from web
 	private Bitmap getBitmapWeb( String url )
 	{
-		try {
+		try
+		{
 			URL imageUrl = new URL(url);
 			HttpURLConnection conn = (HttpURLConnection) imageUrl.openConnection();
 			InputStream is = conn.getInputStream();
@@ -128,8 +133,14 @@ public class ImageLoader
 			D.CopyStream(is, os);
 			os.close();
 
-			return D.getBitmapFromFile(fileCache.getFile(url));
-		} catch (Exception ex) {
+			Bitmap bitmap = D.getBitmapFromFile(fileCache.getFile(url));
+			if ( bitmap != null )
+				memCache.put( url, bitmap );
+			memCache.put(url, bitmap);
+			return bitmap;
+		}
+		catch (Exception ex)
+		{
 			Log.d(D.LOGTAG, "image " + url + " download failed!");
 			Log.d(D.LOGTAG, ex.getMessage());
 			ex.printStackTrace();
@@ -138,7 +149,8 @@ public class ImageLoader
 	}
 
 	// Task for the queue
-	private class PhotoToLoad {
+	private class PhotoToLoad
+	{
 		public String url;
 		public ImageView imageView;
 
@@ -196,9 +208,12 @@ public class ImageLoader
 	private class PhotosLoaderDisk extends PhotosLoaderBase
 	{
 		@Override
-		public void run() {
-			try {
-				while (true) {
+		public void run()
+		{
+			try
+			{
+				while (true)
+				{
 					// thread waits until there are any images to load in the queue
 					if (photosToLoad.empty())
 						synchronized (photosToLoad)
@@ -217,8 +232,6 @@ public class ImageLoader
 						Bitmap bmp = getBitmapDisk(photoToLoad.url);
 						if ( bmp == null )
 							webloader.queuePhoto(photoToLoad);
-
-						memCache.put(photoToLoad.url, bmp);
 
 						// check if we still want the bitmap
 						String tag = imageViews.get(photoToLoad.imageView);
@@ -239,9 +252,12 @@ public class ImageLoader
 	private class PhotosLoaderWeb extends PhotosLoaderBase
 	{
 		@Override
-		public void run() {
-			try {
-				while (true) {
+		public void run()
+		{
+			try
+			{
+				while (true)
+				{
 					// thread waits until there are any images to load in the queue
 					if (photosToLoad.empty())
 						synchronized (photosToLoad)
