@@ -49,6 +49,7 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -57,6 +58,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Toast;
 import android.widget.ImageView.ScaleType;
 
@@ -119,30 +122,32 @@ public class ViewImageActivity extends Activity
 			final float center_x = savedInstanceState.getFloat("image_center_x");
 			final float center_y = savedInstanceState.getFloat("image_center_y");
 
+			Log.d(D.LOGTAG, "old scale: " + scale + ", old center: (" + center_x + ", " + center_y + ")");
+
 			image.post(
 				new Runnable()
 				{
 					@Override
 					public void run()
 					{
-						float scale15 = scale / 1.5f;
-						image.zoomTo(scale15 < 1.0f ? 1.0f : scale15);
-						image.zoomTo(scale, 500);
+						if ( scale > 0.0f )
+						{
+							float target_scale = scale / image.getBaseScale();
+							image.zoomTo( Math.min( image.getMaxZoom(), Math.max( 1.0f, target_scale) ) );
+						}
+						else
+							image.zoomTo( 1.0f );
+
+						PointF from_pt = image.getViewportCenter();
+						RectF now_rect = image.getBitmapRect();
+						image.scrollBy( from_pt.x - center_x * now_rect.width(), from_pt.y - center_y * now_rect.height() );
+
+						image.center( true, true );
 					}
 				}
 			);
-			image.post(
-				new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						PointF from_pt = image.getMappedCenter();
-						float new_scale = image.getScale();
-						image.zoomAwareScrollBy( from_pt.x / new_scale * scale - center_x, from_pt.y / new_scale * scale - center_y, scale, 500);
-					}
-				}
-			);
+			Animation anim = AnimationUtils.loadAnimation(this, R.anim.zoom_enter_lite);
+			image.startAnimation( anim );
 		}
 	}
 
@@ -170,10 +175,14 @@ public class ViewImageActivity extends Activity
 	{
 		try
 		{
-			PointF pt = image.getMappedCenter();
-			outState.putFloat("image_scale", image.getScale());
-			outState.putFloat("image_center_x", pt.x);
-			outState.putFloat("image_center_y", pt.y);
+			PointF pt = image.getViewportCenter();
+			RectF rect = image.getBitmapRect();
+			if ( image.getScale() == 1.0f )
+				outState.putFloat("image_scale", -1.0f);
+			else
+				outState.putFloat("image_scale", image.getScale() * image.getBaseScale());
+			outState.putFloat("image_center_x", pt.x / rect.width());
+			outState.putFloat("image_center_y", pt.y / rect.height());
 		}
 		catch ( NullPointerException ex )
 		{
@@ -193,6 +202,8 @@ public class ViewImageActivity extends Activity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
+		PointF pt = image.getViewportCenter();
+		Log.d(D.LOGTAG, "image center: (" + pt.x + ", " + pt.y + "), scale = " + image.getScale());
 		switch(item.getItemId())
 		{
 		case R.id.view_image_menu_info:

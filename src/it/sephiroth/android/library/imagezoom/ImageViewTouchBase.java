@@ -150,7 +150,7 @@ public class ImageViewTouchBase extends ImageView
 		if ( mBitmapDisplayed.getBitmap() != null )
 		{
 			getProperBaseMatrix( mBitmapDisplayed, mBaseMatrix );
-			setImageMatrix( Command.Layout, getImageViewMatrix() );
+			setImageMatrix( getImageViewMatrix() );
 		}
 	}
 
@@ -193,7 +193,7 @@ public class ImageViewTouchBase extends ImageView
 		if ( reset )
 			mSuppMatrix.reset();
 
-		setImageMatrix( Command.Reset, getImageViewMatrix() );
+		setImageMatrix( getImageViewMatrix() );
 		mMaxZoom = maxZoom();
 
 		if( mListener != null )
@@ -277,7 +277,7 @@ public class ImageViewTouchBase extends ImageView
 		return mMatrixValues[whichValue];
 	}
 
-	protected RectF getBitmapRect()
+	public RectF getBitmapRect()
 	{
 		if ( mBitmapDisplayed.getBitmap() == null )
 			return null;
@@ -287,14 +287,14 @@ public class ImageViewTouchBase extends ImageView
 		return rect;
 	}
 
-	protected float getScale( Matrix matrix )
+	public float getBaseScale()
 	{
-		return getValue( matrix, Matrix.MSCALE_X );
+		return getValue( mBaseMatrix, Matrix.MSCALE_X );
 	}
 
 	public float getScale()
 	{
-		return getScale( mSuppMatrix );
+		return getValue( mSuppMatrix, Matrix.MSCALE_X );
 	}
 
 	public void center( boolean horizontal, boolean vertical )
@@ -317,12 +317,7 @@ public class ImageViewTouchBase extends ImageView
 				scrollBy( pt.x, pt.y, durationMs );
 	}
 
-	protected void setImageMatrix( Command command, Matrix matrix )
-	{
-		setImageMatrix( matrix );
-	}
-
-	public PointF getMappedCenter()
+	public PointF getViewportCenter()
 	{
 		RectF rect = getBitmapRect();
 		return new PointF( -rect.left + getWidth() / 2, -rect.top + getHeight() / 2 );
@@ -363,13 +358,13 @@ public class ImageViewTouchBase extends ImageView
 	protected void postTranslate( float deltaX, float deltaY )
 	{
 		mSuppMatrix.postTranslate( deltaX, deltaY );
-		setImageMatrix( Command.Move, getImageViewMatrix() );
+		setImageMatrix( getImageViewMatrix() );
 	}
 
 	protected void postScale( float scale, float centerX, float centerY )
 	{
 		mSuppMatrix.postScale( scale, scale, centerX, centerY );
-		setImageMatrix( Command.Zoom, getImageViewMatrix() );
+		setImageMatrix( getImageViewMatrix() );
 	}
 
 	public void zoomTo( float scale )
