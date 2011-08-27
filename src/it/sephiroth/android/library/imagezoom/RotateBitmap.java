@@ -39,7 +39,8 @@ public class RotateBitmap
 	{
 		mBitmap = bitmap;
 
-		if ( mBitmap != null ) {
+		if ( mBitmap != null )
+		{
 			mBitmapWidth = bitmap.getWidth();
 			mBitmapHeight = bitmap.getHeight();
 			invalidate();
@@ -64,7 +65,8 @@ public class RotateBitmap
 	public Matrix getRotateMatrix()
 	{
 		Matrix matrix = new Matrix();
-		if ( mRotation != 0 ) {
+		if ( mRotation != 0 )
+		{
 			int cx = mBitmapWidth / 2;
 			int cy = mBitmapHeight / 2;
 			matrix.preTranslate( -cx, -cy );
@@ -86,7 +88,8 @@ public class RotateBitmap
 
 	public void recycle()
 	{
-		if ( mBitmap != null ) {
+		if ( mBitmap != null )
+		{
 			mBitmap.recycle();
 			mBitmap = null;
 		}
