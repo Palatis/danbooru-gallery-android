@@ -202,8 +202,6 @@ public class ViewImageActivity extends Activity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		PointF pt = image.getViewportCenter();
-		Log.d(D.LOGTAG, "image center: (" + pt.x + ", " + pt.y + "), scale = " + image.getScale());
 		switch(item.getItemId())
 		{
 		case R.id.view_image_menu_info:
@@ -321,10 +319,17 @@ public class ViewImageActivity extends Activity
 	@Override
 	public void onBackPressed()
 	{
-		if ( image.getScale() != 1.0f )
+		try
 		{
-			image.zoomTo( 1.0f, 500 );
-			return;
+			if ( image.getScale() != 1.0f )
+			{
+				image.zoomTo( 1.0f, 500 );
+				return;
+			}
+		}
+		catch ( NullPointerException ex )
+		{
+			// just quit
 		}
 
 		finish();
