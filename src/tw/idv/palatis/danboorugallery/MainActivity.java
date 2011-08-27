@@ -483,7 +483,7 @@ public class MainActivity extends Activity
 				if ( do_animation )
 				{
 					image.clearAnimation();
-					image.startAnimation(AnimationUtils.loadAnimation(image.getContext(), R.anim.fade_in));
+					image.startAnimation(AnimationUtils.loadAnimation(image.getContext(), android.R.anim.fade_in));
 				}
 
 				image.setTag(null);
