@@ -1,6 +1,6 @@
 package it.sephiroth.android.library.imagezoom;
 
-import it.sephiroth.android.library.imagezoom.easing.Expo;
+import it.sephiroth.android.library.imagezoom.easing.Cubic;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -103,9 +103,9 @@ public class ImageViewTouchBase extends ImageView
 			long now = System.currentTimeMillis();
 			float scale = getScale();
 			float currentMs = Math.min( dms, now - st );
-			float expo = Expo.easeOut(currentMs, dms);
-			float x = expo * dx;
-			float y = expo * dy;
+			float ease = Cubic.easeOut(currentMs, dms);
+			float x = ease * dx;
+			float y = ease * dy;
 			postTranslate( (x - old_x) * scale, (y - old_y) * scale );
 			old_x = x;
 			old_y = y;
@@ -424,7 +424,7 @@ public class ImageViewTouchBase extends ImageView
 				{
 					long now = System.currentTimeMillis();
 					float currentMs = Math.min( durationMs, now - startTime );
-					float target = oldScale + ( diffScale * Expo.easeOut( currentMs, durationMs ) );
+					float target = oldScale + ( diffScale * Cubic.easeOut( currentMs, durationMs ) );
 					zoomTo( target, centerX, centerY );
 					if ( currentMs < durationMs )
 						mHandler.post( this );
