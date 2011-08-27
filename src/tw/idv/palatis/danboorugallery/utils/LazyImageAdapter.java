@@ -127,4 +127,9 @@ public class LazyImageAdapter extends BaseAdapter
 	{
 		loader.stopThread();
 	}
+
+	public void onLowMemory()
+	{
+		loader.onLowMemory();
+	}
 }

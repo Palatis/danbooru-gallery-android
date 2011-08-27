@@ -90,6 +90,11 @@ public class ImageLoader
 		}
 	}
 
+	public void onLowMemory()
+	{
+		memCache.clear();
+	}
+
 	public void cancelAll()
 	{
 		diskloader.cancelAll();

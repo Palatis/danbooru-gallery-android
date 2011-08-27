@@ -246,6 +246,12 @@ public class MainActivity extends Activity
 	}
 
 	@Override
+	public void onLowMemory()
+	{
+		adapter.onLowMemory();
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		MenuInflater inflater = getMenuInflater();
