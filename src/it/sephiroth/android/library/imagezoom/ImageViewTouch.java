@@ -137,10 +137,7 @@ public class ImageViewTouch extends ImageViewTouchBase
 			if ( mScaleDetector.isInProgress() )
 				return false;
 
-			float diffX = e2.getX() - e1.getX();
-			float diffY = e2.getY() - e1.getY();
-
-			scrollBy( diffX, diffY, 500 );
+			scrollBy( velocityX / 3, velocityY / 3, 500 );
 			invalidate();
 			return super.onFling( e1, e2, velocityX, velocityY );
 		}
