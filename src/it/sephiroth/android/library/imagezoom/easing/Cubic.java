@@ -2,8 +2,10 @@ package it.sephiroth.android.library.imagezoom.easing;
 
 public class Cubic
 {
-	public static float easeOut( float time, float start, float end, float duration )
+	public static float easeOut( float elapsedMs, float durationMs )
 	{
-		return end * ( ( time = time / duration - 1 ) * time * time + 1 ) + start;
+		  float progress = elapsedMs / durationMs - 1.0f;
+
+		  return progress * progress * progress + 1;
 	}
 }
