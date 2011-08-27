@@ -102,6 +102,7 @@ public class ViewImageActivity extends Activity
 		{
 			ProgressDialog dialog = new ProgressDialog(this);
 			loader = new AsyncImageLoader(image, dialog, file);
+			dialog.setTitle(String.format(getString( R.string.view_image_progress_title ), post.width, post.height));
 			dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 			dialog.setMax(1);
 			dialog.setOnCancelListener(new ProgressOnCancelListener(this, loader));

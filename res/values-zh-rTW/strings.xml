@@ -39,6 +39,7 @@
 	<string name="main_menu_goto_reset_tags">重設標籤</string>
 	<string name="main_menu_preferences">喜好設定</string>
 	<string name="main_menu_refresh">重新整理</string>
+	<string name="view_image_progress_title">%1$sx%2$s</string>
 
 	<string name="main_goto_page_dialog_title">跳至頁面...</string>
 
