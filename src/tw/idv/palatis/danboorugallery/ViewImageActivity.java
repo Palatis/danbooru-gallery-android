@@ -199,7 +199,7 @@ public class ViewImageActivity extends Activity
 			Builder builder = new AlertDialog.Builder(this);
 			builder.setMessage(
 				String.format(
-					getText( R.string.view_image_pic_info ).toString(),
+					getString( R.string.view_image_pic_info ),
 					post.tags, post.width, post.height, post.author,
 					post.created_at == null ? "" : post.created_at.toLocaleString()
 				)
@@ -240,7 +240,7 @@ public class ViewImageActivity extends Activity
 				Toast.makeText(
 					this,
 					String.format(
-						getText( R.string.view_image_file_saved ).toString(),
+						getString( R.string.view_image_file_saved ),
 						outfile.getPath()
 					),
 					Toast.LENGTH_SHORT

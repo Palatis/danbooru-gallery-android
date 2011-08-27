@@ -95,7 +95,7 @@ public class DanbooruGalleryPreferenceActivity extends PreferenceActivity
 					String name = hosts.get(Integer.parseInt((String)newValue))[ Hosts.HOST_NAME ];
 					preference.setSummary(
 						String.format(
-							getText( R.string.preferences_hosts_selected_host ).toString(),
+							getString( R.string.preferences_hosts_selected_host ),
 							name
 						)
 					);
@@ -117,7 +117,7 @@ public class DanbooruGalleryPreferenceActivity extends PreferenceActivity
 
 		pref_hosts.setSummary(
 			String.format(
-				getText( R.string.preferences_hosts_selected_host ).toString(),
+				getString( R.string.preferences_hosts_selected_host ),
 				(selected_host_index == -1) ? "(NONE)" : hosts.get(selected_host_index)[ Hosts.HOST_NAME ]
 			)
 		);
@@ -269,7 +269,7 @@ public class DanbooruGalleryPreferenceActivity extends PreferenceActivity
 				builder.setTitle( R.string.preferences_hosts_dialog_delete_confirm_title );
 				builder.setMessage(
 					String.format(
-						dialog.getContext().getText( R.string.preferences_hosts_dialog_delete_confirm_message ).toString(),
+						dialog.getContext().getString( R.string.preferences_hosts_dialog_delete_confirm_message ),
 						hosts.get((Integer)edit_name.getTag())[ Hosts.HOST_NAME ],
 						hosts.get((Integer)edit_name.getTag())[ Hosts.HOST_URL ]
 					)

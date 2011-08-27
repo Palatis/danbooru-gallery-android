@@ -154,7 +154,7 @@ public class MainActivity extends Activity
 			Toast.makeText(
 				this,
 				String.format(
-					getText(R.string.main_query).toString(),
+					getString(R.string.main_query),
 					Uri.encode(query)
 				),
 				Toast.LENGTH_SHORT
