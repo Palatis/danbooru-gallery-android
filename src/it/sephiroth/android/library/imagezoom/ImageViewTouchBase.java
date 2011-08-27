@@ -1,10 +1,10 @@
 package it.sephiroth.android.library.imagezoom;
 
-import it.sephiroth.android.library.imagezoom.easing.Cubic;
 import it.sephiroth.android.library.imagezoom.easing.Expo;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -60,6 +60,18 @@ public class ImageViewTouchBase extends ImageView
 		setScaleType( ImageView.ScaleType.MATRIX );
 	}
 
+	public void zoomAwareScrollBy(float distanceX, float distanceY, float targetScale, float durationMs )
+	{
+		if ( Math.abs(distanceX) < 1 && Math.abs(distanceY) < 1 )
+		{
+			scrollBy( distanceX, distanceY );
+			return;
+		}
+
+		mScrollRunnable.reset(distanceX, distanceY, targetScale, durationMs);
+		mHandler.post( mScrollRunnable );
+	}
+
 	private class ScrollRunnable implements Runnable
 	{
 		float	dx			= 0;
@@ -70,13 +82,18 @@ public class ImageViewTouchBase extends ImageView
 		long	st			= 0;
 		boolean canceled	= false;
 
-		public void reset( float distanceX, float distanceY, long startTime, float durationMs )
+		public void reset( float distanceX, float distanceY, float durationMs )
+		{
+			reset( distanceX, distanceY, getScale(), durationMs );
+		}
+
+		public void reset( float distanceX, float distanceY, float targetScale, float durationMs )
 		{
 			old_x = 0;
 			old_y = 0;
-			dx = distanceX;
-			dy = distanceY;
-			st = startTime;
+			dx = distanceX / targetScale;
+			dy = distanceY / targetScale;
+			st = System.currentTimeMillis();
 			dms = durationMs;
 			canceled = false;
 		}
@@ -84,10 +101,12 @@ public class ImageViewTouchBase extends ImageView
 		public void run()
 		{
 			long now = System.currentTimeMillis();
+			float scale = getScale();
 			float currentMs = Math.min( dms, now - st );
-			float x = Cubic.easeOut( currentMs, 0, dx, dms );
-			float y = Cubic.easeOut( currentMs, 0, dy, dms );
-			postTranslate( ( x - old_x ), ( y - old_y ) );
+			float expo = Expo.easeOut(currentMs, dms);
+			float x = expo * dx;
+			float y = expo * dy;
+			postTranslate( (x - old_x) * scale, (y - old_y) * scale );
 			old_x = x;
 			old_y = y;
 
@@ -278,22 +297,24 @@ public class ImageViewTouchBase extends ImageView
 		return getScale( mSuppMatrix );
 	}
 
-	protected void center( boolean horizontal, boolean vertical )
-	{
-		center( horizontal, vertical, 0 );
-	}
-
-	protected void center( boolean horizontal, boolean vertical, final float durationMs )
+	public void center( boolean horizontal, boolean vertical )
 	{
 		if ( mBitmapDisplayed.getBitmap() == null )
 			return;
 
-		final RectF rect = getCenter( horizontal, vertical );
-		if ( rect.left != 0 || rect.top != 0 )
-			if ( durationMs == 0 )
-				postTranslate( rect.left, rect.top );
-			else
-				scrollBy( rect.left, rect.top, durationMs );
+		final PointF pt = getCenter( horizontal, vertical );
+		if ( pt.x != 0 || pt.y != 0 )
+				postTranslate( pt.x, pt.y );
+	}
+
+	public void center( boolean horizontal, boolean vertical, final float durationMs )
+	{
+		if ( mBitmapDisplayed.getBitmap() == null )
+			return;
+
+		final PointF pt = getCenter( horizontal, vertical );
+		if ( pt.x != 0 || pt.y != 0 )
+				scrollBy( pt.x, pt.y, durationMs );
 	}
 
 	protected void setImageMatrix( Command command, Matrix matrix )
@@ -301,16 +322,22 @@ public class ImageViewTouchBase extends ImageView
 		setImageMatrix( matrix );
 	}
 
-	protected RectF getCenter( boolean horizontal, boolean vertical )
+	public PointF getMappedCenter()
+	{
+		RectF rect = getBitmapRect();
+		return new PointF( -rect.left + getWidth() / 2, -rect.top + getHeight() / 2 );
+	}
+
+	public PointF getCenter( boolean horizontal, boolean vertical )
 	{
 		if ( mBitmapDisplayed.getBitmap() == null )
-			return new RectF( 0, 0, 0, 0 );
+			return new PointF( 0, 0 );
 
 		RectF rect = getBitmapRect();
-		float height = rect.height();
-		float width = rect.width();
 		float deltaX = 0, deltaY = 0;
-		if ( vertical ) {
+		if ( vertical )
+		{
+			float height = rect.height();
 			int viewHeight = getHeight();
 			if ( height < viewHeight )
 				deltaY = ( viewHeight - height ) / 2 - rect.top;
@@ -319,7 +346,9 @@ public class ImageViewTouchBase extends ImageView
 			else if ( rect.bottom < viewHeight )
 				deltaY = getHeight() - rect.bottom;
 		}
-		if ( horizontal ) {
+		if ( horizontal )
+		{
+			float width = rect.width();
 			int viewWidth = getWidth();
 			if ( width < viewWidth )
 				deltaX = ( viewWidth - width ) / 2 - rect.left;
@@ -328,7 +357,7 @@ public class ImageViewTouchBase extends ImageView
 			else if ( rect.right < viewWidth )
 				deltaX = viewWidth - rect.right;
 		}
-		return new RectF( deltaX, deltaY, 0, 0 );
+		return new PointF( deltaX, deltaY );
 	}
 
 	protected void postTranslate( float deltaX, float deltaY )
@@ -343,7 +372,7 @@ public class ImageViewTouchBase extends ImageView
 		setImageMatrix( Command.Zoom, getImageViewMatrix() );
 	}
 
-	protected void zoomTo( float scale )
+	public void zoomTo( float scale )
 	{
 		float cx = getWidth() / 2F;
 		float cy = getHeight() / 2F;
@@ -357,7 +386,7 @@ public class ImageViewTouchBase extends ImageView
 		zoomTo( scale, cx, cy, durationMs );
 	}
 
-	protected void zoomTo( float scale, float centerX, float centerY )
+	public void zoomTo( float scale, float centerX, float centerY )
 	{
 		float oldScale = getScale();
 		float deltaScale = scale / oldScale;
@@ -376,7 +405,7 @@ public class ImageViewTouchBase extends ImageView
 		postTranslate( x, y );
 	}
 
-	protected void scrollBy( float distanceX, float distanceY, final float durationMs )
+	public void scrollBy( float distanceX, float distanceY, final float durationMs )
 	{
 		if ( Math.abs(distanceX) < 1 && Math.abs(distanceY) < 1 )
 		{
@@ -384,11 +413,11 @@ public class ImageViewTouchBase extends ImageView
 			return;
 		}
 
-		mScrollRunnable.reset(distanceX, distanceY, System.currentTimeMillis(), durationMs);
+		mScrollRunnable.reset(distanceX, distanceY, durationMs);
 		mHandler.post( mScrollRunnable );
 	}
 
-	protected void zoomTo( float scale, final float centerX, final float centerY, final float durationMs )
+	public void zoomTo( float scale, final float centerX, final float centerY, final float durationMs )
 	{
 		final long startTime = System.currentTimeMillis();
 		final float oldScale = getScale();
