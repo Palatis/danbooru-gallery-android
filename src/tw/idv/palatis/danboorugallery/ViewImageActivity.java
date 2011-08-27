@@ -321,6 +321,12 @@ public class ViewImageActivity extends Activity
 	@Override
 	public void onBackPressed()
 	{
+		if ( image.getScale() != 1.0f )
+		{
+			image.zoomTo( 1.0f, 500 );
+			return;
+		}
+
 		finish();
 		overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
 		super.onBackPressed();
