@@ -52,6 +52,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.View.OnFocusChangeListener;
+import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -482,8 +483,17 @@ public class MainActivity extends Activity
 
 				if ( do_animation )
 				{
-					image.clearAnimation();
-					image.startAnimation(AnimationUtils.loadAnimation(image.getContext(), android.R.anim.fade_in));
+					Animation anim = image.getAnimation();
+					if ( anim != null )
+					{
+						if ( !anim.hasStarted() || anim.hasEnded() )
+						{
+							anim.reset();
+							image.startAnimation(anim);
+						}
+					}
+					else
+						image.startAnimation(AnimationUtils.loadAnimation(image.getContext(), android.R.anim.fade_in));
 				}
 
 				image.setTag(null);
