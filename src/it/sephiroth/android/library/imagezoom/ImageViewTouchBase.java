@@ -60,18 +60,6 @@ public class ImageViewTouchBase extends ImageView
 		setScaleType( ImageView.ScaleType.MATRIX );
 	}
 
-	public void zoomAwareScrollBy(float distanceX, float distanceY, float targetScale, float durationMs )
-	{
-		if ( Math.abs(distanceX) < 1 && Math.abs(distanceY) < 1 )
-		{
-			scrollBy( distanceX, distanceY );
-			return;
-		}
-
-		mScrollRunnable.reset(distanceX, distanceY, targetScale, durationMs);
-		mHandler.post( mScrollRunnable );
-	}
-
 	private class ScrollRunnable implements Runnable
 	{
 		float	dx			= 0;
