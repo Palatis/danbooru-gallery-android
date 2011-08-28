@@ -50,7 +50,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.net.Uri;
+import android.media.MediaScannerConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.AsyncTask.Status;
@@ -255,7 +255,7 @@ public class ViewImageActivity extends Activity
 					Toast.LENGTH_SHORT
 				).show();
 
-				sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + outfile.getParent())));
+				MediaScannerConnection.scanFile(this, new String[] { outfile.getAbsolutePath() }, null, null);
 			}
 			catch (Exception e)
 			{
