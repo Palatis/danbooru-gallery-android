@@ -2,7 +2,7 @@ package it.sephiroth.android.library.imagezoom.easing;
 
 public class Quad
 {
-	public static float easeOut( float elapsedMs, float durationMs )
+	public static float easeOut(float elapsedMs, float durationMs)
 	{
 		float progress = elapsedMs / durationMs;
 

@@ -43,25 +43,25 @@ import android.widget.Toast;
 
 public class LazyPostFetcher
 {
-	private AsyncPostFetcher fetcher = null;
-	public URLEnclosure enclosure = null;
-	boolean reached_end = false;
+	private AsyncPostFetcher	fetcher		= null;
+	public URLEnclosure			enclosure	= null;
+	boolean						reached_end	= false;
 
 	public LazyPostFetcher()
 	{
 		enclosure = new URLEnclosure();
 	}
 
-	public LazyPostFetcher( URLEnclosure e )
+	public LazyPostFetcher(URLEnclosure e)
 	{
 		enclosure = e;
 	}
 
 	public boolean setUrl(String url)
 	{
-		boolean result = enclosure.url_format.equals(url);
+		boolean result = enclosure.url_format.equals( url );
 		enclosure.url_format = url;
-		if ( !result )
+		if ( !result)
 			reached_end = false;
 		return !result;
 	}
@@ -71,16 +71,16 @@ public class LazyPostFetcher
 		page = (page < 1) ? 1 : page;
 		boolean result = (enclosure.page == page);
 		enclosure.page = page;
-		if ( !result )
+		if ( !result)
 			reached_end = false;
 		return !result;
 	}
 
 	public boolean setTags(String tags)
 	{
-		boolean result = enclosure.tags.equals(tags);
+		boolean result = enclosure.tags.equals( tags );
 		enclosure.tags = tags;
-		if ( !result )
+		if ( !result)
 			reached_end = false;
 		return !result;
 	}
@@ -89,16 +89,16 @@ public class LazyPostFetcher
 	{
 		boolean result = (enclosure.limit == limit);
 		enclosure.limit = limit;
-		if ( !result )
+		if ( !result)
 			reached_end = false;
 		return !result;
 	}
 
 	public boolean setRating(String rating)
 	{
-		boolean result = enclosure.rating.equals(rating);
+		boolean result = enclosure.rating.equals( rating );
 		enclosure.rating = rating;
-		if ( !result )
+		if ( !result)
 			reached_end = false;
 		return !result;
 	}
@@ -108,9 +108,9 @@ public class LazyPostFetcher
 		return enclosure;
 	}
 
-	public void fetchNextPage( LazyImageAdapter adapter )
+	public void fetchNextPage(LazyImageAdapter adapter)
 	{
-		if ( fetcher != null && fetcher.getStatus() == Status.RUNNING )
+		if (fetcher != null && fetcher.getStatus() == Status.RUNNING)
 			return;
 
 		fetcher = new AsyncPostFetcher( adapter, this );
@@ -119,9 +119,9 @@ public class LazyPostFetcher
 
 	public void cancel()
 	{
-		if ( fetcher != null && fetcher.getStatus() == Status.RUNNING )
+		if (fetcher != null && fetcher.getStatus() == Status.RUNNING)
 		{
-			fetcher.cancel(true);
+			fetcher.cancel( true );
 			fetcher = null;
 		}
 	}
@@ -138,11 +138,11 @@ public class LazyPostFetcher
 
 	public class URLEnclosure
 	{
-		public String url_format;
-		public String tags;
-		public int page;
-		public int limit;
-		public String rating;
+		public String	url_format;
+		public String	tags;
+		public int		page;
+		public int		limit;
+		public String	rating;
 
 		public URLEnclosure()
 		{
@@ -153,7 +153,7 @@ public class LazyPostFetcher
 			rating = "";
 		}
 
-		public URLEnclosure( String f, int p, int l, String t, String r )
+		public URLEnclosure(String f, int p, int l, String t, String r)
 		{
 			url_format = f;
 			tags = t;
@@ -163,12 +163,13 @@ public class LazyPostFetcher
 		}
 	}
 
-	private class AsyncPostFetcher extends AsyncTask<URLEnclosure, Integer, Integer>
+	private class AsyncPostFetcher
+		extends AsyncTask < URLEnclosure, Integer, Integer >
 	{
-		LazyImageAdapter adapter;
-		LazyPostFetcher fetcher;
+		LazyImageAdapter	adapter;
+		LazyPostFetcher		fetcher;
 
-		AsyncPostFetcher( LazyImageAdapter a, LazyPostFetcher f )
+		AsyncPostFetcher(LazyImageAdapter a, LazyPostFetcher f)
 		{
 			adapter = a;
 			fetcher = f;
@@ -183,12 +184,12 @@ public class LazyPostFetcher
 
 			try
 			{
-				for (URLEnclosure enclosure: params)
-					while ( fetched_posts_count < enclosure.limit )
+				for (URLEnclosure enclosure : params)
+					while (fetched_posts_count < enclosure.limit)
 					{
-						URL url = new URL(String.format(enclosure.url_format, enclosure.page, enclosure.tags, enclosure.limit));
+						URL url = new URL( String.format( enclosure.url_format, enclosure.page, enclosure.tags, enclosure.limit ) );
 
-						Log.v(D.LOGTAG, "fetching " + url.toString() + " (" + fetched_posts_count + " fetched, " + skipped_posts_count + " skipped)");
+						Log.v( D.LOGTAG, "fetching " + url.toString() + " (" + fetched_posts_count + " fetched, " + skipped_posts_count + " skipped)" );
 
 						if (isCancelled())
 							return fetched_posts_count;
@@ -197,9 +198,9 @@ public class LazyPostFetcher
 						Writer output = new StringWriter();
 
 						int count = 0;
-						while ((count = input.read(buffer)) > 0)
+						while ((count = input.read( buffer )) > 0)
 						{
-							output.write(buffer, 0, count);
+							output.write( buffer, 0, count );
 							if (isCancelled())
 								return fetched_posts_count;
 						}
@@ -208,21 +209,21 @@ public class LazyPostFetcher
 						{
 							JSONArray json_posts = new JSONArray( output.toString() );
 							int len = json_posts.length();
-							if ( len == 0 )
+							if (len == 0)
 							{
-								D.makeToastOnUiThread(adapter.getActivity(), R.string.main_fetch_reach_end, Toast.LENGTH_SHORT);
+								D.makeToastOnUiThread( adapter.getActivity(), R.string.main_fetch_reach_end, Toast.LENGTH_SHORT );
 								fetcher.noMorePosts();
 								return fetched_posts_count;
 							}
-							ArrayList<Post> posts = new ArrayList<Post>();
-							posts.ensureCapacity(len);
-							for (int j = 0;j < len; ++j)
+							ArrayList < Post > posts = new ArrayList < Post >();
+							posts.ensureCapacity( len );
+							for (int j = 0; j < len; ++j)
 							{
-								JSONObject json_post = json_posts.getJSONObject(j);
+								JSONObject json_post = json_posts.getJSONObject( j );
 
 								try
 								{
-									if ( enclosure.rating.indexOf( json_post.getString("rating") ) == -1 )
+									if (enclosure.rating.indexOf( json_post.getString( "rating" ) ) == -1)
 									{
 										++skipped_posts_count;
 										continue;
@@ -234,17 +235,17 @@ public class LazyPostFetcher
 
 								Post post = new Post( json_post );
 
-								posts.add(post);
+								posts.add( post );
 								++fetched_posts_count;
 
 								if (isCancelled())
 									return fetched_posts_count;
 							}
-							adapter.addPosts(posts);
+							adapter.addPosts( posts );
 						}
 						catch (JSONException ex)
 						{
-							D.makeToastOnUiThread(adapter.getActivity(), ex.getMessage(), Toast.LENGTH_LONG);
+							D.makeToastOnUiThread( adapter.getActivity(), ex.getMessage(), Toast.LENGTH_LONG );
 						}
 
 						if (isCancelled())
@@ -255,7 +256,7 @@ public class LazyPostFetcher
 			}
 			catch (IOException ex)
 			{
-				D.makeToastOnUiThread(adapter.getActivity(), ex.getMessage(), Toast.LENGTH_LONG);
+				D.makeToastOnUiThread( adapter.getActivity(), ex.getMessage(), Toast.LENGTH_LONG );
 			}
 
 			return fetched_posts_count;

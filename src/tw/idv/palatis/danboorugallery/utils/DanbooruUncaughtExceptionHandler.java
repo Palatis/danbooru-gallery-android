@@ -38,11 +38,12 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Looper;
 import android.util.Log;
 
-public class DanbooruUncaughtExceptionHandler implements UncaughtExceptionHandler
+public class DanbooruUncaughtExceptionHandler
+	implements UncaughtExceptionHandler
 {
-	final Activity activity;
+	final Activity	activity;
 
-	public DanbooruUncaughtExceptionHandler( Activity a )
+	public DanbooruUncaughtExceptionHandler(Activity a)
 	{
 		activity = a;
 	}
@@ -50,39 +51,42 @@ public class DanbooruUncaughtExceptionHandler implements UncaughtExceptionHandle
 	@Override
 	public void uncaughtException(final Thread thread, final Throwable ex)
 	{
-		Log.e(D.LOGTAG, Log.getStackTraceString(ex));
-		if ( ex.getCause() != null )
-			Log.e(D.LOGTAG, Log.getStackTraceString(ex.getCause()));
+		Log.e( D.LOGTAG, Log.getStackTraceString( ex ) );
+		if (ex.getCause() != null)
+			Log.e( D.LOGTAG, Log.getStackTraceString( ex.getCause() ) );
 
 		File logdir;
 		File logfile = null;
 		// Find the directory to save cached images
-		if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED))
+		if (android.os.Environment.getExternalStorageState().equals( android.os.Environment.MEDIA_MOUNTED ))
 		{
-			logdir = new File(android.os.Environment.getExternalStorageDirectory(), D.ERRORLOG_DIRECTORY);
-			if(!logdir.exists())
+			logdir = new File( android.os.Environment.getExternalStorageDirectory(), D.ERRORLOG_DIRECTORY );
+			if ( !logdir.exists())
 				logdir.mkdirs();
 
-				try {
-				logfile = File.createTempFile(D.ERRORLOG_PREFIX, D.ERRORLOG_SUFFIX, logdir);
+			try
+			{
+				logfile = File.createTempFile( D.ERRORLOG_PREFIX, D.ERRORLOG_SUFFIX, logdir );
 				BufferedWriter out = new BufferedWriter( new FileWriter( logfile ) );
 
 				try
 				{
-					PackageInfo manager = activity.getPackageManager().getPackageInfo(activity.getPackageName(), 0);
-					out.write(manager.packageName + " v" + manager.versionName + "\n\n");
+					PackageInfo manager = activity.getPackageManager().getPackageInfo( activity.getPackageName(), 0 );
+					out.write( manager.packageName + " v" + manager.versionName + "\n\n" );
 				}
 				catch (NameNotFoundException e)
 				{
 
 				}
 
-				out.write(Log.getStackTraceString(ex));
-				if ( ex.getCause() != null )
-					out.write(Log.getStackTraceString(ex.getCause()));
+				out.write( Log.getStackTraceString( ex ) );
+				if (ex.getCause() != null)
+					out.write( Log.getStackTraceString( ex.getCause() ) );
 
 				out.close();
-			} catch (IOException e) {
+			}
+			catch (IOException e)
+			{
 				// failed, does nothing.
 				e.printStackTrace();
 			}
@@ -90,42 +94,34 @@ public class DanbooruUncaughtExceptionHandler implements UncaughtExceptionHandle
 
 		new Thread()
 		{
-			String logfile;
+			String	logfile;
 
-			public Thread initialize( File l )
+			public Thread initialize(File l)
 			{
-				logfile = ( l != null ) ? l.getAbsolutePath() : "<unable to save error log>";
+				logfile = (l != null) ? l.getAbsolutePath() : "<unable to save error log>";
 				return this;
 			}
 
 			@Override
-			public void run() {
+			public void run()
+			{
 				Looper.prepare();
-				Builder builder = new AlertDialog.Builder(activity);
+				Builder builder = new AlertDialog.Builder( activity );
 				builder.setTitle( R.string.error_dialog_title );
 				builder.setIcon( android.R.drawable.ic_delete );
-				builder.setMessage(
-					String.format(
-						activity.getText( R.string.error_dialog_message ).toString(),
-						logfile,
-						activity.getText( R.string.preferences_about_author ).toString()
-					)
-				);
-				builder.setPositiveButton(
-					android.R.string.ok,
-					new OnClickListener()
+				builder.setMessage( String.format( activity.getText( R.string.error_dialog_message ).toString(), logfile, activity.getText( R.string.preferences_about_author ).toString() ) );
+				builder.setPositiveButton( android.R.string.ok, new OnClickListener()
+				{
+					@Override
+					public void onClick(DialogInterface dialog, int which)
 					{
-						@Override
-						public void onClick(DialogInterface dialog, int which)
-						{
-							// we crashed, force the application to exit.
-							System.exit(1);
-						}
+						// we crashed, force the application to exit.
+						System.exit( 1 );
 					}
-				);
+				} );
 				builder.create().show();
 				Looper.loop();
 			}
-		}.initialize(logfile).start();
+		}.initialize( logfile ).start();
 	}
 }

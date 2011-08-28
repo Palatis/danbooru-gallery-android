@@ -25,38 +25,39 @@ import java.io.File;
 import tw.idv.palatis.danboorugallery.defines.D;
 import android.content.Context;
 
-public class FileCache {
-	private File chunkdirs[] = null;
+public class FileCache
+{
+	private File	chunkdirs[]	= null;
 
 	public FileCache(Context context)
 	{
 		// Find the directory to save cached images
 		File cachedir;
-		if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED))
-			cachedir = new File(android.os.Environment.getExternalStorageDirectory(), D.CACHEDIR);
+		if (android.os.Environment.getExternalStorageState().equals( android.os.Environment.MEDIA_MOUNTED ))
+			cachedir = new File( android.os.Environment.getExternalStorageDirectory(), D.CACHEDIR );
 		else
 			cachedir = context.getCacheDir();
 
 		chunkdirs = new File[100];
-		for (int i = 0;i < 100; ++i)
+		for (int i = 0; i < 100; ++i)
 		{
-			chunkdirs[i] = new File(cachedir, String.valueOf(i));
-			if ( !chunkdirs[i].exists() )
+			chunkdirs[i] = new File( cachedir, String.valueOf( i ) );
+			if ( !chunkdirs[i].exists())
 				chunkdirs[i].mkdirs();
 		}
 	}
 
 	public File getFile(String url)
 	{
-		return new File(chunkdirs[Math.abs(url.hashCode() % 100)], String.valueOf(url.hashCode()));
+		return new File( chunkdirs[Math.abs( url.hashCode() % 100 )], String.valueOf( url.hashCode() ) );
 	}
 
 	public void clear()
 	{
-		for (File chunkdir: chunkdirs)
+		for (File chunkdir : chunkdirs)
 		{
 			File[] files = chunkdir.listFiles();
-			for(File f: files)
+			for (File f : files)
 				f.delete();
 		}
 	}

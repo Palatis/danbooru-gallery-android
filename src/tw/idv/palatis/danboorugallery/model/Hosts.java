@@ -31,53 +31,58 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 public class Hosts
 {
-	static public final int HOST_NAME = 0;
-	static public final int HOST_URL = 1;
+	static public final int	HOST_NAME	= 0;
+	static public final int	HOST_URL	= 1;
 
-	List< String[] > hosts;
+	List < String[] >		hosts;
 
 	public Hosts()
 	{
-		this(new ArrayList< String[] >());
+		this( new ArrayList < String[] >() );
 	}
 
-	private Hosts( List< String[] > h )
+	private Hosts(List < String[] > h)
 	{
 		hosts = h;
 	}
 
-	public boolean add( String name, String url )
+	public boolean add(String name, String url)
 	{
-		return hosts.add( new String[] { name, url } );
+		return hosts.add( new String[] {
+			name,
+			url
+		} );
 	}
 
-	public boolean add( String[] host )
-		throws IllegalArgumentException
+	public boolean add(String[] host) throws IllegalArgumentException
 	{
-		if ( host.length != 2 )
-			throw new IllegalArgumentException("\"host\" must be a String[2] with index HOSTS_NAME as name and index HOSTS_URL as url.");
+		if (host.length != 2)
+			throw new IllegalArgumentException( "\"host\" must be a String[2] with index HOSTS_NAME as name and index HOSTS_URL as url." );
 
 		return hosts.add( host );
 	}
 
-	public void set( int location, String name, String url )
+	public void set(int location, String name, String url)
 	{
-		hosts.set(location, new String[] { name, url } );
+		String host[] = new String[] {
+			name,
+			url
+		};
+		hosts.set( location, host );
 	}
 
-	public String[] get( int location )
+	public String[] get(int location)
 	{
-		if ( hosts.isEmpty() )
+		if (hosts.isEmpty())
 			return null;
 
-		if ( location < hosts.size() )
+		if (location < hosts.size())
 			return hosts.get( location );
 
 		return hosts.get( hosts.size() - 1 );
 	}
 
-	public String[] remove( int location )
-		throws IndexOutOfBoundsException
+	public String[] remove(int location) throws IndexOutOfBoundsException
 	{
 		return hosts.remove( location );
 	}
@@ -96,10 +101,9 @@ public class Hosts
 	}
 
 	// Factory Method
-	static public Hosts fromCSV( String csv_str )
-		throws IOException
+	static public Hosts fromCSV(String csv_str) throws IOException
 	{
-		CSVReader reader = new CSVReader(new StringReader( csv_str ) );
+		CSVReader reader = new CSVReader( new StringReader( csv_str ) );
 		return new Hosts( reader.readAll() );
 	}
 }

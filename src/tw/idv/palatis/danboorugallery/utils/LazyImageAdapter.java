@@ -34,16 +34,17 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
-public class LazyImageAdapter extends BaseAdapter
+public class LazyImageAdapter
+	extends BaseAdapter
 {
-	final LayoutInflater inflater;
+	final LayoutInflater	inflater;
 
-	Activity activity;
-	List<Post> posts;
-	ImageLoader loader;
-	int item_size;
+	Activity				activity;
+	List < Post >			posts;
+	ImageLoader				loader;
+	int						item_size;
 
-	public LazyImageAdapter( Activity a, List<Post> p, int sz )
+	public LazyImageAdapter(Activity a, List < Post > p, int sz)
 	{
 		activity = a;
 		posts = p;
@@ -62,63 +63,66 @@ public class LazyImageAdapter extends BaseAdapter
 		return activity;
 	}
 
-	public void addPosts(ArrayList<Post> newposts)
+	public void addPosts(ArrayList < Post > newposts)
 	{
-		if ( newposts.isEmpty() )
+		if (newposts.isEmpty())
 			return;
 
-		posts.addAll(newposts);
+		posts.addAll( newposts );
 
-		activity.runOnUiThread(
-			new Runnable() {
-				LazyImageAdapter adapter;
+		activity.runOnUiThread( new Runnable()
+		{
+			LazyImageAdapter	adapter;
 
-				Runnable initialize( LazyImageAdapter a )
-				{
-					adapter = a;
-					return this;
-				}
+			Runnable initialize(LazyImageAdapter a)
+			{
+				adapter = a;
+				return this;
+			}
 
-				@Override
-				public void run() {
-					adapter.notifyDataSetChanged();
-				}
-			}.initialize( this )
-		);
+			@Override
+			public void run()
+			{
+				adapter.notifyDataSetChanged();
+			}
+		}.initialize( this ) );
 	}
 
 	@Override
-	public int getCount() {
+	public int getCount()
+	{
 		return posts.size();
 	}
 
 	@Override
-	public Object getItem(int position) {
-		return posts.get(position);
+	public Object getItem(int position)
+	{
+		return posts.get( position );
 	}
 
 	@Override
-	public long getItemId(int position) {
-		return posts.get(position).hashCode();
+	public long getItemId(int position)
+	{
+		return posts.get( position ).hashCode();
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent)
 	{
 		ImageView image = null;
-		if ( convertView != null )
+		if (convertView != null)
 		{
-				image = (ImageView)convertView;
-				image.setScaleType(ScaleType.CENTER);
+			image = (ImageView) convertView;
+			image.setScaleType( ScaleType.CENTER );
 		}
 
-		if ( image == null )
+		if (image == null)
 		{
-			image = (ImageView)inflater.inflate( R.layout.gallery_image, null );
-			image.setLayoutParams(new GridView.LayoutParams(item_size, item_size));
+			image = (ImageView) inflater.inflate( R.layout.gallery_image, null );
+			image.setLayoutParams( new GridView.LayoutParams( item_size, item_size ) );
 		}
 
-		loader.DisplayImage(posts.get(position).preview_url, image);
+		loader.DisplayImage( posts.get( position ).preview_url, image );
 
 		return image;
 	}

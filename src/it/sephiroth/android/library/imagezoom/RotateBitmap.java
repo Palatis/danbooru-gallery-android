@@ -6,20 +6,20 @@ import android.graphics.RectF;
 
 public class RotateBitmap
 {
-	private Bitmap					mBitmap;
-	private int						mRotation;
-	private int						mWidth;
-	private int						mHeight;
-	private int						mBitmapWidth;
-	private int						mBitmapHeight;
+	private Bitmap	mBitmap;
+	private int		mRotation;
+	private int		mWidth;
+	private int		mHeight;
+	private int		mBitmapWidth;
+	private int		mBitmapHeight;
 
-	public RotateBitmap( Bitmap bitmap, int rotation )
+	public RotateBitmap(Bitmap bitmap, int rotation)
 	{
 		mRotation = rotation % 360;
 		setBitmap( bitmap );
 	}
 
-	public void setRotation( int rotation )
+	public void setRotation(int rotation)
 	{
 		mRotation = rotation;
 		invalidate();
@@ -35,11 +35,11 @@ public class RotateBitmap
 		return mBitmap;
 	}
 
-	public void setBitmap( Bitmap bitmap )
+	public void setBitmap(Bitmap bitmap)
 	{
 		mBitmap = bitmap;
 
-		if ( mBitmap != null )
+		if (mBitmap != null)
 		{
 			mBitmapWidth = bitmap.getWidth();
 			mBitmapHeight = bitmap.getHeight();
@@ -58,14 +58,14 @@ public class RotateBitmap
 
 		RectF rect = new RectF( 0, 0, mBitmapWidth, mBitmapHeight );
 		matrix.mapRect( rect );
-		mWidth = (int)rect.width();
-		mHeight = (int)rect.height();
+		mWidth = (int) rect.width();
+		mHeight = (int) rect.height();
 	}
 
 	public Matrix getRotateMatrix()
 	{
 		Matrix matrix = new Matrix();
-		if ( mRotation != 0 )
+		if (mRotation != 0)
 		{
 			int cx = mBitmapWidth / 2;
 			int cy = mBitmapHeight / 2;
@@ -88,7 +88,7 @@ public class RotateBitmap
 
 	public void recycle()
 	{
-		if ( mBitmap != null )
+		if (mBitmap != null)
 		{
 			mBitmap.recycle();
 			mBitmap = null;

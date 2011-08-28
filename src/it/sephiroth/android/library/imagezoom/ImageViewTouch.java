@@ -7,20 +7,21 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.ViewConfiguration;
 
-public class ImageViewTouch extends ImageViewTouchBase
+public class ImageViewTouch
+	extends ImageViewTouchBase
 {
-	static final float					MIN_ZOOM	= 0.7f;
-	static final float					MAX_ZOOM	= 5.0f;
-	protected ScaleGestureDetector		mScaleDetector;
-	protected GestureDetector			mGestureDetector;
-	protected int						mTouchSlop;
-	protected float						mCurrentScaleFactor;
-	protected float						mScaleFactor;
-	protected int						mDoubleTapDirection;
-	protected GestureListener			mGestureListener;
-	protected ScaleListener				mScaleListener;
+	static final float				MIN_ZOOM	= 0.7f;
+	static final float				MAX_ZOOM	= 5.0f;
+	protected ScaleGestureDetector	mScaleDetector;
+	protected GestureDetector		mGestureDetector;
+	protected int					mTouchSlop;
+	protected float					mCurrentScaleFactor;
+	protected float					mScaleFactor;
+	protected int					mDoubleTapDirection;
+	protected GestureListener		mGestureListener;
+	protected ScaleListener			mScaleListener;
 
-	public ImageViewTouch( Context context, AttributeSet attrs )
+	public ImageViewTouch(Context context, AttributeSet attrs)
 	{
 		super( context, attrs );
 	}
@@ -40,21 +41,21 @@ public class ImageViewTouch extends ImageViewTouchBase
 	}
 
 	@Override
-	public void setImageRotateBitmapReset( RotateBitmap bitmap, boolean reset )
+	public void setImageRotateBitmapReset(RotateBitmap bitmap, boolean reset)
 	{
 		super.setImageRotateBitmapReset( bitmap, reset );
 		mScaleFactor = getMaxZoom() / 3;
 	}
 
 	@Override
-	public boolean onTouchEvent( MotionEvent event )
+	public boolean onTouchEvent(MotionEvent event)
 	{
 		mScaleDetector.onTouchEvent( event );
-		if ( !mScaleDetector.isInProgress() )
+		if ( !mScaleDetector.isInProgress())
 			mGestureDetector.onTouchEvent( event );
 
 		int action = event.getAction();
-		switch ( action & MotionEvent.ACTION_MASK )
+		switch (action & MotionEvent.ACTION_MASK)
 		{
 		case MotionEvent.ACTION_DOWN:
 		case MotionEvent.ACTION_POINTER_DOWN:
@@ -62,9 +63,9 @@ public class ImageViewTouch extends ImageViewTouchBase
 			break;
 		case MotionEvent.ACTION_UP:
 		case MotionEvent.ACTION_POINTER_UP:
-			if ( getScale() < 1f )
+			if (getScale() < 1f)
 				zoomTo( 1f, 500 );
-			if ( getScale() > getMaxZoom() )
+			if (getScale() > getMaxZoom())
 				zoomTo( getMaxZoom(), 500 );
 			center( true, true, 500 );
 			break;
@@ -73,18 +74,18 @@ public class ImageViewTouch extends ImageViewTouchBase
 	}
 
 	@Override
-	protected void onZoom( float scale )
+	protected void onZoom(float scale)
 	{
 		super.onZoom( scale );
-		if ( !mScaleDetector.isInProgress() )
+		if ( !mScaleDetector.isInProgress())
 			mCurrentScaleFactor = scale;
 	}
 
-	protected float onDoubleTapPost( float scale, float maxZoom )
+	protected float onDoubleTapPost(float scale, float maxZoom)
 	{
-		if ( mDoubleTapDirection == 1 )
+		if (mDoubleTapDirection == 1)
 		{
-			if ( ( scale + ( mScaleFactor * 2 ) ) <= maxZoom )
+			if ((scale + (mScaleFactor * 2)) <= maxZoom)
 				return scale + mScaleFactor;
 			else
 			{
@@ -99,10 +100,11 @@ public class ImageViewTouch extends ImageViewTouchBase
 		}
 	}
 
-	class GestureListener extends GestureDetector.SimpleOnGestureListener
+	class GestureListener
+		extends GestureDetector.SimpleOnGestureListener
 	{
 		@Override
-		public boolean onDoubleTap( MotionEvent e )
+		public boolean onDoubleTap(MotionEvent e)
 		{
 			float scale = getScale();
 			float targetScale = scale;
@@ -115,13 +117,13 @@ public class ImageViewTouch extends ImageViewTouchBase
 		}
 
 		@Override
-		public boolean onScroll( MotionEvent e1, MotionEvent e2, float distanceX, float distanceY )
+		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY)
 		{
-			if ( e1 == null || e2 == null )
+			if (e1 == null || e2 == null)
 				return false;
-			if ( e1.getPointerCount() > 1 || e2.getPointerCount() > 1 )
+			if (e1.getPointerCount() > 1 || e2.getPointerCount() > 1)
 				return false;
-			if ( mScaleDetector.isInProgress() )
+			if (mScaleDetector.isInProgress())
 				return false;
 
 			scrollBy( -distanceX, -distanceY );
@@ -130,11 +132,11 @@ public class ImageViewTouch extends ImageViewTouchBase
 		}
 
 		@Override
-		public boolean onFling( MotionEvent e1, MotionEvent e2, float velocityX, float velocityY )
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
 		{
-			if ( e1.getPointerCount() > 1 || e2.getPointerCount() > 1 )
+			if (e1.getPointerCount() > 1 || e2.getPointerCount() > 1)
 				return false;
-			if ( mScaleDetector.isInProgress() )
+			if (mScaleDetector.isInProgress())
 				return false;
 
 			scrollBy( velocityX / 3, velocityY / 3, 500 );
@@ -143,10 +145,11 @@ public class ImageViewTouch extends ImageViewTouchBase
 		}
 	}
 
-	class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener
+	class ScaleListener
+		extends ScaleGestureDetector.SimpleOnScaleGestureListener
 	{
 		@Override
-		public boolean onScale( ScaleGestureDetector detector )
+		public boolean onScale(ScaleGestureDetector detector)
 		{
 			mCurrentScaleFactor = Math.min( getMaxZoom() * MAX_ZOOM, Math.max( mCurrentScaleFactor * detector.getScaleFactor(), MIN_ZOOM ) );
 			zoomTo( mCurrentScaleFactor, detector.getFocusX(), detector.getFocusY() );

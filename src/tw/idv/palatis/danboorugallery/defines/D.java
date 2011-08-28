@@ -35,117 +35,119 @@ import android.widget.Toast;
 
 public class D
 {
-	public static final String LOGTAG = "DanbooruGallery";
-	public static final String CACHEDIR = "DanbooruGallery/.cache";
-	public static final String SAVEDIR = "DanbooruGallery";
+	public static final String	LOGTAG					= "DanbooruGallery";
+	public static final String	CACHEDIR				= "DanbooruGallery/.cache";
+	public static final String	SAVEDIR					= "DanbooruGallery";
 
-	public static final String ERRORLOG_DIRECTORY = "DanbooruGallery";
-	public static final String ERRORLOG_PREFIX = "Error";
-	public static final String ERRORLOG_SUFFIX = ".txt";
+	public static final String	ERRORLOG_DIRECTORY		= "DanbooruGallery";
+	public static final String	ERRORLOG_PREFIX			= "Error";
+	public static final String	ERRORLOG_SUFFIX			= ".txt";
 
-	public static final String SHAREDPREFERENCES_NAME = "DanbooruGallery";
-	public static final int PREFERENCE_VERSION = 1;
+	public static final String	SHAREDPREFERENCES_NAME	= "DanbooruGallery";
+	public static final int		PREFERENCE_VERSION		= 1;
 
-	public static final String URL_POST = "/post/index.json?page=%1$s&tags=%2$s&limit=%3$s";
-	public static final String URL_TAGS = "/tag/index.json?order=count&name=*%1$s*&limit=100";
+	public static final String	URL_POST				= "/post/index.json?page=%1$s&tags=%2$s&limit=%3$s";
+	public static final String	URL_TAGS				= "/tag/index.json?order=count&name=*%1$s*&limit=100";
+
 	// public static final String URL_SEARCH = "";
 
-	public static void makeToastOnUiThread( Activity activity, int resourceId, int length )
+	public static void makeToastOnUiThread(Activity activity, int resourceId, int length)
 	{
-		activity.runOnUiThread(
-			new Runnable() {
-				Activity activity;
-				int resourceId;
-				int duration;
+		activity.runOnUiThread( new Runnable()
+		{
+			Activity	activity;
+			int			resourceId;
+			int			duration;
 
-				public Runnable initialize( Activity a, int r, int d )
-				{
-					activity = a;
-					resourceId = r;
-					duration = d;
-					return this;
-				}
+			public Runnable initialize(Activity a, int r, int d)
+			{
+				activity = a;
+				resourceId = r;
+				duration = d;
+				return this;
+			}
 
-				@Override
-				public void run() {
-					Toast.makeText(activity, resourceId, duration).show();
-				}
-			}.initialize(activity, resourceId, length)
-		);
+			@Override
+			public void run()
+			{
+				Toast.makeText( activity, resourceId, duration ).show();
+			}
+		}.initialize( activity, resourceId, length ) );
 	}
 
-	public static void makeToastOnUiThread( Activity activity, String message, int length )
+	public static void makeToastOnUiThread(Activity activity, String message, int length)
 	{
-		activity.runOnUiThread(
-			new Runnable() {
-				Activity activity;
-				String message;
-				int duration;
+		activity.runOnUiThread( new Runnable()
+		{
+			Activity	activity;
+			String		message;
+			int			duration;
 
-				public Runnable initialize( Activity a, String m, int d )
-				{
-					activity = a;
-					message = m;
-					duration = d;
-					return this;
-				}
+			public Runnable initialize(Activity a, String m, int d)
+			{
+				activity = a;
+				message = m;
+				duration = d;
+				return this;
+			}
 
-				@Override
-				public void run() {
-					Toast.makeText(activity, message, duration).show();
-				}
-			}.initialize(activity, message, length)
-		);
+			@Override
+			public void run()
+			{
+				Toast.makeText( activity, message, duration ).show();
+			}
+		}.initialize( activity, message, length ) );
 	}
 
 	private static int computeSampleSize(BitmapFactory.Options options, int minSideLength, int maxNumOfPixels)
 	{
-	    int initialSize = computeInitialSampleSize(options, minSideLength, maxNumOfPixels);
+		int initialSize = computeInitialSampleSize( options, minSideLength, maxNumOfPixels );
 
-	    int roundedSize;
-	    if (initialSize <= 8)
-	    {
-	        roundedSize = 1;
-	        while (roundedSize < initialSize)
+		int roundedSize;
+		if (initialSize <= 8)
+		{
+			roundedSize = 1;
+			while (roundedSize < initialSize)
 				roundedSize <<= 1;
-	    } else
+		}
+		else
 			roundedSize = (initialSize + 7) / 8 * 8;
 
-	    return roundedSize;
+		return roundedSize;
 	}
 
 	private static int computeInitialSampleSize(BitmapFactory.Options options, int minSideLength, int maxNumOfPixels)
 	{
-	    double w = options.outWidth;
-	    double h = options.outHeight;
+		double w = options.outWidth;
+		double h = options.outHeight;
 
-	    int lowerBound = (maxNumOfPixels == -1) ? 1 :
-	            (int) Math.ceil(Math.sqrt(w * h / maxNumOfPixels));
-	    int upperBound = (minSideLength == -1) ? 128 :
-	            (int) Math.min(Math.floor(w / minSideLength), Math.floor(h / minSideLength));
+		int lowerBound = (maxNumOfPixels == -1) ? 1 : (int) Math.ceil( Math.sqrt( w * h / maxNumOfPixels ) );
+		int upperBound = (minSideLength == -1) ? 128 : (int) Math.min( Math.floor( w / minSideLength ), Math.floor( h / minSideLength ) );
 
-	    if (upperBound < lowerBound)
-	        return lowerBound;
+		if (upperBound < lowerBound)
+			return lowerBound;
 
-	    if ((maxNumOfPixels == -1) && (minSideLength == -1))
-	        return 1;
-	    else if (minSideLength == -1)
-	        return lowerBound;
-	    else
-	        return upperBound;
+		if ((maxNumOfPixels == -1) && (minSideLength == -1))
+			return 1;
+		else if (minSideLength == -1)
+			return lowerBound;
+		else
+			return upperBound;
 	}
 
 	public static void CopyStream(InputStream is, OutputStream os)
 	{
 		final int buffer_size = 1024;
 
-		try {
+		try
+		{
 			byte[] bytes = new byte[buffer_size];
-			for (;;) {
-				int count = is.read(bytes, 0, buffer_size);
+			for (;;)
+			{
+				int count = is.read( bytes, 0, buffer_size );
 				if (count == -1)
 					break;
-				os.write(bytes, 0, count);
+				os.write( bytes, 0, count );
 			}
 		}
 		catch (Exception ex)
@@ -154,7 +156,7 @@ public class D
 		}
 	}
 
-	public static Bitmap getBitmapFromFile( File file )
+	public static Bitmap getBitmapFromFile(File file)
 	{
 		try
 		{
@@ -164,18 +166,19 @@ public class D
 			opt.inJustDecodeBounds = true;
 			BitmapFactory.decodeFile( file.getAbsolutePath(), opt );
 
-			opt.inSampleSize = computeSampleSize(opt, -1, 2048 * 2048);
+			opt.inSampleSize = computeSampleSize( opt, -1, 2048 * 2048 );
 			opt.inJustDecodeBounds = false;
 			opt.inPurgeable = true;
 
-			// decodeFile() gets OutOfMemoryError very often, try decodeFileDescriptor()
+			// decodeFile() gets OutOfMemoryError very often, try
+			// decodeFileDescriptor()
 			// return BitmapFactory.decodeFile( file.getAbsolutePath(), opt );
-			FileInputStream input = new FileInputStream(file);
+			FileInputStream input = new FileInputStream( file );
 			return BitmapFactory.decodeFileDescriptor( input.getFD(), null, opt );
 		}
 		catch (OutOfMemoryError ex)
 		{
-			Log.d(D.LOGTAG, "decode failed, OutOfMemory occured.");
+			Log.d( D.LOGTAG, "decode failed, OutOfMemory occured." );
 		}
 		catch (FileNotFoundException ex)
 		{
