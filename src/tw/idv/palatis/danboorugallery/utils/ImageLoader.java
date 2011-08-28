@@ -233,7 +233,10 @@ public class ImageLoader
 
 						Bitmap bmp = getBitmapDisk( photoToLoad.url );
 						if (bmp == null)
+						{
 							webloader.queuePhoto( photoToLoad );
+							continue;
+						}
 
 						// check if we still want the bitmap
 						String tag = imageViews.get( photoToLoad.imageView );
