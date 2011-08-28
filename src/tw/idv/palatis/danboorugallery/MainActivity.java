@@ -121,8 +121,11 @@ public class MainActivity
 			public boolean onItemLongClick(AdapterView < ? > parent, View view, final int position, long id)
 			{
 				Builder builder = new AlertDialog.Builder( MainActivity.this );
-				builder.setTitle( "Download?" );
-				builder.setMessage( "Do you want to download this image?" );
+				builder.setTitle( R.string.main_download_dialog_title );
+				ImageView image = (ImageView) view;
+				ImageView download_preview = new ImageView(MainActivity.this);
+				download_preview.setImageDrawable( image.getDrawable() );
+				builder.setView( download_preview );
 				builder.setPositiveButton( android.R.string.yes, new OnClickListener()
 				{
 					@Override
@@ -130,7 +133,7 @@ public class MainActivity
 					{
 						Post post = posts.get( position );
 						String host[] = hosts.get( preferences.getInt( "selected_host", 0 ) );
-						String title = "!?!?!?";
+						String title = post.tags;
 						if (host != null)
 							title = String.format( "%1$s - %2$s", host[Hosts.HOST_NAME], post.tags );
 
