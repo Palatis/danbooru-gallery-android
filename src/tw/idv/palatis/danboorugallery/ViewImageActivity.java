@@ -59,7 +59,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.ScaleAnimation;
 import android.widget.Toast;
 import android.widget.ImageView.ScaleType;
 
@@ -98,6 +99,56 @@ public class ViewImageActivity extends Activity
 			post.created_at = new Date(intent.getLongExtra("post.created_at", 0));
 
 		image = (ImageViewTouch)findViewById( R.id.view_image_image );
+
+		if ( savedInstanceState != null )
+		{
+			final float old_scale = savedInstanceState.getFloat("image_scale");
+			final float old_center_x = savedInstanceState.getFloat("image_center_x");
+			final float old_center_y = savedInstanceState.getFloat("image_center_y");
+			final float old_width = savedInstanceState.getFloat("image_width");
+
+			Log.d(D.LOGTAG, "old scale: " + old_scale + ", old center: (" + old_center_x + ", " + old_center_y + ")");
+
+			image.post(
+				new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						loadImage();
+
+						if ( old_scale > 0.0f )
+						{
+							float target_scale = old_scale / image.getBaseScale();
+							image.zoomTo( Math.min( image.getMaxZoom(), Math.max( 1.0f, target_scale) ) );
+						}
+						else
+							image.zoomTo( 1.0f );
+
+						PointF from_pt = image.getViewportCenter();
+						RectF now_rect = image.getBitmapRect();
+						image.scrollBy( from_pt.x - old_center_x * now_rect.width(), from_pt.y - old_center_y * now_rect.height() );
+
+						image.center( true, true );
+
+						// do some animations...
+
+						RectF new_rect = image.getBitmapRect();
+						float factor = old_width / new_rect.width();
+						Animation anim = new ScaleAnimation(factor, 1.0f, factor, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+						anim.setInterpolator(new OvershootInterpolator(3.0f));
+						anim.setDuration(400);
+						image.clearAnimation();
+						image.startAnimation(anim);
+					}
+				}
+			);
+		} else
+			loadImage();
+	}
+
+	private void loadImage()
+	{
 		File file = filecache.getFile(post.file_url);
 		if ( file.exists() )
 			bitmap = D.getBitmapFromFile(file);
@@ -114,41 +165,7 @@ public class ViewImageActivity extends Activity
 			bitmap = D.getBitmapFromFile( filecache.getFile(post.preview_url) );
 			image.setScaleType(ScaleType.FIT_CENTER);
 		}
-
 		image.setImageBitmapReset( bitmap, true );
-		if ( savedInstanceState != null )
-		{
-			final float scale = savedInstanceState.getFloat("image_scale");
-			final float center_x = savedInstanceState.getFloat("image_center_x");
-			final float center_y = savedInstanceState.getFloat("image_center_y");
-
-			Log.d(D.LOGTAG, "old scale: " + scale + ", old center: (" + center_x + ", " + center_y + ")");
-
-			image.post(
-				new Runnable()
-				{
-					@Override
-					public void run()
-					{
-						if ( scale > 0.0f )
-						{
-							float target_scale = scale / image.getBaseScale();
-							image.zoomTo( Math.min( image.getMaxZoom(), Math.max( 1.0f, target_scale) ) );
-						}
-						else
-							image.zoomTo( 1.0f );
-
-						PointF from_pt = image.getViewportCenter();
-						RectF now_rect = image.getBitmapRect();
-						image.scrollBy( from_pt.x - center_x * now_rect.width(), from_pt.y - center_y * now_rect.height() );
-
-						image.center( true, true );
-					}
-				}
-			);
-			Animation anim = AnimationUtils.loadAnimation(this, R.anim.zoom_enter_lite);
-			image.startAnimation( anim );
-		}
 	}
 
 	@Override
@@ -183,6 +200,8 @@ public class ViewImageActivity extends Activity
 				outState.putFloat("image_scale", image.getScale() * image.getBaseScale());
 			outState.putFloat("image_center_x", pt.x / rect.width());
 			outState.putFloat("image_center_y", pt.y / rect.height());
+			outState.putFloat("image_width", rect.width());
+			outState.putFloat("image_height", rect.height());
 		}
 		catch ( NullPointerException ex )
 		{
