@@ -45,7 +45,6 @@ import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Display;
@@ -114,9 +113,6 @@ public class MainActivity extends Activity
 			fetcher = new LazyPostFetcher();
 		}
 
-		Log.d(D.LOGTAG, getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath());
-		Log.d(D.LOGTAG, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath());
-
 		GridView grid = (GridView)findViewById( R.id.gallery_grid );
 		grid.setOnItemLongClickListener(
 			new OnItemLongClickListener()
@@ -145,6 +141,9 @@ public class MainActivity extends Activity
 									filename = Uri.encode(uri.toString());
 
 								File dest = new File(android.os.Environment.getExternalStorageDirectory(), D.SAVEDIR + "/" + host[ Hosts.HOST_NAME ] + "/" + filename);
+								if ( !dest.getParentFile().exists() )
+									dest.getParentFile().mkdirs();
+
 								DownloadManager.Request request = new DownloadManager.Request(uri);
 								request.setTitle(title);
 								request.setDestinationUri(Uri.fromFile(dest));
