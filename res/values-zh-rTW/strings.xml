@@ -96,7 +96,7 @@
 	<!-- searchable -->
 	<string name="search_hint">搜尋標籤</string>
 	<string name="search_settings_description">透過 Danbooru Gallery 搜尋標籤</string>
-	<string name="search_suggestion_description">（%1$s 個貼文）</string>
+	<string name="search_suggestion_description">（%1$s 個貼文，關鍵字：%2$s）</string>
 
 	<!-- translators, add your language and name below. -->
 	<!-- for example: -->

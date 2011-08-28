@@ -7,6 +7,17 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +35,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.util.Log;
 
 public class TagProvider extends ContentProvider
 {
@@ -121,6 +133,55 @@ public class TagProvider extends ContentProvider
 		return null;
 	}
 
+	static private class ResultSet
+	{
+		public int count;
+		public String name;
+		public String keywords;
+
+		ResultSet(JSONObject obj)
+		{
+			count = obj.optInt("count");
+			name = obj.optString("name");
+			keywords = "";
+		}
+
+		public static class CompareKeywords implements Comparator<ResultSet>
+		{
+			@Override
+			public int compare(ResultSet object1, ResultSet object2)
+			{
+				// we want ones with more keywords in front
+				return object2.keywords.split(",").length - object1.keywords.split(",").length;
+			}
+		}
+
+		public static class CompareCount implements Comparator<ResultSet>
+		{
+			@Override
+			public int compare(ResultSet object1, ResultSet object2)
+			{
+				// we want descending order
+				return object2.count - object1.count;
+			}
+		}
+
+		public static class CompareName implements Comparator<ResultSet>
+		{
+			@Override
+			public int compare(ResultSet object1, ResultSet object2)
+			{
+				return object1.name.compareTo(object2.name);
+			}
+		}
+
+		@Override
+		public String toString()
+		{
+			return name + " - (" + count + ", " + keywords + ")";
+		}
+	}
+
 	Cursor getSuggestions(String query)
 	{
 		try
@@ -134,22 +195,78 @@ public class TagProvider extends ContentProvider
 			else
 				host = hosts.get(selected_host)[ Hosts.HOST_URL ];
 
-			// get data from network...
 			char buffer[] = new char[8192];
-			URL url = new URL(String.format(host + D.URL_TAGS, query));
-			Reader input = new BufferedReader( new InputStreamReader( url.openStream(), "UTF-8" ) );
-			Writer output = new StringWriter();
+			String[] keywords = query.split("\\+");
+			SortedSet<String> keyword_set = new TreeSet<String>(Arrays.asList(keywords));
+			List<ResultSet> allresults = new ArrayList<ResultSet>();
 
-			int count = 0;
-			while ((count = input.read(buffer)) > 0)
-				output.write(buffer, 0, count);
-			buffer = null; // indicates that the GC shall recover these 8192 bytes
+			keywords = keyword_set.toArray(new String[] {});
+			keyword_set = null;
 
-			// get the JSONArray into an MatrixCursor
-			JSONArray array = new JSONArray( output.toString() );
-			int length = array.length();
+			for (String keyword: keywords)
+			{
+				// trim leading and trailing whitespace, then replace spaces with underscores.
+				// because typing underscore with soft-keyboard is a pain in the ass...
+				keyword = keyword.trim().replace(' ', '_');
+
+				// get data from network...
+				URL url = new URL(String.format(host + D.URL_TAGS, keyword));
+				Reader input = new BufferedReader( new InputStreamReader( url.openStream(), "UTF-8" ) );
+				Writer output = new StringWriter();
+
+				int count = 0;
+				while ((count = input.read(buffer)) > 0)
+					output.write(buffer, 0, count);
+
+				// push the result into allresults
+				JSONArray array = new JSONArray( output.toString() );
+				int length = array.length();
+				for ( int i = 0;i < length; ++i )
+					allresults.add(new ResultSet(array.getJSONObject(i)));
+			}
+
+			if ( allresults.size() > 0 )
+			{
+				// merge results
+				Map<String, ResultSet> map = new HashMap<String, ResultSet>();
+				for (ResultSet result: allresults)
+					map.put(result.name, result);
+
+				// dump it back to an array
+				allresults.clear();
+				Set<Entry<String, ResultSet>> set = map.entrySet();
+				for (Entry<String, ResultSet> entry : set)
+					allresults.add(entry.getValue());
+
+				// adjust keywords
+				for (String keyword: keywords)
+					for (ResultSet result: allresults)
+						if ( result.name.contains(keyword) )
+							result.keywords += ", " + keyword;
+
+				// get rid of leading ", "
+				for (ResultSet result: allresults)
+					result.keywords = result.keywords.substring(2);
+
+				// the following 3 sort are just to garentee we have the correct
+				// order:
+				//   - one with more keywords in front
+				//   - if keyword counts are same, one with more posts in front
+				//   - if post counts are same, sort by lexicographically
+
+				// sort by name
+				Collections.sort(allresults, new ResultSet.CompareName());
+				// sort by post count
+				Collections.sort(allresults, new ResultSet.CompareCount());
+				// sort by keyword count
+				Collections.sort(allresults, new ResultSet.CompareKeywords());
+			}
+
+			// get the result ArrayList into a MatrixCursor
+			int length = allresults.size();
 			MatrixCursor cursor = new MatrixCursor(
-				new String[] {
+				new String[]
+				{
 					BaseColumns._ID,
 					SearchManager.SUGGEST_COLUMN_TEXT_1,
 					SearchManager.SUGGEST_COLUMN_TEXT_2,
@@ -158,31 +275,30 @@ public class TagProvider extends ContentProvider
 				length
 			);
 
-			for (int i = 0;i < length;++i)
-			{
-				JSONObject obj = array.optJSONObject(i);
+			for (ResultSet entry: allresults)
 				cursor.addRow(
-					new Object[] {
-						i,
-						obj.optString("name"),
+					new Object[]
+					{
+						entry.name.hashCode(),
+						entry.name,
 						String.format(
 							getContext().getString( R.string.search_suggestion_description ),
-							obj.optInt("count")
+							entry.count,
+							entry.keywords
 						),
-						obj.optString("name"),
+						entry.name,
 					}
 				);
-			}
 
 			return cursor;
 		}
 		catch (IOException ex)
 		{
-
+			Log.d(D.LOGTAG, Log.getStackTraceString(ex));
 		}
-		catch (JSONException e)
+		catch (JSONException ex)
 		{
-
+			Log.d(D.LOGTAG, Log.getStackTraceString(ex));
 		}
 		return null;
 	}

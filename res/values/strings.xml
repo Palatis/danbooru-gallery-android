@@ -96,7 +96,7 @@
     <!-- searchable -->
     <string name="search_hint">Search tags</string>
     <string name="search_settings_description">Search Danbooru Gallery for tags</string>
-    <string name="search_suggestion_description">(%1$s posts)</string>
+    <string name="search_suggestion_description">(%1$s posts, from keyword(s): %2$s)</string>
 
 	 <!-- translators, add your language and name below. -->
 	 <!-- for example: -->
