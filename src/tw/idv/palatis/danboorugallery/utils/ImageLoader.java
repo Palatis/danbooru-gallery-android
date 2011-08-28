@@ -105,9 +105,6 @@ public class ImageLoader
 	// from Memory cache
 	private Bitmap getBitmapCache(String url)
 	{
-		Bitmap bitmap = memCache.get( url );
-		if (bitmap != null)
-			memCache.put( url, bitmap );
 		return memCache.get( url );
 	}
 
