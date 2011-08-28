@@ -323,13 +323,13 @@ public class ViewImageActivity extends Activity
 		{
 			if ( image.getScale() != 1.0f )
 			{
-				image.zoomTo( 1.0f, 500 );
+				image.zoomTo( 1.0f, 400 );
 				return;
 			}
 		}
 		catch ( NullPointerException ex )
 		{
-			// just quit
+			// no picture just quit
 		}
 
 		finish();
