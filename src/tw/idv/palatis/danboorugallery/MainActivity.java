@@ -20,6 +20,7 @@ package tw.idv.palatis.danboorugallery;
  * along with Danbooru Gallery.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ import tw.idv.palatis.danboorugallery.utils.LazyImageAdapter;
 import tw.idv.palatis.danboorugallery.utils.LazyPostFetcher;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.app.SearchManager;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -43,6 +45,7 @@ import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.InputType;
 import android.util.Log;
 import android.view.Display;
@@ -62,6 +65,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView.ScaleType;
 
 public class MainActivity extends Activity
@@ -69,6 +73,7 @@ public class MainActivity extends Activity
 	LazyImageAdapter adapter;
 	LazyPostFetcher fetcher;
 	SharedPreferences preferences;
+	DownloadManager downloader;
 
 	List<Post> posts;
 	Hosts hosts;
@@ -86,6 +91,10 @@ public class MainActivity extends Activity
 		preferences = getSharedPreferences(D.SHAREDPREFERENCES_NAME, MODE_PRIVATE);
 		loadPreferences();
 
+		// get the download manager
+		downloader = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+
+		// calculate screen size
 		Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 		int gallery_item_size = Math.min(display.getWidth() / 3, display.getHeight() / 3);
 		int numcols = display.getWidth() / gallery_item_size;
@@ -105,7 +114,51 @@ public class MainActivity extends Activity
 			fetcher = new LazyPostFetcher();
 		}
 
+		Log.d(D.LOGTAG, getExternalFilesDir(Environment.DIRECTORY_PICTURES).getAbsolutePath());
+		Log.d(D.LOGTAG, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath());
+
 		GridView grid = (GridView)findViewById( R.id.gallery_grid );
+		grid.setOnItemLongClickListener(
+			new OnItemLongClickListener()
+			{
+				@Override
+				public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id)
+				{
+					Builder builder = new AlertDialog.Builder(MainActivity.this);
+					builder.setTitle("Download?");
+					builder.setMessage("Do you want to download this image?");
+					builder.setPositiveButton(android.R.string.yes,
+						new OnClickListener()
+						{
+							@Override
+							public void onClick(DialogInterface dialog, int which)
+							{
+								Post post = posts.get(position);
+								String host[] = hosts.get( preferences.getInt("selected_host", 0) );
+								String title = "!?!?!?";
+								if ( host != null )
+									title = String.format("%1$s - %2$s", host[ Hosts.HOST_NAME ], post.tags);
+
+								Uri uri = Uri.parse(post.file_url);
+								String filename = uri.getLastPathSegment();
+								if ( filename == null )
+									filename = Uri.encode(uri.toString());
+
+								File dest = new File(android.os.Environment.getExternalStorageDirectory(), D.SAVEDIR + "/" + host[ Hosts.HOST_NAME ] + "/" + filename);
+								DownloadManager.Request request = new DownloadManager.Request(uri);
+								request.setTitle(title);
+								request.setDestinationUri(Uri.fromFile(dest));
+								downloader.enqueue(request);
+							}
+						}
+					);
+					builder.setNegativeButton(android.R.string.no, null);
+					builder.create().show();
+					return true;
+				}
+
+			}
+		);
 		grid.setNumColumns(numcols);
 
 		adapter = new LazyImageAdapter( this, posts, gallery_item_size );
@@ -357,7 +410,8 @@ public class MainActivity extends Activity
 	}
 
 	@Override
-	public Object onRetainNonConfigurationInstance() {
+	public Object onRetainNonConfigurationInstance()
+	{
 		return new ConfigurationEnclosure( posts, fetcher.getURLEnclosure() );
 	}
 
