@@ -217,7 +217,7 @@ public class MainActivity
 	@Override
 	public boolean onSearchRequested()
 	{
-		startSearch( fetcher.getURLEnclosure().tags, false, null, false );
+		startSearch( fetcher.getURLEnclosure().tags, true, null, false );
 		return true;
 	}
 
@@ -418,6 +418,8 @@ public class MainActivity
 			String host[] = hosts.get( preferences.getInt( "selected_host", 0 ) );
 			intent.putExtra( "host_name", host[Hosts.HOST_NAME] );
 			intent.putExtra( "host_url", host[Hosts.HOST_URL] );
+
+			intent.putExtra( "page_tags", fetcher.getURLEnclosure().tags );
 
 			startActivityForResult( intent, REQUEST_TAGCLICKED );
 			overridePendingTransition( R.anim.zoom_up, R.anim.zoom_exit );
