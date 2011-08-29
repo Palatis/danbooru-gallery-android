@@ -196,6 +196,13 @@ public class LazyPostFetcher
 							filtered.add( post );
 						else
 							++skipped_posts_count;
+
+					if ( posts.size() == 0 )
+					{
+						fetcher.noMorePosts();
+						break;
+					}
+
 					adapter.addPosts( filtered );
 					fetched_posts_count += filtered.size();
 
