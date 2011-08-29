@@ -70,13 +70,15 @@ import android.widget.ImageView.ScaleType;
 public class MainActivity
 	extends Activity
 {
-	LazyImageAdapter	adapter;
-	LazyPostFetcher		fetcher;
-	SharedPreferences	preferences;
-	DownloadManager		downloader;
+	static public final int	REQUEST_TAGCLICKED	= 0x01;
 
-	List < Post >		posts;
-	Hosts				hosts;
+	LazyImageAdapter		adapter;
+	LazyPostFetcher			fetcher;
+	SharedPreferences		preferences;
+	DownloadManager			downloader;
+
+	List < Post >			posts;
+	Hosts					hosts;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -123,7 +125,7 @@ public class MainActivity
 				Builder builder = new AlertDialog.Builder( MainActivity.this );
 				builder.setTitle( R.string.main_download_dialog_title );
 				ImageView image = (ImageView) view;
-				ImageView download_preview = new ImageView(MainActivity.this);
+				ImageView download_preview = new ImageView( MainActivity.this );
 				download_preview.setImageDrawable( image.getDrawable() );
 				builder.setView( download_preview );
 				builder.setPositiveButton( android.R.string.yes, new OnClickListener()
@@ -163,7 +165,7 @@ public class MainActivity
 		adapter = new LazyImageAdapter( this, posts, gallery_item_size );
 		grid.setAdapter( adapter );
 		grid.setOnScrollListener( new GalleryOnScrollListener( fetcher, adapter, preferences.getInt( "page_limit", 16 ) ) );
-		grid.setOnItemClickListener( new GalleryOnItemClickListener( posts, this ) );
+		grid.setOnItemClickListener( new GalleryOnItemClickListener() );
 
 		if (conf == null)
 			handleIntent( getIntent() );
@@ -400,19 +402,10 @@ public class MainActivity
 	private class GalleryOnItemClickListener
 		implements OnItemClickListener
 	{
-		List < Post >	posts;
-		Activity		activity;
-
-		public GalleryOnItemClickListener(List < Post > p, Activity a)
-		{
-			posts = p;
-			activity = a;
-		}
-
 		@Override
 		public void onItemClick(AdapterView < ? > parent, View view, int position, long id)
 		{
-			Intent intent = new Intent( activity, ViewImageActivity.class );
+			Intent intent = new Intent( MainActivity.this, ViewImageActivity.class );
 			intent.putExtra( "post.preview_url", posts.get( position ).preview_url );
 			intent.putExtra( "post.file_url", posts.get( position ).file_url );
 			intent.putExtra( "post.author", posts.get( position ).author );
@@ -427,8 +420,20 @@ public class MainActivity
 			intent.putExtra( "host_name", host[Hosts.HOST_NAME] );
 			intent.putExtra( "host_url", host[Hosts.HOST_URL] );
 
-			activity.startActivity( intent );
-			activity.overridePendingTransition( R.anim.zoom_up, R.anim.zoom_exit );
+			startActivityForResult( intent, REQUEST_TAGCLICKED );
+			overridePendingTransition( R.anim.zoom_up, R.anim.zoom_exit );
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		switch (requestCode)
+		{
+		case REQUEST_TAGCLICKED:
+			if (resultCode == RESULT_OK)
+				handleIntent( data );
+			break;
 		}
 	}
 

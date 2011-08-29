@@ -42,6 +42,7 @@ import tw.idv.palatis.danboorugallery.utils.FileCache;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -55,13 +56,21 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.AsyncTask.Status;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.OvershootInterpolator;
 import android.view.animation.ScaleAnimation;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView.ScaleType;
 
 public class ViewImageActivity
@@ -132,7 +141,6 @@ public class ViewImageActivity
 					image.center( true, true );
 
 					// do some animations...
-
 					RectF new_rect = image.getBitmapRect();
 					float factor = old_width / new_rect.width();
 					Animation anim = new ScaleAnimation( factor, 1.0f, factor, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f );
@@ -225,7 +233,61 @@ public class ViewImageActivity
 		{
 		case R.id.view_image_menu_info:
 			Builder builder = new AlertDialog.Builder( this );
-			builder.setMessage( String.format( getString( R.string.view_image_pic_info ), post.tags, post.width, post.height, post.author, post.created_at == null ? "" : post.created_at.toLocaleString() ) );
+			builder.setTitle( R.string.view_image_menu_info );
+			builder.setMessage( String.format( getString( R.string.view_image_pic_info ), post.width, post.height, post.author, post.created_at == null ? "" : post.created_at.toLocaleString() ) );
+			ListView listview = new ListView( ViewImageActivity.this );
+			listview.setAdapter( new BaseAdapter()
+			{
+				String	tags[]	= post.tags.split( " " );
+
+				@Override
+				public int getCount()
+				{
+					return tags.length;
+				}
+
+				@Override
+				public Object getItem(int position)
+				{
+					return tags[position];
+				}
+
+				@Override
+				public long getItemId(int position)
+				{
+					return tags[position].hashCode();
+				}
+
+				@Override
+				public View getView(int position, View convertView, ViewGroup parent)
+				{
+					TextView text = null;
+					if (convertView != null)
+						text = (TextView) convertView;
+
+					if (text == null)
+						text = new TextView( ViewImageActivity.this );
+
+					text.setText( tags[position] );
+					text.setLayoutParams( new ListView.LayoutParams( ListView.LayoutParams.MATCH_PARENT, ListView.LayoutParams.WRAP_CONTENT ) );
+					text.setGravity( Gravity.CENTER_HORIZONTAL );
+					text.setPadding( 4, 4, 4, 4 );
+					return text;
+				}
+			} );
+			listview.setOnItemClickListener( new OnItemClickListener()
+			{
+				@Override
+				public void onItemClick(AdapterView < ? > parent, View view, int position, long id)
+				{
+					TextView text = (TextView) view;
+					Intent intent = new Intent( Intent.ACTION_SEARCH );
+					intent.putExtra( SearchManager.QUERY, text.getText() );
+					setResult( RESULT_OK, intent );
+					finish();
+				}
+			} );
+			builder.setView( listview );
 			builder.setPositiveButton( android.R.string.ok, null );
 			builder.create().show();
 			break;

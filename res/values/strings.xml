@@ -44,7 +44,7 @@
 	 <string name="main_goto_page_dialog_title">Go to page...</string>
 
     <!-- View Image Activity -->
-    <string name="view_image_pic_info">Tags: %1$s\nSize: %2$dx%3$d\nAuthor: %4$s\nCreated At: %5$s</string>
+    <string name="view_image_pic_info">Size: %1$dx%2$d\nAuthor: %3$s\nCreated At:\n%4$s\nTags:</string>
     <string name="view_image_file_saved">File saved to:\n%1$s</string>
     <string name="view_image_download_failed">Download failed!</string>
     <string name="view_image_file_save_failed">Failed to save file.</string>
