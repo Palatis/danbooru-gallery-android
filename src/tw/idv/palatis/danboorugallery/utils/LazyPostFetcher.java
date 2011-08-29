@@ -199,7 +199,7 @@ public class LazyPostFetcher
 					adapter.addPosts( filtered );
 					fetched_posts_count += filtered.size();
 
-					Log.d( D.LOGTAG, "fetched + skipped / total: " + fetched_posts_count + " + " + skipped_posts_count + " / " + fetched_posts_count + skipped_posts_count );
+					Log.d( D.LOGTAG, "fetched + skipped / total: " + fetched_posts_count + " + " + skipped_posts_count + " / " + (fetched_posts_count + skipped_posts_count) );
 					++fetcher.enclosure.page;
 				}
 
