@@ -12,6 +12,7 @@ import org.json.JSONObject;
  * @author palatis
  */
 public class Tag
+	implements Comparable < Tag >
 {
 	int		id;
 	int		type;
@@ -30,5 +31,11 @@ public class Tag
 		count = json.optInt( "count" );
 		ambiguous = json.optBoolean( "ambiguous" );
 		name = json.optString( "name" );
+	}
+
+	@Override
+	public int compareTo(Tag another)
+	{
+		return name.compareTo( another.name );
 	}
 }
