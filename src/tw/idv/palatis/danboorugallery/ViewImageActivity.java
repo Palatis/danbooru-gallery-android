@@ -47,10 +47,10 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaScannerConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -79,10 +79,10 @@ public class ViewImageActivity
 	FileCache			filecache;
 	Post				post;
 	AsyncImageLoader	loader;
-	Bitmap				bitmap;
 	ImageViewTouch		image;
 
 	String				host[];
+	String				page_tags;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -109,6 +109,9 @@ public class ViewImageActivity
 			post.created_at = new Date( intent.getLongExtra( "post.created_at", 0 ) );
 
 		image = (ImageViewTouch) findViewById( R.id.view_image_image );
+		loader = (AsyncImageLoader) getLastNonConfigurationInstance();
+
+		loadImage();
 
 		if (savedInstanceState != null)
 		{
@@ -122,52 +125,75 @@ public class ViewImageActivity
 				@Override
 				public void run()
 				{
-					loadImage();
-
-					if (old_scale > 0.0f)
+					try
 					{
-						float target_scale = old_scale / image.getBaseScale();
-						image.zoomTo( Math.min( image.getMaxZoom(), Math.max( 1.0f, target_scale ) ) );
+						if (old_scale > 0.0f)
+						{
+							float target_scale = old_scale / image.getBaseScale();
+							image.zoomTo( Math.min( image.getMaxZoom(), Math.max( 1.0f, target_scale ) ) );
+						}
+						else
+							image.zoomTo( 1.0f );
+
+						PointF from_pt = image.getViewportCenter();
+						RectF now_rect = image.getBitmapRect();
+						image.scrollBy( from_pt.x - old_center_x * now_rect.width(), from_pt.y - old_center_y * now_rect.height() );
+
+						image.center( true, true );
+
+						// do some animations...
+						RectF new_rect = image.getBitmapRect();
+						float factor = old_width / new_rect.width();
+						Animation anim = new ScaleAnimation( factor, 1.0f, factor, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f );
+						anim.setInterpolator( new OvershootInterpolator( 3.0f ) );
+						anim.setDuration( 400 );
+						image.clearAnimation();
+						image.startAnimation( anim );
 					}
-					else
-						image.zoomTo( 1.0f );
-
-					PointF from_pt = image.getViewportCenter();
-					RectF now_rect = image.getBitmapRect();
-					image.scrollBy( from_pt.x - old_center_x * now_rect.width(), from_pt.y - old_center_y * now_rect.height() );
-
-					image.center( true, true );
-
-					// do some animations...
-					RectF new_rect = image.getBitmapRect();
-					float factor = old_width / new_rect.width();
-					Animation anim = new ScaleAnimation( factor, 1.0f, factor, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f );
-					anim.setInterpolator( new OvershootInterpolator( 3.0f ) );
-					anim.setDuration( 400 );
-					image.clearAnimation();
-					image.startAnimation( anim );
+					catch (NullPointerException ex)
+					{
+						// message queue problem. the time we try to get the image's status
+						// (getViewportCenter() or getBitmapRect()) but they're just not
+						// ready yet. so post this to the message queue so it gets processed
+						// later when it's ready.
+						image.post( this );
+					}
 				}
 			} );
 		}
-		else
-			loadImage();
 	}
 
 	private void loadImage()
 	{
+		Bitmap bitmap = null;
 		File file = filecache.getFile( post.file_url );
 		if (file.exists())
 			bitmap = D.getBitmapFromFile( file );
-		else
+
+		if (bitmap == null)
 		{
 			ProgressDialog dialog = new ProgressDialog( this );
-			loader = new AsyncImageLoader( image, dialog, file );
 			dialog.setTitle( String.format( getString( R.string.view_image_progress_title ), post.width, post.height ) );
 			dialog.setProgressStyle( ProgressDialog.STYLE_HORIZONTAL );
-			dialog.setMax( 1 );
-			dialog.setOnCancelListener( new ProgressOnCancelListener( this, loader ) );
-			loader.execute( post.file_url );
+			dialog.setOnCancelListener( new ProgressOnCancelListener() );
+			dialog.show();
 
+			if (loader == null)
+			{
+				loader = new AsyncImageLoader( this, image, dialog, file );
+				loader.execute( post.file_url );
+				dialog.setMax( 1 );
+			}
+			else
+			{
+				dialog.setMax( loader.dialog.getMax() );
+				dialog.setProgress( loader.dialog.getProgress() );
+				loader.reattach( this, image, dialog );
+			}
+		}
+
+		if (bitmap == null)
+		{
 			bitmap = D.getBitmapFromFile( filecache.getFile( post.preview_url ) );
 			image.setScaleType( ScaleType.FIT_CENTER );
 		}
@@ -177,12 +203,13 @@ public class ViewImageActivity
 	@Override
 	public void onDestroy()
 	{
-		if (loader != null)
-			if (loader.getStatus() == Status.RUNNING)
-				loader.cancel( true );
-
-		if (bitmap != null)
-			bitmap.recycle();
+		BitmapDrawable drawable = (BitmapDrawable) image.getDrawable();
+		if (drawable != null)
+		{
+			Bitmap bitmap = drawable.getBitmap();
+			if (bitmap != null)
+				bitmap.recycle();
+		}
 
 		super.onDestroy();
 	}
@@ -191,6 +218,12 @@ public class ViewImageActivity
 	public void onStart()
 	{
 		super.onStart();
+	}
+
+	@Override
+	public Object onRetainNonConfigurationInstance()
+	{
+		return loader;
 	}
 
 	@Override
@@ -296,13 +329,14 @@ public class ViewImageActivity
 			dialog.setMax( 1 );
 
 			ImageViewTouch image = (ImageViewTouch) findViewById( R.id.view_image_image );
-			loader = new AsyncImageLoader( image, dialog, file );
-			dialog.setOnCancelListener( new ProgressOnCancelListener( this, loader ) );
+			loader = new AsyncImageLoader( this, image, dialog, file );
+			dialog.setOnCancelListener( new ProgressOnCancelListener() );
 
 			loader.execute( post.file_url );
 			break;
 		case R.id.view_image_menu_save:
 			// FIXME: do this in the background, don't block the UI thread.
+			// maybe we shall just do a ln?
 			try
 			{
 				File cachefile = filecache.getFile( post.file_url );
@@ -310,15 +344,7 @@ public class ViewImageActivity
 
 				outfile.delete();
 
-				InputStream in = new FileInputStream( cachefile );
-				OutputStream out = new FileOutputStream( outfile );
-
-				byte[] buf = new byte[1024];
-				int len;
-				while ((len = in.read( buf )) > 0)
-					out.write( buf, 0, len );
-				in.close();
-				out.close();
+				D.CopyStream( new FileInputStream( cachefile ), new FileOutputStream( outfile ) );
 
 				Toast.makeText( this, String.format( getString( R.string.view_image_file_saved ), outfile.getPath() ), Toast.LENGTH_SHORT ).show();
 
@@ -368,19 +394,10 @@ public class ViewImageActivity
 	private class ProgressOnCancelListener
 		implements OnCancelListener
 	{
-		Activity			activity;
-		AsyncImageLoader	loader;
-
-		public ProgressOnCancelListener(Activity a, AsyncImageLoader l)
-		{
-			activity = a;
-			loader = l;
-		}
-
 		@Override
 		public void onCancel(DialogInterface dialog)
 		{
-			activity.finish();
+			finish();
 			overridePendingTransition( R.anim.zoom_enter, R.anim.zoom_exit );
 			loader.cancel( true );
 		}
@@ -402,12 +419,15 @@ public class ViewImageActivity
 			// no picture just quit
 		}
 
+		if (loader != null)
+			if (loader.getStatus() == Status.RUNNING)
+				loader.cancel( true );
+
 		finish();
 		overridePendingTransition( R.anim.zoom_enter, R.anim.zoom_exit );
-		super.onBackPressed();
 	}
 
-	private class AsyncImageLoader
+	private static class AsyncImageLoader
 		extends AsyncTask < String, Integer, Integer >
 	{
 		private static final int	PROGRESS_SETMAX			= 0x01;
@@ -419,15 +439,24 @@ public class ViewImageActivity
 		private static final int	RESULT_FAILED			= 0x01;
 		private static final int	RESULT_CANCELLED		= 0x02;
 
+		ViewImageActivity			activity;
 		ImageViewTouch				image;
 		ProgressDialog				dialog;
 		File						file;
 
-		public AsyncImageLoader(ImageViewTouch i, ProgressDialog p, File f)
+		public AsyncImageLoader(ViewImageActivity a, ImageViewTouch i, ProgressDialog p, File f)
 		{
+			activity = a;
 			image = i;
 			dialog = p;
 			file = f;
+		}
+
+		public void reattach(ViewImageActivity a, ImageViewTouch i, ProgressDialog p)
+		{
+			activity = a;
+			image = i;
+			dialog = p;
 		}
 
 		@Override
@@ -449,13 +478,14 @@ public class ViewImageActivity
 				InputStream input = conn.getInputStream();
 				OutputStream output = new FileOutputStream( file );
 
-				byte[] bytes = new byte[1024];
+				byte[] bytes = new byte[4096];
 				for (;;)
 				{
-					int count = input.read( bytes, 0, 1024 );
+					int count = input.read( bytes );
 					if (count == -1)
 						break;
 
+					Log.d( D.LOGTAG, "publishing progress with (PROGRESS_INCREMENTBY, " + count + ")" );
 					publishProgress( PROGRESS_INCREMENTBY, count );
 
 					if (isCancelled())
@@ -481,19 +511,12 @@ public class ViewImageActivity
 		}
 
 		@Override
-		public void onPreExecute()
-		{
-			setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_NOSENSOR );
-			dialog.show();
-		}
-
-		@Override
 		protected void onPostExecute(Integer result)
 		{
 			switch (result)
 			{
 			case RESULT_SUCCESS:
-				bitmap = D.getBitmapFromFile( file );
+				Bitmap bitmap = D.getBitmapFromFile( file );
 				image.setImageBitmapReset( bitmap, true );
 				image.setScaleType( ScaleType.MATRIX );
 				dialog.dismiss();
@@ -510,18 +533,13 @@ public class ViewImageActivity
 				Log.e( D.LOGTAG, "AsyncImageLoader::onPostExecute(): Unknown result: " + result );
 				dialog.dismiss();
 			}
-			setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_SENSOR );
+
+			activity.loader = null;
 		}
 
 		@Override
 		protected void onProgressUpdate(Integer... values)
 		{
-			if (values.length != 2)
-			{
-				Log.e( D.LOGTAG, "AsyncImageLoader::onProgressUpdate(): Invalid argument!" );
-				return;
-			}
-
 			switch (values[0])
 			{
 			case PROGRESS_SETMAX:
