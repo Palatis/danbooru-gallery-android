@@ -108,6 +108,8 @@ public class ViewImageActivity
 		if (intent.hasExtra( "post.created_at" ))
 			post.created_at = new Date( intent.getLongExtra( "post.created_at", 0 ) );
 
+		page_tags = intent.getStringExtra( "page_tags" );
+
 		image = (ImageViewTouch) findViewById( R.id.view_image_image );
 		loader = (AsyncImageLoader) getLastNonConfigurationInstance();
 
@@ -247,6 +249,15 @@ public class ViewImageActivity
 
 		}
 		super.onSaveInstanceState( outState );
+	}
+
+	@Override
+	public boolean onSearchRequested()
+	{
+		Log.d( D.LOGTAG, "is loader running? " + (loader.getStatus() == AsyncTask.Status.RUNNING) );
+		if (loader.getStatus() != AsyncTask.Status.RUNNING)
+			startSearch( page_tags, true, null, false );
+		return true;
 	}
 
 	@Override
