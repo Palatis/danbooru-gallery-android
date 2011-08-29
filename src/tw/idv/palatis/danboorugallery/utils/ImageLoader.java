@@ -182,9 +182,9 @@ public class ImageLoader
 			// if both have a view or both don't have a view, the one added earlier has higher priority
 			long diff = mTimestamp - another.mTimestamp;
 			if (diff > 0)
-				return -1;
-			if (diff < 0)
 				return 1;
+			if (diff < 0)
+				return -1;
 			return 0;
 		}
 	}
