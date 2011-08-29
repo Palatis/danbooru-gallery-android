@@ -25,6 +25,8 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.net.Uri;
+
 public class Post
 {
 	public String	preview_url;
@@ -43,6 +45,14 @@ public class Post
 	{
 		preview_url = json_post.optString( "preview_url" );
 		file_url = json_post.optString( "file_url" );
+
+		// if the preview_url is a relative url, add the host part from file_url to it.
+		Uri puri = Uri.parse( preview_url );
+		if (puri.getHost() == null)
+		{
+			Uri furi = Uri.parse( file_url );
+			preview_url = furi.getScheme() + "://" + furi.getHost() + "/" + preview_url;
+		}
 
 		author = json_post.optString( "author" );
 		tags = json_post.optString( "tags" );
