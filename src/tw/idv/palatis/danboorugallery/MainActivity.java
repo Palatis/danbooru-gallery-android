@@ -108,7 +108,7 @@ public class MainActivity
 		if (conf != null)
 		{
 			posts = conf.posts;
-			fetcher = new LazyPostFetcher( conf.url_enclosure );
+			fetcher = conf.fetcher;
 		}
 		else
 		{
@@ -310,7 +310,7 @@ public class MainActivity
 		{
 			final EditText input = new EditText( this );
 			input.setInputType( InputType.TYPE_CLASS_NUMBER );
-			input.setText( String.valueOf( fetcher.enclosure.page ) );
+			input.setText( String.valueOf( fetcher.getPage() ) );
 
 			builder = new AlertDialog.Builder( this );
 			builder.setView( input );
@@ -382,20 +382,20 @@ public class MainActivity
 
 	private class ConfigurationEnclosure
 	{
-		public List < Post >				posts;
-		public LazyPostFetcher.URLEnclosure	url_enclosure;
+		public List < Post >	posts;
+		public LazyPostFetcher	fetcher;
 
-		public ConfigurationEnclosure(List < Post > p, LazyPostFetcher.URLEnclosure e)
+		public ConfigurationEnclosure(List < Post > p, LazyPostFetcher f)
 		{
 			posts = p;
-			url_enclosure = e;
+			fetcher = f;
 		}
 	}
 
 	@Override
 	public Object onRetainNonConfigurationInstance()
 	{
-		return new ConfigurationEnclosure( posts, fetcher.getURLEnclosure() );
+		return new ConfigurationEnclosure( posts, fetcher );
 	}
 
 	private class GalleryOnItemClickListener

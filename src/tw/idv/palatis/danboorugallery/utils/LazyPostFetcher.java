@@ -35,10 +35,9 @@ import android.util.Log;
 public class LazyPostFetcher
 {
 	private AsyncPostFetcher	fetcher		= null;
-	public URLEnclosure			enclosure	= null;
+	private URLEnclosure		enclosure	= null;
+	private ISiteAPI			site_api	= null;
 	boolean						reached_end	= false;
-
-	public ISiteAPI				site_api	= null;
 
 	public LazyPostFetcher()
 	{
@@ -73,6 +72,11 @@ public class LazyPostFetcher
 		if ( !result)
 			reached_end = false;
 		return !result;
+	}
+
+	public int getPage()
+	{
+		return enclosure.page;
 	}
 
 	public boolean setPage(int page)
@@ -197,7 +201,7 @@ public class LazyPostFetcher
 						else
 							++skipped_posts_count;
 
-					if ( posts.size() == 0 )
+					if (posts.size() == 0)
 					{
 						fetcher.noMorePosts();
 						break;
