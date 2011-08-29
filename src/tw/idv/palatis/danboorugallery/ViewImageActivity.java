@@ -63,7 +63,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
@@ -145,11 +148,29 @@ public class ViewImageActivity
 						image.center( true, true );
 
 						// do some animations...
-						RectF new_rect = image.getBitmapRect();
-						float factor = old_width / new_rect.width();
-						Animation anim = new ScaleAnimation( factor, 1.0f, factor, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f );
-						anim.setInterpolator( new OvershootInterpolator( 3.0f ) );
-						anim.setDuration( 400 );
+						float factor = old_width / image.getBitmapRect().width();
+
+						Animation anim = null;
+						if (Math.abs( factor - 1.0f ) < 0.05)
+						{
+							AnimationSet animset = new AnimationSet(false);
+							anim = new ScaleAnimation( 1.0f, 1.2f, 1.0f, 1.2f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f );
+							anim.setInterpolator( new AccelerateInterpolator() );
+							anim.setDuration( 250 );
+							animset.addAnimation( anim );
+							anim = new ScaleAnimation( 1.0f, 1.0f / 1.2f, 1.0f, 1.0f / 1.2f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f );
+							anim.setInterpolator( new DecelerateInterpolator() );
+							anim.setDuration( 250 );
+							anim.setStartOffset( 250 );
+							animset.addAnimation( anim );
+							anim = animset;
+						}
+						else
+						{
+							anim = new ScaleAnimation( factor, 1.0f, factor, 1.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f );
+							anim.setInterpolator( new OvershootInterpolator() );
+							anim.setDuration( 500 );
+						}
 						image.clearAnimation();
 						image.startAnimation( anim );
 					}
@@ -572,7 +593,8 @@ public class ViewImageActivity
 		}
 	}
 
-	private class NoSearchProgressDialog extends ProgressDialog
+	private class NoSearchProgressDialog
+		extends ProgressDialog
 	{
 		public NoSearchProgressDialog(Context context)
 		{
