@@ -184,7 +184,7 @@ public class MainActivity
 		String query = "";
 		if (intent.getAction().equals( Intent.ACTION_SEARCH ))
 		{
-			query = intent.getStringExtra( SearchManager.QUERY ).replace( ' ', '_' ).replace( "%2B", "+" );
+			query = intent.getStringExtra( SearchManager.QUERY ).replace( ' ', '_' );
 			dosearch = true;
 		}
 		else if (intent.getAction().equals( Intent.ACTION_VIEW ))
