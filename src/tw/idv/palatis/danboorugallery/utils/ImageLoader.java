@@ -27,7 +27,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Stack;
+import java.util.PriorityQueue;
 import java.util.WeakHashMap;
 
 import tw.idv.palatis.danboorugallery.R;
@@ -41,41 +41,47 @@ import android.widget.ImageView.ScaleType;
 
 public class ImageLoader
 {
-	private BitmapMemCache				memCache;
-	private FileCache					fileCache;
-	private Map < ImageView, String >	imageViews	= Collections.synchronizedMap( new WeakHashMap < ImageView, String >() );
-	private PhotosLoaderWeb				webloader;
-	private PhotosLoaderDisk			diskloader;
+	private BitmapMemCache				mMemCache;
+	private FileCache					mFileCache;
+	private Map < ImageView, String >	mImageViews	= Collections.synchronizedMap( new WeakHashMap < ImageView, String >() );
+	private PhotosLoaderWeb				mWebLoader;
+	private PhotosLoaderDisk			mDiskLoader;
 
 	public ImageLoader(Context context)
 	{
 		// Make the background thread low priority. This way it will not affect
 		// the UI performance
-		webloader = new PhotosLoaderWeb();
-		webloader.setPriority( Thread.MIN_PRIORITY );
-		webloader.start();
+		mWebLoader = new PhotosLoaderWeb();
+		mWebLoader.setPriority( Thread.MIN_PRIORITY );
+		mWebLoader.start();
 
-		diskloader = new PhotosLoaderDisk();
-		diskloader.setPriority( Thread.MIN_PRIORITY );
-		diskloader.start();
+		mDiskLoader = new PhotosLoaderDisk();
+		mDiskLoader.setPriority( Thread.MIN_PRIORITY );
+		mDiskLoader.start();
 
-		fileCache = new FileCache( context );
-		memCache = BitmapMemCache.getInstance();
+		mFileCache = new FileCache( context );
+		mMemCache = BitmapMemCache.getInstance();
 	}
 
-	// final int stub_id=R.drawable.stub;
 	final int	stub_id	= R.drawable.icon;
 
 	public void DisplayImage(String url, ImageView image)
 	{
 		// This ImageView may be used for other images before. So there may be
 		// some old tasks in the queue. We need to discard them.
-		diskloader.discard( image );
-		webloader.discard( image );
+		mDiskLoader.discard( image );
+		mWebLoader.discard( image );
 
-		imageViews.put( image, url );
+		mImageViews.put( image, url );
 
 		Bitmap bitmap = getBitmapCache( url );
+		if (image == null)
+		{
+			if (bitmap == null)
+				mDiskLoader.queuePhoto( new PhotoToLoad( url, null ) );
+			return;
+		}
+
 		if (bitmap != null)
 		{
 			image.setImageBitmap( bitmap );
@@ -85,7 +91,7 @@ public class ImageLoader
 		}
 		else
 		{
-			diskloader.queuePhoto( new PhotoToLoad( url, image ) );
+			mDiskLoader.queuePhoto( new PhotoToLoad( url, image ) );
 			image.setImageResource( stub_id );
 			image.setTag( this );
 		}
@@ -93,27 +99,27 @@ public class ImageLoader
 
 	public void onLowMemory()
 	{
-		memCache.clear();
+		mMemCache.clear();
 	}
 
 	public void cancelAll()
 	{
-		diskloader.cancelAll();
-		webloader.cancelAll();
+		mDiskLoader.cancelAll();
+		mWebLoader.cancelAll();
 	}
 
 	// from Memory cache
 	private Bitmap getBitmapCache(String url)
 	{
-		return memCache.get( url );
+		return mMemCache.get( url );
 	}
 
 	// from SD cache
 	private Bitmap getBitmapDisk(String url)
 	{
-		Bitmap bitmap = D.getBitmapFromFile( fileCache.getFile( url ) );
+		Bitmap bitmap = D.getBitmapFromFile( mFileCache.getFile( url ) );
 		if (bitmap != null)
-			memCache.put( url, bitmap );
+			mMemCache.put( url, bitmap );
 		return bitmap;
 	}
 
@@ -125,76 +131,118 @@ public class ImageLoader
 			URL imageUrl = new URL( url );
 			HttpURLConnection conn = (HttpURLConnection) imageUrl.openConnection();
 			InputStream is = conn.getInputStream();
-			OutputStream os = new FileOutputStream( fileCache.getFile( url ) );
+			OutputStream os = new FileOutputStream( mFileCache.getFile( url ) );
 			D.CopyStream( is, os );
 			os.close();
 
-			Bitmap bitmap = D.getBitmapFromFile( fileCache.getFile( url ) );
+			Bitmap bitmap = D.getBitmapFromFile( mFileCache.getFile( url ) );
 			if (bitmap != null)
-				memCache.put( url, bitmap );
-			memCache.put( url, bitmap );
+				mMemCache.put( url, bitmap );
+			mMemCache.put( url, bitmap );
 			return bitmap;
 		}
 		catch (Exception ex)
 		{
 			Log.d( D.LOGTAG, "image " + url + " download failed!" );
 			Log.d( D.LOGTAG, ex.getMessage() );
-			ex.printStackTrace();
 		}
 		return null;
 	}
 
+	public void stopThread()
+	{
+		mDiskLoader.interrupt();
+		mWebLoader.interrupt();
+	}
+
 	// Task for the queue
 	private class PhotoToLoad
+		implements Comparable < PhotoToLoad >
 	{
-		public String		url;
-		public ImageView	imageView;
+		public long			mTimestamp;
+		public String		mUrl;
+		public ImageView	mImage;
 
 		public PhotoToLoad(String u, ImageView i)
 		{
-			url = u;
-			imageView = i;
+			mUrl = u;
+			mImage = i;
+			mTimestamp = System.currentTimeMillis();
 		}
-	}
 
-	public void stopThread()
-	{
-		diskloader.interrupt();
-		webloader.interrupt();
+		@Override
+		public int compareTo(PhotoToLoad another)
+		{
+			// ones with a ImageView associated is with higher priority
+			if (mImage == null && another.mImage != null)
+				return 1;
+			else if (mImage != null && another.mImage == null)
+				return -1;
+
+			// if both have a view or both don't have a view, the one added earlier has higher priority
+			long diff = mTimestamp - another.mTimestamp;
+			if (diff > 0)
+				return -1;
+			if (diff < 0)
+				return 1;
+			return 0;
+		}
 	}
 
 	private abstract class PhotosLoaderBase
 		extends Thread
 	{
-		protected Stack < PhotoToLoad >	photosToLoad	= new Stack < PhotoToLoad >();
+		protected PriorityQueue < PhotoToLoad >	tasks	= new PriorityQueue < PhotoToLoad >();
 
 		public void discard(ImageView image)
 		{
-			synchronized (photosToLoad)
+			if (image == null)
+				return;
+
+			synchronized (tasks)
 			{
-				for (int i = 0; i < photosToLoad.size();)
-					if (photosToLoad.get( i ).imageView == image)
-						photosToLoad.remove( i );
-					else
-						++i;
+				for (PhotoToLoad task : tasks)
+					if (task.mImage == image)
+						tasks.remove( task );
 			}
 		}
 
-		public void queuePhoto(PhotoToLoad photo)
+		public void queuePhoto(PhotoToLoad task)
 		{
-			synchronized (photosToLoad)
+			synchronized (tasks)
 			{
-				photosToLoad.push( photo );
-				photosToLoad.notifyAll();
+				tasks.offer( task );
+				tasks.notifyAll();
 			}
 		}
 
 		public void cancelAll()
 		{
-			synchronized (photosToLoad)
+			synchronized (tasks)
 			{
-				photosToLoad.clear();
-				photosToLoad.notifyAll();
+				tasks.clear();
+				tasks.notifyAll();
+			}
+		}
+
+		protected boolean hasMoreTask()
+		{
+			return !tasks.isEmpty();
+		}
+
+		protected PhotoToLoad pollNextTask()
+		{
+			synchronized (tasks)
+			{
+				return tasks.poll();
+			}
+		}
+
+		protected void waitForTasks() throws InterruptedException
+		{
+			synchronized (tasks)
+			{
+				tasks.wait();
 			}
 		}
 
@@ -212,33 +260,28 @@ public class ImageLoader
 			{
 				while (true)
 				{
-					// thread waits until there are any images to load in the
-					// queue
-					if (photosToLoad.empty())
-						synchronized (photosToLoad)
-						{
-							photosToLoad.wait();
-						}
+					// thread waits until there are any images to load in the queue
+					if ( !hasMoreTask())
+						waitForTasks();
 
-					if ( !photosToLoad.empty())
+					if (hasMoreTask())
 					{
-						PhotoToLoad photoToLoad;
-						synchronized (photosToLoad)
-						{
-							photoToLoad = photosToLoad.pop();
-						}
+						PhotoToLoad task = pollNextTask();
 
-						Bitmap bmp = getBitmapDisk( photoToLoad.url );
-						if (bmp == null)
+						Bitmap bitmap = getBitmapDisk( task.mUrl );
+						if (bitmap == null)
 						{
-							webloader.queuePhoto( photoToLoad );
+							mWebLoader.queuePhoto( task );
 							continue;
 						}
 
-						// check if we still want the bitmap
-						String tag = imageViews.get( photoToLoad.imageView );
-						if (tag != null && tag.equals( photoToLoad.url ))
-							new GalleryItemDisplayer( photoToLoad.imageView, bmp, ScaleType.CENTER_CROP, true ).display();
+						if (task.mImage != null)
+						{
+							// check if we still want the bitmap
+							String tag = mImageViews.get( task.mImage );
+							if (tag != null && tag.equals( task.mUrl ))
+								new GalleryItemDisplayer( task.mImage, bitmap, ScaleType.CENTER_CROP, true ).display();
+						}
 					}
 					if (Thread.interrupted())
 						break;
@@ -261,37 +304,29 @@ public class ImageLoader
 			{
 				while (true)
 				{
-					// thread waits until there are any images to load in the
-					// queue
-					if (photosToLoad.empty())
-						synchronized (photosToLoad)
-						{
-							photosToLoad.wait();
-						}
+					// thread waits until there are any images to load in the queue
+					if ( !hasMoreTask())
+						waitForTasks();
 
-					if ( !photosToLoad.empty())
+					if (hasMoreTask())
 					{
-						PhotoToLoad photoToLoad;
-						synchronized (photosToLoad)
-						{
-							photoToLoad = photosToLoad.pop();
-						}
+						PhotoToLoad task = pollNextTask();
 
-						Bitmap bmp = getBitmapWeb( photoToLoad.url );
-
-						if ( bmp == null )
+						Bitmap bitmap = getBitmapWeb( task.mUrl );
+						if (bitmap == null)
 						{
-							synchronized (photosToLoad)
-							{
-								photosToLoad.add( 0, photoToLoad );
-							}
+							// download problem, put this task to the end of the queue and try again later.
+							queuePhoto( task );
 							continue;
 						}
 
-						// check if we still want the bitmap
-						String tag = imageViews.get( photoToLoad.imageView );
-						if (tag != null && tag.equals( photoToLoad.url ))
-							new GalleryItemDisplayer( photoToLoad.imageView, bmp, ScaleType.CENTER_CROP, true ).display();
+						if (task.mImage != null)
+						{
+							// check if we still want the bitmap
+							String tag = mImageViews.get( task.mImage );
+							if (tag != null && tag.equals( task.mUrl ))
+								new GalleryItemDisplayer( task.mImage, bitmap, ScaleType.CENTER_CROP, true ).display();
+						}
 					}
 					if (Thread.interrupted())
 						break;
