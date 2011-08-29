@@ -368,6 +368,9 @@ public class ViewImageActivity
 					return text;
 				}
 			} );
+			builder.setView( listview );
+			builder.setPositiveButton( android.R.string.ok, null );
+			final AlertDialog pic_info_dialog = builder.create();
 			listview.setOnItemClickListener( new OnItemClickListener()
 			{
 				@Override
@@ -377,12 +380,10 @@ public class ViewImageActivity
 					Intent intent = new Intent( Intent.ACTION_SEARCH );
 					intent.putExtra( SearchManager.QUERY, text.getText() );
 					setResult( RESULT_OK, intent );
+					pic_info_dialog.dismiss();
 					finish();
 				}
 			} );
-			builder.setView( listview );
-			builder.setPositiveButton( android.R.string.ok, null );
-			builder.create().show();
 			break;
 		case R.id.view_image_menu_refresh:
 			File file = filecache.getFile( post.file_url );
