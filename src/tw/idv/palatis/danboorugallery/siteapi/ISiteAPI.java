@@ -51,4 +51,43 @@ public interface ISiteAPI
 	 * @return
 	 */
 	abstract List < Tag > fetchTagsIndex(int page, String name, int limit);
+
+	/**
+	 * cancels the operation in action, it should cancel the operation as soon
+	 * as possible.
+	 */
+	abstract void cancel();
+
+	/**
+	 * this exception is thrown when the desired API is not supported.
+	 *
+	 * @author palatis
+	 */
+	public class UnsupportedAPIException
+		extends Exception
+	{
+		private static final long	serialVersionUID	= 1L;
+
+		private static String _apiToString(int api)
+		{
+			if (api == API_JSON)
+				return "API_JSON";
+			if (api == API_XML)
+				return "API_XML";
+			return "Unknown API (" + api + ")";
+		}
+
+		private int	mUnsupportedApi;
+
+		UnsupportedAPIException(int api)
+		{
+			super( "Unsupported API: " + _apiToString( api ) );
+			mUnsupportedApi = api;
+		}
+
+		public int getUnsupportedAPI()
+		{
+			return mUnsupportedApi;
+		}
+	}
 }
