@@ -44,6 +44,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
@@ -174,7 +175,7 @@ public class ViewImageActivity
 
 		if (bitmap == null)
 		{
-			ProgressDialog dialog = new ProgressDialog( this );
+			ProgressDialog dialog = new NoSearchProgressDialog( this );
 			dialog.setTitle( String.format( getString( R.string.view_image_progress_title ), post.width, post.height ) );
 			dialog.setProgressStyle( ProgressDialog.STYLE_HORIZONTAL );
 			dialog.setOnCancelListener( new ProgressOnCancelListener() );
@@ -335,7 +336,7 @@ public class ViewImageActivity
 			break;
 		case R.id.view_image_menu_refresh:
 			File file = filecache.getFile( post.file_url );
-			ProgressDialog dialog = new ProgressDialog( this );
+			ProgressDialog dialog = new NoSearchProgressDialog( this );
 			dialog.setProgressStyle( ProgressDialog.STYLE_HORIZONTAL );
 			dialog.setMax( 1 );
 
@@ -568,6 +569,25 @@ public class ViewImageActivity
 			default:
 				Log.e( D.LOGTAG, "AsyncImageLoader::onProgressUpdate(): Unknown action: " + values[0] );
 			}
+		}
+	}
+
+	private class NoSearchProgressDialog extends ProgressDialog
+	{
+		public NoSearchProgressDialog(Context context)
+		{
+			super( context );
+		}
+
+		public NoSearchProgressDialog(Context context, int theme)
+		{
+			super( context, theme );
+		}
+
+		@Override
+		public boolean onSearchRequested()
+		{
+			return false;
 		}
 	}
 }
