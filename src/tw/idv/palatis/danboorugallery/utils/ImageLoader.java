@@ -27,8 +27,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.WeakHashMap;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import tw.idv.palatis.danboorugallery.R;
 import tw.idv.palatis.danboorugallery.MainActivity.GalleryItemDisplayer;
@@ -192,58 +192,31 @@ public class ImageLoader
 	private abstract class PhotosLoaderBase
 		extends Thread
 	{
-		protected PriorityQueue < PhotoToLoad >	tasks	= new PriorityQueue < PhotoToLoad >();
+		protected PriorityBlockingQueue < PhotoToLoad >	tasks	= new PriorityBlockingQueue < PhotoToLoad >();
 
 		public void discard(ImageView image)
 		{
 			if (image == null)
 				return;
 
-			synchronized (tasks)
-			{
-				for (PhotoToLoad task : tasks)
-					if (task.mImage == image)
-						tasks.remove( task );
-			}
+			for (PhotoToLoad task : tasks)
+				if (task.mImage == image)
+					tasks.remove( task );
 		}
 
 		public void queuePhoto(PhotoToLoad task)
 		{
-			synchronized (tasks)
-			{
-				tasks.offer( task );
-				tasks.notifyAll();
-			}
+			tasks.put( task );
+		}
+
+		protected PhotoToLoad pollNextTask() throws InterruptedException
+		{
+			return tasks.take();
 		}
 
 		public void cancelAll()
 		{
-			synchronized (tasks)
-			{
-				tasks.clear();
-				tasks.notifyAll();
-			}
-		}
-
-		protected boolean hasMoreTask()
-		{
-			return !tasks.isEmpty();
-		}
-
-		protected PhotoToLoad pollNextTask()
-		{
-			synchronized (tasks)
-			{
-				return tasks.poll();
-			}
-		}
-
-		protected void waitForTasks() throws InterruptedException
-		{
-			synchronized (tasks)
-			{
-				tasks.wait();
-			}
+			tasks.clear();
 		}
 
 		@Override
@@ -260,29 +233,23 @@ public class ImageLoader
 			{
 				while (true)
 				{
-					// thread waits until there are any images to load in the queue
-					if ( !hasMoreTask())
-						waitForTasks();
+					PhotoToLoad task = pollNextTask();
 
-					if (hasMoreTask())
+					Bitmap bitmap = getBitmapDisk( task.mUrl );
+					if (bitmap == null)
 					{
-						PhotoToLoad task = pollNextTask();
-
-						Bitmap bitmap = getBitmapDisk( task.mUrl );
-						if (bitmap == null)
-						{
-							mWebLoader.queuePhoto( task );
-							continue;
-						}
-
-						if (task.mImage != null)
-						{
-							// check if we still want the bitmap
-							String tag = mImageViews.get( task.mImage );
-							if (tag != null && tag.equals( task.mUrl ))
-								new GalleryItemDisplayer( task.mImage, bitmap, ScaleType.CENTER_CROP, true ).display();
-						}
+						mWebLoader.queuePhoto( task );
+						continue;
 					}
+
+					if (task.mImage != null)
+					{
+						// check if we still want the bitmap
+						String tag = mImageViews.get( task.mImage );
+						if (tag != null && tag.equals( task.mUrl ))
+							new GalleryItemDisplayer( task.mImage, bitmap, ScaleType.CENTER_CROP, true ).display();
+					}
+
 					if (Thread.interrupted())
 						break;
 				}
@@ -304,30 +271,24 @@ public class ImageLoader
 			{
 				while (true)
 				{
-					// thread waits until there are any images to load in the queue
-					if ( !hasMoreTask())
-						waitForTasks();
+					PhotoToLoad task = pollNextTask();
 
-					if (hasMoreTask())
+					Bitmap bitmap = getBitmapWeb( task.mUrl );
+					if (bitmap == null)
 					{
-						PhotoToLoad task = pollNextTask();
-
-						Bitmap bitmap = getBitmapWeb( task.mUrl );
-						if (bitmap == null)
-						{
-							// download problem, put this task to the end of the queue and try again later.
-							queuePhoto( task );
-							continue;
-						}
-
-						if (task.mImage != null)
-						{
-							// check if we still want the bitmap
-							String tag = mImageViews.get( task.mImage );
-							if (tag != null && tag.equals( task.mUrl ))
-								new GalleryItemDisplayer( task.mImage, bitmap, ScaleType.CENTER_CROP, true ).display();
-						}
+						// download problem, put this task to the end of the queue and try again later.
+						queuePhoto( task );
+						continue;
 					}
+
+					if (task.mImage != null)
+					{
+						// check if we still want the bitmap
+						String tag = mImageViews.get( task.mImage );
+						if (tag != null && tag.equals( task.mUrl ))
+							new GalleryItemDisplayer( task.mImage, bitmap, ScaleType.CENTER_CROP, true ).display();
+					}
+
 					if (Thread.interrupted())
 						break;
 				}
