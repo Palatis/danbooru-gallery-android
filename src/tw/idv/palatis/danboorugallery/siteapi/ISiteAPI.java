@@ -15,16 +15,38 @@ public interface ISiteAPI
 	 *
 	 * @return supported API, either API_JSON, API_XML, or API_JSON | API_XML.
 	 */
-	abstract int supportedApi();
+	abstract int getSupportedApi();
 
 	/**
 	 * choose the API to use for this site.
 	 *
 	 * @param api
-	 *            the api to use, can be API_JSON or API_XML.
-	 * @return true on success, false otherwise.
+	 *            the API to use, can be API_JSON or API_XML.
+	 * @throws UnsupportedAPIException
 	 */
-	abstract boolean selectApi(int api);
+	abstract void setApi(int api) throws UnsupportedAPIException;
+
+	/**
+	 * get the selected API
+	 *
+	 * @return the API which is using, can be API_JSON or API_XML.
+	 */
+	abstract int getApi();
+
+	/**
+	 * get the site's URL
+	 *
+	 * @return the site's URL
+	 */
+	abstract public String getSiteUrl();
+
+	/**
+	 * set the site's URL
+	 *
+	 * @param siteUrl
+	 *            the URL to set
+	 */
+	abstract public void setSiteUrl(String siteUrl);
 
 	/**
 	 * get the posts, just like when you're browsing the post list page.
@@ -35,7 +57,7 @@ public interface ISiteAPI
 	 *            tags to limit the search. can't be null, but can ba an empty string.
 	 * @param limit
 	 *            posts per page to retrieve at once.
-	 * @return the posts fetched
+	 * @return the posts fetched, null if failed.
 	 */
 	abstract List < Post > fetchPostsIndex(int page, String tags, int limit);
 
@@ -48,7 +70,7 @@ public interface ISiteAPI
 	 *            name of the tags, can have wildcard characters to do a search
 	 * @param limit
 	 *            tags shown per page
-	 * @return
+	 * @return the tags fetched, null if failed.
 	 */
 	abstract List < Tag > fetchTagsIndex(int page, String name, int limit);
 
