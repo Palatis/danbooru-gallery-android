@@ -276,9 +276,7 @@ public class ViewImageActivity
 	@Override
 	public boolean onSearchRequested()
 	{
-		Log.d( D.LOGTAG, "is loader running? " + (loader.getStatus() == AsyncTask.Status.RUNNING) );
-		if (loader.getStatus() != AsyncTask.Status.RUNNING)
-			startSearch( page_tags, true, null, false );
+		startSearch( page_tags, true, null, false );
 		return true;
 	}
 
