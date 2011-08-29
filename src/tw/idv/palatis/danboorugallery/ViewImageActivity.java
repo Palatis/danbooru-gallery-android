@@ -115,9 +115,15 @@ public class ViewImageActivity
 		page_tags = intent.getStringExtra( "page_tags" );
 
 		image = (ImageViewTouch) findViewById( R.id.view_image_image );
-		loader = (AsyncImageLoader) getLastNonConfigurationInstance();
 
-		loadImage();
+		ConfigurationEnclosure enclosure = (ConfigurationEnclosure) getLastNonConfigurationInstance();
+		Bitmap bitmap = null;
+		if ( enclosure != null )
+		{
+			loader = enclosure.loader;
+			bitmap = enclosure.bitmap;
+		}
+		loadImage( bitmap );
 
 		if (savedInstanceState != null)
 		{
@@ -153,7 +159,7 @@ public class ViewImageActivity
 						Animation anim = null;
 						if (Math.abs( factor - 1.0f ) < 0.05)
 						{
-							AnimationSet animset = new AnimationSet(false);
+							AnimationSet animset = new AnimationSet( false );
 							anim = new ScaleAnimation( 1.0f, 1.2f, 1.0f, 1.2f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f );
 							anim.setInterpolator( new AccelerateInterpolator() );
 							anim.setDuration( 250 );
@@ -187,12 +193,15 @@ public class ViewImageActivity
 		}
 	}
 
-	private void loadImage()
+	private void loadImage(Bitmap bitmap)
 	{
-		Bitmap bitmap = null;
-		File file = filecache.getFile( post.file_url );
-		if (file.exists())
-			bitmap = D.getBitmapFromFile( file );
+		File file = null;
+		if (bitmap == null)
+		{
+			file = filecache.getFile( post.file_url );
+			if (file.exists())
+				bitmap = D.getBitmapFromFile( file );
+		}
 
 		if (bitmap == null)
 		{
@@ -244,10 +253,32 @@ public class ViewImageActivity
 		super.onStart();
 	}
 
+	private static class ConfigurationEnclosure
+	{
+		public AsyncImageLoader	loader;
+		public Bitmap			bitmap;
+
+		ConfigurationEnclosure(AsyncImageLoader loader, Bitmap bitmap)
+		{
+			this.loader = loader;
+			this.bitmap = bitmap;
+		}
+	}
+
 	@Override
 	public Object onRetainNonConfigurationInstance()
 	{
-		return loader;
+		Bitmap bitmap = null;
+		if ( loader != null && loader.getStatus() != Status.RUNNING )
+		{
+			BitmapDrawable drawable = (BitmapDrawable) image.getDrawable();
+			if (drawable != null)
+			{
+				bitmap = drawable.getBitmap();
+				image.setImageDrawable( null );
+			}
+		}
+		return new ConfigurationEnclosure( loader, bitmap );
 	}
 
 	@Override
