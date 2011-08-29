@@ -20,7 +20,6 @@ package tw.idv.palatis.danboorugallery.utils;
  * along with Danbooru Gallery.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import java.util.ArrayList;
 import java.util.List;
 
 import tw.idv.palatis.danboorugallery.R;
@@ -63,12 +62,12 @@ public class LazyImageAdapter
 		return activity;
 	}
 
-	public void addPosts(ArrayList < Post > newposts)
+	public void addPosts(List < Post > commit)
 	{
-		if (newposts.isEmpty())
+		if (commit.isEmpty())
 			return;
 
-		posts.addAll( newposts );
+		posts.addAll( commit );
 
 		activity.runOnUiThread( new Runnable()
 		{
