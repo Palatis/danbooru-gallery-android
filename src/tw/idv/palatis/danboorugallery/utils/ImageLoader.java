@@ -279,6 +279,15 @@ public class ImageLoader
 
 						Bitmap bmp = getBitmapWeb( photoToLoad.url );
 
+						if ( bmp == null )
+						{
+							synchronized (photosToLoad)
+							{
+								photosToLoad.add( 0, photoToLoad );
+							}
+							continue;
+						}
+
 						// check if we still want the bitmap
 						String tag = imageViews.get( photoToLoad.imageView );
 						if (tag != null && tag.equals( photoToLoad.url ))
