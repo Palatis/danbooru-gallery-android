@@ -42,14 +42,39 @@ public class LazyImageAdapter
 	List < Post >			posts;
 	ImageLoader				loader;
 	int						item_size;
+	boolean					aggressive;
 
-	public LazyImageAdapter(Activity a, List < Post > p, int sz)
+	/**
+	 * controls the aggressive posts prefetching features
+	 *
+	 * @return true if aggressive, false if not
+	 */
+	public boolean isAggressive()
+	{
+		return aggressive;
+	}
+
+	/**
+	 * enable / disable the aggressive post prefetching behavier
+	 *
+	 * @param ag
+	 *            the aggressiveness to set
+	 */
+	public void setAggressive(boolean ag)
+	{
+		aggressive = ag;
+		if ( !aggressive)
+			loader.cancelAllPrefetch();
+	}
+
+	public LazyImageAdapter(Activity a, List < Post > p, int sz, boolean ag)
 	{
 		activity = a;
 		posts = p;
 		inflater = activity.getLayoutInflater();
 		loader = new ImageLoader( activity.getApplicationContext() );
 		item_size = sz;
+		aggressive = ag;
 	}
 
 	public void cancelAll()
@@ -70,8 +95,9 @@ public class LazyImageAdapter
 		posts.addAll( commit );
 
 		// add the posts for aggressive preview image pre-fetching
-		for (Post post : commit )
-			loader.DisplayImage( post.preview_url, null );
+		if (aggressive)
+			for (Post post : commit)
+				loader.DisplayImage( post.preview_url, null );
 
 		activity.runOnUiThread( new Runnable()
 		{

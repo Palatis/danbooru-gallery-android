@@ -162,7 +162,7 @@ public class MainActivity
 		} );
 		grid.setNumColumns( numcols );
 
-		adapter = new LazyImageAdapter( this, posts, gallery_item_size );
+		adapter = new LazyImageAdapter( this, posts, gallery_item_size, true );
 		grid.setAdapter( adapter );
 		grid.setOnScrollListener( new GalleryOnScrollListener( fetcher, adapter, preferences.getInt( "page_limit", 16 ) ) );
 		grid.setOnItemClickListener( new GalleryOnItemClickListener() );
