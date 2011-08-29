@@ -384,6 +384,7 @@ public class ViewImageActivity
 					finish();
 				}
 			} );
+			pic_info_dialog.show();
 			break;
 		case R.id.view_image_menu_refresh:
 			File file = filecache.getFile( post.file_url );
