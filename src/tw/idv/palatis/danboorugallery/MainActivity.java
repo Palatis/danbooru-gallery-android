@@ -184,7 +184,7 @@ public class MainActivity
 		String query = "";
 		if (intent.getAction().equals( Intent.ACTION_SEARCH ))
 		{
-			query = intent.getStringExtra( SearchManager.QUERY );
+			query = intent.getStringExtra( SearchManager.QUERY ).replace( ' ', '_' ).replace( "%2B", "+" );
 			dosearch = true;
 		}
 		else if (intent.getAction().equals( Intent.ACTION_VIEW ))
@@ -199,8 +199,7 @@ public class MainActivity
 
 		if (dosearch)
 		{
-			Log.d( D.LOGTAG, "query = " + query );
-			Toast.makeText( this, String.format( getString( R.string.main_query ), Uri.encode( query ) ), Toast.LENGTH_SHORT ).show();
+			Toast.makeText( this, String.format( getString( R.string.main_query ), query ), Toast.LENGTH_SHORT ).show();
 
 			if (fetcher.setTags( query ))
 			{
