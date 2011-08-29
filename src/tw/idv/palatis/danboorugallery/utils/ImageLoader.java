@@ -204,6 +204,13 @@ public class ImageLoader
 					tasks.remove( task );
 		}
 
+		public void discardAllNoImage()
+		{
+			for (PhotoToLoad task : tasks)
+				if (task.mImage == null)
+					tasks.remove( task );
+		}
+
 		public void queuePhoto(PhotoToLoad task)
 		{
 			tasks.put( task );
@@ -298,5 +305,11 @@ public class ImageLoader
 				// allow thread to exit
 			}
 		}
+	}
+
+	public void cancelAllPrefetch()
+	{
+		mDiskLoader.discardAllNoImage();
+		mWebLoader.discardAllNoImage();
 	}
 }
