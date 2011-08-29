@@ -69,22 +69,18 @@ public class LazyImageAdapter
 
 		posts.addAll( commit );
 
+		// add the posts for aggressive preview image pre-fetching
+		for (Post post : commit )
+			loader.DisplayImage( post.preview_url, null );
+
 		activity.runOnUiThread( new Runnable()
 		{
-			LazyImageAdapter	adapter;
-
-			Runnable initialize(LazyImageAdapter a)
-			{
-				adapter = a;
-				return this;
-			}
-
 			@Override
 			public void run()
 			{
-				adapter.notifyDataSetChanged();
+				LazyImageAdapter.this.notifyDataSetChanged();
 			}
-		}.initialize( this ) );
+		} );
 	}
 
 	@Override
