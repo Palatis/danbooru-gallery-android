@@ -153,17 +153,4 @@ public class Post
 			preview_url = furi.getScheme() + "://" + furi.getHost() + "/" + preview_url;
 		}
 	}
-
-	/*
-	 * public Post(String pUrl, String fUrl, String athr, String t, Date ct, int w, int h)
-	 * {
-	 * preview_url = pUrl;
-	 * file_url = fUrl;
-	 * author = athr;
-	 * tags = t;
-	 * created_at = ct;
-	 * width = w;
-	 * height = h;
-	 * }
-	 */
 }
