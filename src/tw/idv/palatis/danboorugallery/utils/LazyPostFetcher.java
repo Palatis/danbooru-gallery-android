@@ -20,26 +20,17 @@ package tw.idv.palatis.danboorugallery.utils;
  * along with Danbooru Gallery.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import tw.idv.palatis.danboorugallery.R;
 import tw.idv.palatis.danboorugallery.defines.D;
 import tw.idv.palatis.danboorugallery.model.Post;
+import tw.idv.palatis.danboorugallery.siteapi.DanbooruAPI;
+import tw.idv.palatis.danboorugallery.siteapi.ISiteAPI;
+import tw.idv.palatis.danboorugallery.siteapi.ISiteAPI.UnsupportedAPIException;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.util.Log;
-import android.widget.Toast;
 
 public class LazyPostFetcher
 {
@@ -47,20 +38,38 @@ public class LazyPostFetcher
 	public URLEnclosure			enclosure	= null;
 	boolean						reached_end	= false;
 
+	public ISiteAPI				site_api	= null;
+
 	public LazyPostFetcher()
 	{
 		enclosure = new URLEnclosure();
+		try
+		{
+			site_api = new DanbooruAPI( "" );
+		}
+		catch (UnsupportedAPIException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public LazyPostFetcher(URLEnclosure e)
 	{
 		enclosure = e;
+		try
+		{
+			site_api = new DanbooruAPI( "" );
+		}
+		catch (UnsupportedAPIException e1)
+		{
+		}
 	}
 
 	public boolean setUrl(String url)
 	{
-		boolean result = enclosure.url_format.equals( url );
-		enclosure.url_format = url;
+		boolean result = site_api.getSiteUrl().equals( url );
+		site_api.setSiteUrl( url );
 		if ( !result)
 			reached_end = false;
 		return !result;
@@ -138,7 +147,6 @@ public class LazyPostFetcher
 
 	public class URLEnclosure
 	{
-		public String	url_format;
 		public String	tags;
 		public int		page;
 		public int		limit;
@@ -146,16 +154,11 @@ public class LazyPostFetcher
 
 		public URLEnclosure()
 		{
-			url_format = "";
-			tags = "";
-			page = 1;
-			limit = 16;
-			rating = "";
+			this( 1, 16, "", "" );
 		}
 
-		public URLEnclosure(String f, int p, int l, String t, String r)
+		public URLEnclosure(int p, int l, String t, String r)
 		{
-			url_format = f;
 			tags = t;
 			page = p;
 			limit = l;
@@ -163,7 +166,7 @@ public class LazyPostFetcher
 		}
 	}
 
-	private class AsyncPostFetcher
+	private static class AsyncPostFetcher
 		extends AsyncTask < URLEnclosure, Integer, Integer >
 	{
 		LazyImageAdapter	adapter;
@@ -178,86 +181,27 @@ public class LazyPostFetcher
 		@Override
 		protected Integer doInBackground(URLEnclosure... params)
 		{
-			char buffer[] = new char[8192];
 			int fetched_posts_count = 0;
 			int skipped_posts_count = 0;
 
-			try
-			{
-				for (URLEnclosure enclosure : params)
-					while (fetched_posts_count < enclosure.limit)
-					{
-						URL url = new URL( String.format( enclosure.url_format, enclosure.page, enclosure.tags, enclosure.limit ) );
+			for (URLEnclosure enclosure : params)
+				while (fetched_posts_count < enclosure.limit)
+				{
+					List < Post > posts = fetcher.site_api.fetchPostsIndex( enclosure.page, enclosure.tags, enclosure.limit );
+					if (posts == null)
+						continue;
+					List < Post > filtered = new ArrayList < Post >( posts.size() );
+					for (Post post : posts)
+						if (enclosure.rating.contains( post.rating ))
+							filtered.add( post );
+						else
+							++skipped_posts_count;
+					adapter.addPosts( filtered );
+					fetched_posts_count += filtered.size();
 
-						Log.v( D.LOGTAG, "fetching " + url.toString() + " (" + fetched_posts_count + " fetched, " + skipped_posts_count + " skipped)" );
-
-						if (isCancelled())
-							return fetched_posts_count;
-
-						Reader input = new BufferedReader( new InputStreamReader( url.openStream(), "UTF-8" ) );
-						Writer output = new StringWriter();
-
-						int count = 0;
-						while ((count = input.read( buffer )) > 0)
-						{
-							output.write( buffer, 0, count );
-							if (isCancelled())
-								return fetched_posts_count;
-						}
-
-						try
-						{
-							JSONArray json_posts = new JSONArray( output.toString() );
-							int len = json_posts.length();
-							if (len == 0)
-							{
-								D.makeToastOnUiThread( adapter.getActivity(), R.string.main_fetch_reach_end, Toast.LENGTH_SHORT );
-								fetcher.noMorePosts();
-								return fetched_posts_count;
-							}
-							ArrayList < Post > posts = new ArrayList < Post >();
-							posts.ensureCapacity( len );
-							for (int j = 0; j < len; ++j)
-							{
-								JSONObject json_post = json_posts.getJSONObject( j );
-
-								try
-								{
-									if (enclosure.rating.indexOf( json_post.getString( "rating" ) ) == -1)
-									{
-										++skipped_posts_count;
-										continue;
-									}
-								}
-								catch (JSONException ex)
-								{
-								}
-
-								Post post = new Post( json_post );
-
-								posts.add( post );
-								++fetched_posts_count;
-
-								if (isCancelled())
-									return fetched_posts_count;
-							}
-							adapter.addPosts( posts );
-						}
-						catch (JSONException ex)
-						{
-							D.makeToastOnUiThread( adapter.getActivity(), ex.getMessage(), Toast.LENGTH_LONG );
-						}
-
-						if (isCancelled())
-							return fetched_posts_count;
-
-						++enclosure.page;
-					}
-			}
-			catch (IOException ex)
-			{
-				D.makeToastOnUiThread( adapter.getActivity(), ex.getMessage(), Toast.LENGTH_LONG );
-			}
+					Log.d( D.LOGTAG, "fetched + skipped / total: " + fetched_posts_count + " + " + skipped_posts_count + " / " + fetched_posts_count + skipped_posts_count );
+					++fetcher.enclosure.page;
+				}
 
 			return fetched_posts_count;
 		}
