@@ -26,6 +26,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * This is the data structure used to represent a post.
@@ -61,6 +63,7 @@ import android.net.Uri;
  * @author palatis
  */
 public class Post
+	implements Parcelable
 {
 	public int		id;
 	public int		parent_id;
@@ -152,5 +155,91 @@ public class Post
 			Uri furi = Uri.parse( file_url );
 			preview_url = furi.getScheme() + "://" + furi.getHost() + "/" + preview_url;
 		}
+	}
+
+	// parcelable related
+	public static final Parcelable.Creator < Post >	CREATOR	= new PostParcelableCreater();
+
+	private static class PostParcelableCreater
+		implements Parcelable.Creator < Post >
+	{
+		@Override
+		public Post createFromParcel(Parcel source)
+		{
+			return new Post( source );
+		}
+
+		@Override
+		public Post[] newArray(int size)
+		{
+			return new Post[size];
+		}
+	}
+
+	private Post(Parcel parcel)
+	{
+		id = parcel.readInt();
+		parent_id = parcel.readInt();
+		creator_id = parcel.readInt();
+		change = parcel.readInt();
+		score = parcel.readInt();
+		status = parcel.readString();
+		rating = parcel.readString();
+		tags = parcel.readString();
+		source = parcel.readString();
+		author = parcel.readString();
+		created_at = new Date( parcel.readLong() );
+		has_notes = parcel.readInt() != 0;
+		has_children = parcel.readInt() != 0;
+		has_comments = parcel.readInt() != 0;
+
+		md5 = parcel.readString();
+		file_url = parcel.readString();
+		file_size = parcel.readInt();
+		width = parcel.readInt();
+		height = parcel.readInt();
+		sample_url = parcel.readString();
+		sample_width = parcel.readInt();
+		sample_height = parcel.readInt();
+		preview_url = parcel.readString();
+		preview_width = parcel.readInt();
+		preview_height = parcel.readInt();
+	}
+
+	@Override
+	public int describeContents()
+	{
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags)
+	{
+		dest.writeInt( id );
+		dest.writeInt( parent_id );
+		dest.writeInt( creator_id );
+		dest.writeInt( change );
+		dest.writeInt( score );
+		dest.writeString( status );
+		dest.writeString( rating );
+		dest.writeString( tags );
+		dest.writeString( source );
+		dest.writeString( author );
+		dest.writeLong( created_at.getTime() );
+		dest.writeInt( has_notes ? 0 : 1 );
+		dest.writeInt( has_children ? 0 : 1 );
+		dest.writeInt( has_comments ? 0 : 1 );
+
+		dest.writeString( md5 );
+		dest.writeString( file_url );
+		dest.writeInt( file_size );
+		dest.writeInt( width );
+		dest.writeInt( height );
+		dest.writeString( sample_url );
+		dest.writeInt( sample_width );
+		dest.writeInt( sample_height );
+		dest.writeString( preview_url );
+		dest.writeInt( preview_width );
+		dest.writeInt( preview_height );
 	}
 }
