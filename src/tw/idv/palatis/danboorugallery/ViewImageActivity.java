@@ -117,8 +117,6 @@ public class ViewImageActivity
 			final float old_center_y = savedInstanceState.getFloat( "image_center_y" );
 			final float old_width = savedInstanceState.getFloat( "image_width" );
 
-			Log.d( D.LOGTAG, "old scale: " + old_scale + ", old center: (" + old_center_x + ", " + old_center_y + ")" );
-
 			image.post( new Runnable()
 			{
 				@Override
