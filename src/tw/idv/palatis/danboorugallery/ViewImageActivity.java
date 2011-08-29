@@ -518,7 +518,6 @@ public class ViewImageActivity
 					if (count == -1)
 						break;
 
-					Log.d( D.LOGTAG, "publishing progress with (PROGRESS_INCREMENTBY, " + count + ")" );
 					publishProgress( PROGRESS_INCREMENTBY, count );
 
 					if (isCancelled())
@@ -562,9 +561,6 @@ public class ViewImageActivity
 				Toast.makeText( image.getContext(), R.string.view_image_user_canceled, Toast.LENGTH_SHORT ).show();
 				dialog.cancel();
 				break;
-			default:
-				Log.e( D.LOGTAG, "AsyncImageLoader::onPostExecute(): Unknown result: " + result );
-				dialog.dismiss();
 			}
 
 			activity.loader = null;
@@ -587,8 +583,6 @@ public class ViewImageActivity
 			case PROGRESS_SETMESSAGE:
 				dialog.setMessage( "" );
 				break;
-			default:
-				Log.e( D.LOGTAG, "AsyncImageLoader::onProgressUpdate(): Unknown action: " + values[0] );
 			}
 		}
 	}
