@@ -405,15 +405,7 @@ public class MainActivity
 		public void onItemClick(AdapterView < ? > parent, View view, int position, long id)
 		{
 			Intent intent = new Intent( MainActivity.this, ViewImageActivity.class );
-			intent.putExtra( "post.preview_url", posts.get( position ).preview_url );
-			intent.putExtra( "post.file_url", posts.get( position ).file_url );
-			intent.putExtra( "post.author", posts.get( position ).author );
-			intent.putExtra( "post.tags", posts.get( position ).tags );
-			intent.putExtra( "post.width", posts.get( position ).width );
-			intent.putExtra( "post.height", posts.get( position ).height );
-
-			if (posts.get( position ).created_at != null)
-				intent.putExtra( "post.created_at", posts.get( position ).created_at.getTime() );
+			intent.putExtra( "post", posts.get( position ) );
 
 			String host[] = hosts.get( preferences.getInt( "selected_host", 0 ) );
 			intent.putExtra( "host_name", host[Hosts.HOST_NAME] );

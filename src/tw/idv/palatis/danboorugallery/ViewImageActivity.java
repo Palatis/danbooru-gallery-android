@@ -33,7 +33,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.Date;
 
 import tw.idv.palatis.danboorugallery.defines.D;
 import tw.idv.palatis.danboorugallery.model.Hosts;
@@ -95,22 +94,13 @@ public class ViewImageActivity
 		setContentView( R.layout.view_image );
 
 		filecache = new FileCache( getApplicationContext() );
-		post = new Post();
 
 		Intent intent = getIntent();
-		post.preview_url = intent.getStringExtra( "post.preview_url" );
-		post.file_url = intent.getStringExtra( "post.file_url" );
-		post.author = intent.getStringExtra( "post.author" );
-		post.tags = intent.getStringExtra( "post.tags" );
-		post.width = intent.getIntExtra( "post.width", 0 );
-		post.height = intent.getIntExtra( "post.height", 0 );
+		post = intent.getParcelableExtra( "post" );
 
 		host = new String[2];
 		host[Hosts.HOST_NAME] = intent.getStringExtra( "host_name" );
 		host[Hosts.HOST_URL] = intent.getStringExtra( "host_url" );
-
-		if (intent.hasExtra( "post.created_at" ))
-			post.created_at = new Date( intent.getLongExtra( "post.created_at", 0 ) );
 
 		page_tags = intent.getStringExtra( "page_tags" );
 
