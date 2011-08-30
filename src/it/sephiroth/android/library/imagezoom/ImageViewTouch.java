@@ -11,13 +11,12 @@ public class ImageViewTouch
 	extends ImageViewTouchBase
 {
 	static final float				MIN_ZOOM	= 0.7f;
-	static final float				MAX_ZOOM	= 5.0f;
+	static final float				MAX_ZOOM	= 2.5f;
 	protected ScaleGestureDetector	mScaleDetector;
 	protected GestureDetector		mGestureDetector;
 	protected int					mTouchSlop;
 	protected float					mCurrentScaleFactor;
 	protected float					mScaleFactor;
-	protected int					mDoubleTapDirection;
 	protected GestureListener		mGestureListener;
 	protected ScaleListener			mScaleListener;
 
@@ -37,7 +36,6 @@ public class ImageViewTouch
 		mScaleDetector = new ScaleGestureDetector( getContext(), mScaleListener );
 		mGestureDetector = new GestureDetector( getContext(), mGestureListener, null, true );
 		mCurrentScaleFactor = 1f;
-		mDoubleTapDirection = 1;
 	}
 
 	@Override
@@ -83,21 +81,7 @@ public class ImageViewTouch
 
 	protected float onDoubleTapPost(float scale, float maxZoom)
 	{
-		if (mDoubleTapDirection == 1)
-		{
-			if ((scale + (mScaleFactor * 2)) <= maxZoom)
-				return scale + mScaleFactor;
-			else
-			{
-				mDoubleTapDirection = -1;
-				return maxZoom;
-			}
-		}
-		else
-		{
-			mDoubleTapDirection = 1;
-			return 1f;
-		}
+		return (scale >= mScaleFactor) ? 1f : mScaleFactor;
 	}
 
 	class GestureListener
@@ -153,7 +137,6 @@ public class ImageViewTouch
 		{
 			mCurrentScaleFactor = Math.min( getMaxZoom() * MAX_ZOOM, Math.max( mCurrentScaleFactor * detector.getScaleFactor(), MIN_ZOOM ) );
 			zoomTo( mCurrentScaleFactor, detector.getFocusX(), detector.getFocusY() );
-			mDoubleTapDirection = 1;
 			invalidate();
 			return true;
 		}
