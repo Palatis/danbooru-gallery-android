@@ -75,7 +75,6 @@ public class MainActivity
 	LazyImageAdapter		adapter;
 	LazyPostFetcher			fetcher;
 	SharedPreferences		preferences;
-	DownloadManager			downloader;
 
 	List < Post >			posts;
 	Hosts					hosts;
@@ -92,9 +91,6 @@ public class MainActivity
 		GalleryItemDisplayer.setActivity( this );
 		preferences = getSharedPreferences( D.SHAREDPREFERENCES_NAME, MODE_PRIVATE );
 		loadPreferences();
-
-		// get the download manager
-		downloader = (DownloadManager) getSystemService( DOWNLOAD_SERVICE );
 
 		// calculate screen size
 		Display display = ((WindowManager) getSystemService( Context.WINDOW_SERVICE )).getDefaultDisplay();
@@ -151,6 +147,7 @@ public class MainActivity
 						DownloadManager.Request request = new DownloadManager.Request( uri );
 						request.setTitle( title );
 						request.setDestinationUri( Uri.fromFile( dest ) );
+						DownloadManager downloader = (DownloadManager) getSystemService( DOWNLOAD_SERVICE );
 						downloader.enqueue( request );
 					}
 				} );
