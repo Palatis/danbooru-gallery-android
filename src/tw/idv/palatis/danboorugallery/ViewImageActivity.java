@@ -108,7 +108,7 @@ public class ViewImageActivity
 
 		ConfigurationEnclosure enclosure = (ConfigurationEnclosure) getLastNonConfigurationInstance();
 		Bitmap bitmap = null;
-		if ( enclosure != null )
+		if (enclosure != null)
 		{
 			loader = enclosure.loader;
 			bitmap = enclosure.bitmap;
@@ -259,7 +259,7 @@ public class ViewImageActivity
 	public Object onRetainNonConfigurationInstance()
 	{
 		Bitmap bitmap = null;
-		if ( loader != null && loader.getStatus() != Status.RUNNING )
+		if (loader != null && loader.getStatus() != Status.RUNNING)
 		{
 			BitmapDrawable drawable = (BitmapDrawable) image.getDrawable();
 			if (drawable != null)
@@ -379,6 +379,7 @@ public class ViewImageActivity
 		case R.id.view_image_menu_refresh:
 			File file = filecache.getFile( post.file_url );
 			ProgressDialog dialog = new NoSearchProgressDialog( this );
+			dialog.setTitle( String.format( getString( R.string.view_image_progress_title ), post.width, post.height ) );
 			dialog.setProgressStyle( ProgressDialog.STYLE_HORIZONTAL );
 			dialog.setMax( 1 );
 
@@ -514,6 +515,12 @@ public class ViewImageActivity
 		}
 
 		@Override
+		protected void onPreExecute()
+		{
+			dialog.show();
+		}
+
+		@Override
 		protected Integer doInBackground(String... params)
 		{
 			if (params.length != 1)
@@ -570,8 +577,13 @@ public class ViewImageActivity
 			{
 			case RESULT_SUCCESS:
 				Bitmap bitmap = D.getBitmapFromFile( file );
-				image.setImageBitmapReset( bitmap, true );
-				image.setScaleType( ScaleType.MATRIX );
+				if (bitmap != null)
+				{
+					image.setImageBitmapReset( bitmap, true );
+					image.setScaleType( ScaleType.MATRIX );
+				}
+				else
+					Toast.makeText( image.getContext(), R.string.view_image_download_failed, Toast.LENGTH_SHORT ).show();
 				dialog.dismiss();
 				break;
 			case RESULT_FAILED:
@@ -608,6 +620,11 @@ public class ViewImageActivity
 		}
 	}
 
+	/**
+	 * this is just a progress dialog that disables the ability to open up a search dialog
+	 *
+	 * @author palatis
+	 */
 	private class NoSearchProgressDialog
 		extends ProgressDialog
 	{
