@@ -269,7 +269,7 @@ public class MainActivity
 			url = host[Hosts.HOST_URL];
 
 		boolean reset = false;
-		reset |= fetcher.setUrl( url + D.URL_POST );
+		reset |= fetcher.setUrl( url );
 		reset |= fetcher.setRating( preferences.getString( "rating", "s" ) );
 		reset |= fetcher.setPageLimit( preferences.getInt( "page_limit", 16 ) );
 
