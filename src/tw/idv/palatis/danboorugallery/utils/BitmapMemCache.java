@@ -24,13 +24,21 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import tw.idv.palatis.danboorugallery.defines.D;
+import android.app.ActivityManager;
+import android.app.Service;
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 public class BitmapMemCache
 {
-	private static final int		CACHE_SIZE	= 200;
+	private static BitmapMemCache	instance	= null;
 
-	private static BitmapMemCache	instance	= new BitmapMemCache();
+	public static void prepare(Context context)
+	{
+		instance = new BitmapMemCache( context );
+	}
 
 	public static BitmapMemCache getInstance()
 	{
@@ -39,9 +47,12 @@ public class BitmapMemCache
 
 	private Map < String, Bitmap >	cache;
 
-	private BitmapMemCache()
+	private BitmapMemCache(Context context)
 	{
-		cache = Collections.synchronizedMap( new LruCache < String, Bitmap >( CACHE_SIZE ) );
+		ActivityManager manager = (ActivityManager) context.getSystemService( Service.ACTIVITY_SERVICE );
+		int cache_size = manager.getMemoryClass() * 16;
+		Log.i( D.LOGTAG, "using " + cache_size + " for BitmapMemCache" );
+		cache = Collections.synchronizedMap( new LruCache < String, Bitmap >( cache_size ) );
 	}
 
 	public Bitmap get(String key)

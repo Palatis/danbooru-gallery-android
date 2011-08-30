@@ -28,6 +28,7 @@ import java.util.List;
 import tw.idv.palatis.danboorugallery.defines.D;
 import tw.idv.palatis.danboorugallery.model.Hosts;
 import tw.idv.palatis.danboorugallery.model.Post;
+import tw.idv.palatis.danboorugallery.utils.BitmapMemCache;
 import tw.idv.palatis.danboorugallery.utils.DanbooruUncaughtExceptionHandler;
 import tw.idv.palatis.danboorugallery.utils.LazyImageAdapter;
 import tw.idv.palatis.danboorugallery.utils.LazyPostFetcher;
@@ -87,6 +88,9 @@ public class MainActivity
 
 		// register a global exception handler here so we don't just quit...
 		Thread.setDefaultUncaughtExceptionHandler( new DanbooruUncaughtExceptionHandler( this ) );
+
+		if (BitmapMemCache.getInstance() == null)
+			BitmapMemCache.prepare( this );
 
 		GalleryItemDisplayer.setActivity( this );
 		preferences = getSharedPreferences( D.SHAREDPREFERENCES_NAME, MODE_PRIVATE );
