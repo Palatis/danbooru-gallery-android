@@ -14,11 +14,11 @@ import org.json.JSONObject;
 public class Tag
 	implements Comparable < Tag >
 {
-	int		id;
-	int		type;
-	int		count;
-	boolean	ambiguous;
-	String	name;
+	public int		id;
+	public int		type;
+	public int		count;
+	public boolean	ambiguous;
+	public String	name;
 
 	public Tag()
 	{
