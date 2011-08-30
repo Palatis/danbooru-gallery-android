@@ -187,6 +187,12 @@ public class ImageLoader
 				return -1;
 			return 0;
 		}
+
+		@SuppressWarnings("unused")
+		public boolean equals(PhotoToLoad another)
+		{
+			return mImage == another.mImage;
+		}
 	}
 
 	private abstract class PhotosLoaderBase
