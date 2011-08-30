@@ -20,10 +20,15 @@ package tw.idv.palatis.danboorugallery.model;
  * along with Danbooru Gallery.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Element;
 
 import android.net.Uri;
 import android.os.Parcel;
@@ -147,6 +152,70 @@ public class Post
 		preview_url = json.optString( "preview_url" );
 		preview_width = json.optInt( "preview_width" );
 		preview_height = json.optInt( "preview_height" );
+
+		// if the preview_url is a relative url, add the host part from file_url to it.
+		Uri puri = Uri.parse( preview_url );
+		if (puri.getHost() == null)
+		{
+			Uri furi = Uri.parse( file_url );
+			preview_url = furi.getScheme() + "://" + furi.getHost() + "/" + preview_url;
+		}
+	}
+
+	// this is used to format the created_at attribute in XML
+	// it is here because Android frees Locale.ENGLISH when formatter destroyed,
+	// resulting reloading of locale data every time which is SLOW.
+	static private DateFormat formatter = new SimpleDateFormat( "EEE MMM dd HH:mm:ss Z yyyy", Locale.ENGLISH);
+
+	public Post(Element node)
+	{
+		id = Integer.valueOf( node.getAttribute( "id" ) );
+		try
+		{
+			parent_id = Integer.valueOf( node.getAttribute( "parent_id" ) );
+		}
+		catch (NumberFormatException ex)
+		{
+			parent_id = -1;
+		}
+		try
+		{
+			creator_id = Integer.valueOf( node.getAttribute( "creator_id" ) );
+		}
+		catch (NumberFormatException ex)
+		{
+			creator_id = -1;
+		}
+		change = Integer.valueOf( node.getAttribute( "change" ) );
+		score = Integer.valueOf( node.getAttribute( "score" ) );
+		status = node.getAttribute( "status" );
+		rating = node.getAttribute( "rating" );
+		tags = node.getAttribute( "tags" );
+		source = node.getAttribute( "source" );
+		author = node.getAttribute( "author" );
+		try
+		{
+			created_at = formatter.parse( "Mon Aug 29 12:01:53 -0400 2011" );
+		}
+		catch (ParseException e)
+		{
+		}
+
+		has_notes = node.getAttribute( "has_notes" ).equals( "true" );
+		has_children = node.getAttribute( "has_children" ).equals( "true" );
+		has_comments = node.getAttribute( "has_comments" ).equals( "true" );
+
+		md5 = node.getAttribute( "md5" );
+		file_url = node.getAttribute( "file_url" );
+		file_size = Integer.valueOf( node.getAttribute( "file_size" ) );
+		width = Integer.valueOf( node.getAttribute( "width" ) );
+		height = Integer.valueOf( node.getAttribute( "height" ) );
+		sample_url = node.getAttribute( "sample_url" );
+		sample_width = Integer.valueOf( node.getAttribute( "sample_width" ) );
+		sample_height = Integer.valueOf( node.getAttribute( "sample_height" ) );
+		preview_url = node.getAttribute( "preview_url" );
+		preview_width = Integer.valueOf( node.getAttribute( "preview_width" ) );
+		preview_height = Integer.valueOf( node.getAttribute( "preview_height" ) );
 
 		// if the preview_url is a relative url, add the host part from file_url to it.
 		Uri puri = Uri.parse( preview_url );

@@ -3,6 +3,7 @@ package tw.idv.palatis.danboorugallery.model;
 import java.util.Comparator;
 
 import org.json.JSONObject;
+import org.w3c.dom.Element;
 
 /**
  * this is the data structure used to represents a tag.
@@ -34,7 +35,17 @@ public class Tag
 		name = json.optString( "name" );
 	}
 
-	public static class CompareByCount implements Comparator<Tag>
+	public Tag(Element item)
+	{
+		id = Integer.valueOf( item .getAttribute( "id" ) );
+		type = Integer.valueOf( item .getAttribute( "type" ) );
+		count = Integer.valueOf( item.getAttribute( "count" ) );
+		ambiguous = item.getAttribute( "ambiguous" ).equals( "true" );
+		name = item.getAttribute( "name" );
+	}
+
+	public static class CompareByCount
+		implements Comparator < Tag >
 	{
 		@Override
 		public int compare(Tag object1, Tag object2)
@@ -43,7 +54,8 @@ public class Tag
 		}
 	}
 
-	public static class CompareByName implements Comparator<Tag>
+	public static class CompareByName
+		implements Comparator < Tag >
 	{
 		@Override
 		public int compare(Tag object1, Tag object2)
@@ -52,7 +64,8 @@ public class Tag
 		}
 	}
 
-	public static class CompareById implements Comparator<Tag>
+	public static class CompareById
+		implements Comparator < Tag >
 	{
 		@Override
 		public int compare(Tag object1, Tag object2)
