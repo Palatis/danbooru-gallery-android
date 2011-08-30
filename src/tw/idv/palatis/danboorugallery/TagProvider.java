@@ -185,6 +185,8 @@ public class TagProvider
 
 			site_api.setSiteUrl( host );
 
+			query = query.toLowerCase();
+
 			Log.d( D.LOGTAG, "getSuggestions: query = " + query );
 			List < Tag > tags = site_api.fetchTagsIndex( 1, query, 300 );
 
