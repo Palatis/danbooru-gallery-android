@@ -93,6 +93,25 @@ public class DanbooruAPI
 	@Override
 	public List < Post > fetchPostsIndex(int page, String tags, int limit)
 	{
+		if (mApi == API_JSON)
+			return fetchPostsIndexJSON( page, tags, limit );
+		if (mApi == API_XML)
+			return fetchPostsIndexXML( page, tags, limit );
+		return null;
+	}
+
+	@Override
+	public List < Tag > fetchTagsIndex(int page, String name, int limit)
+	{
+		if (mApi == API_JSON)
+			return fetchTagsIndexJSON( page, name, limit );
+		if (mApi == API_XML)
+			return fetchTagsIndexXML( page, name, limit );
+		return null;
+	}
+
+	private List < Post > fetchPostsIndexJSON(int page, String tags, int limit)
+	{
 		mIsCanceled = false;
 
 		URL fetchUrl = null;
@@ -155,8 +174,12 @@ public class DanbooruAPI
 		return null;
 	}
 
-	@Override
-	public List < Tag > fetchTagsIndex(int page, String name, int limit)
+	private List < Post > fetchPostsIndexXML(int page, String tags, int limit)
+	{
+		return null;
+	}
+
+	private List < Tag > fetchTagsIndexJSON(int page, String name, int limit)
 	{
 		TreeSet < Tag > ret = new TreeSet < Tag >( new Tag.CompareById() );
 		String keywords[] = new HashSet < String >( Arrays.asList( name.split( "\\+" ) ) ).toArray( new String[] { } );
@@ -206,5 +229,10 @@ public class DanbooruAPI
 		}
 
 		return Arrays.asList( ret.toArray( new Tag[] { } ) );
+	}
+
+	private List < Tag > fetchTagsIndexXML(int page, String name, int limit)
+	{
+		return null;
 	}
 }
