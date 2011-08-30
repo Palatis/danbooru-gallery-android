@@ -27,7 +27,6 @@ import tw.idv.palatis.danboorugallery.defines.D;
 import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.siteapi.DanbooruAPI;
 import tw.idv.palatis.danboorugallery.siteapi.ISiteAPI;
-import tw.idv.palatis.danboorugallery.siteapi.ISiteAPI.UnsupportedAPIException;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.util.Log;
@@ -42,27 +41,13 @@ public class LazyPostFetcher
 	public LazyPostFetcher()
 	{
 		enclosure = new URLEnclosure();
-		try
-		{
-			site_api = new DanbooruAPI( "" );
-		}
-		catch (UnsupportedAPIException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		site_api = new DanbooruAPI();
 	}
 
 	public LazyPostFetcher(URLEnclosure e)
 	{
 		enclosure = e;
-		try
-		{
-			site_api = new DanbooruAPI( "" );
-		}
-		catch (UnsupportedAPIException e1)
-		{
-		}
+		site_api = new DanbooruAPI();
 	}
 
 	public boolean setUrl(String url)

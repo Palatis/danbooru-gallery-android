@@ -36,9 +36,15 @@ public class DanbooruAPI
 	int							mApi;
 	boolean						mIsCanceled;
 
-	public DanbooruAPI(String siteUrl) throws UnsupportedAPIException
+	public DanbooruAPI()
 	{
-		this( siteUrl, API_JSON );
+		this( "" );
+	}
+
+	public DanbooruAPI(String siteUrl)
+	{
+		mSiteUrl = siteUrl;
+		mApi = API_JSON;
 	}
 
 	public DanbooruAPI(String siteUrl, int api) throws UnsupportedAPIException
