@@ -54,7 +54,7 @@ public class ImageViewTouch
 	public void setImageRotateBitmapReset(RotateBitmap bitmap, boolean reset)
 	{
 		super.setImageRotateBitmapReset( bitmap, reset );
-		mScaleFactor = getMaxZoom() / 3;
+		mScaleFactor = getMaxZoom() / 2.0f;
 	}
 
 	@Override
@@ -93,7 +93,7 @@ public class ImageViewTouch
 
 	protected float onDoubleTapPost(float scale, float maxZoom)
 	{
-		return (scale >= mScaleFactor) ? 1f : mScaleFactor;
+		return (scale >= mScaleFactor) ? 1f : scale + mScaleFactor;
 	}
 
 	class GestureListener
