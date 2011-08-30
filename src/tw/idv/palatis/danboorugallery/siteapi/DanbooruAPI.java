@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,7 +28,7 @@ public class DanbooruAPI
 	implements ISiteAPI
 {
 	public static final String	URL_POSTS_JSON	= "/post/index.json?page=%1$s&tags=%2$s&limit=%3$s";
-	public static final String	URL_TAGS_JSON	= "/tag/index.json?order=count&name=*%1$s*&limit=100";
+	public static final String	URL_TAGS_JSON	= "/tag/index.json?order=count&page=%1$s&name=*%2$s*&limit=%3$s";
 
 	private static final int	_BUFFER_SIZE	= 8192;
 
@@ -151,8 +152,7 @@ public class DanbooruAPI
 	@Override
 	public List < Tag > fetchTagsIndex(int page, String name, int limit)
 	{
-		HashSet < Tag > ret = new HashSet < Tag >();
-		// ArrayList < Tag > ret = new ArrayList < Tag >();
+		TreeSet < Tag > ret = new TreeSet < Tag >( new Tag.CompareById() );
 		String keywords[] = new HashSet < String >( Arrays.asList( name.split( "\\+" ) ) ).toArray( new String[] { } );
 
 		char buffer[] = new char[8192];
@@ -165,12 +165,12 @@ public class DanbooruAPI
 			keyword = keyword.trim().replace( ' ', '_' );
 
 			// get data from network...
-			Reader input;
 			try
 			{
 				URL fetchUrl = new URL( String.format( mSiteUrl + URL_TAGS_JSON, page, keyword, limit ) );
+				Log.d( D.LOGTAG, "query for tags: " + fetchUrl.toExternalForm() );
 
-				input = new BufferedReader( new InputStreamReader( fetchUrl.openStream(), "UTF-8" ) );
+				Reader input = new BufferedReader( new InputStreamReader( fetchUrl.openStream(), "UTF-8" ) );
 				Writer output = new StringWriter();
 
 				int count = 0;
