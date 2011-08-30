@@ -45,16 +45,15 @@
 
     <!-- View Image Activity -->
     <string name="view_image_pic_info">Size: %1$dx%2$d\nAuthor: %3$s\nCreated At:\n%4$s\nTags:</string>
-    <string name="view_image_file_saved">File saved to:\n%1$s</string>
     <string name="view_image_download_failed">Download failed!</string>
-    <string name="view_image_file_save_failed">Failed to save file.</string>
     <string name="view_image_user_canceled">User canceled.</string>
     <string name="view_image_progress_title">%1$sx%2$s</string>
 
     <string name="view_image_menu_info">Picture Info</string>
     <string name="view_image_menu_share">Share</string>
 	 <string name="view_image_menu_refresh">Refresh</string>
-	 <string name="view_image_menu_save">Save</string>
+	 <string name="view_image_menu_download">Download</string>
+	 <string name="view_image_menu_downloading">Download enqueued:\n%1$s</string>
 
 	 <string name="view_image_menu_share_chooser_title">Share using...</string>
 
@@ -84,7 +83,8 @@
     <string name="preferences_options_page_limit">Posts per page</string>
 	 <string name="preferences_options_page_limit_description">Posts to retrieve at once</string>
 	 <string name="preferences_options_aggressive_prefetch">Aggressive Prefetch</string>
-	 <string name="preferences_options_aggressive_prefetch_description">Prefetch preview images aggressively. <b>This may cost you a LOT of bandwidth, use with caution.</b></string>
+	 <string name="preferences_options_aggressive_prefetch_description">Prefetch preview images aggressively.
+<b>This may cost you a LOT of bandwidth, use with caution.</b></string>
 
 	 <string name="preferences_category_about">About</string>
 	 <string name="preferences_about_copyright">Copyright (c) 2011</string>

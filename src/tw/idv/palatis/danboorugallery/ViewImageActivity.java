@@ -23,7 +23,6 @@ package tw.idv.palatis.danboorugallery;
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +39,7 @@ import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.utils.FileCache;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.app.AlertDialog.Builder;
@@ -51,11 +51,10 @@ import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.AsyncTask.Status;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -188,7 +187,7 @@ public class ViewImageActivity
 		File file = null;
 		if (bitmap == null)
 		{
-			file = filecache.getFile( post.file_url );
+			file = filecache.getFile( post.sample_url );
 			if (file.exists())
 				bitmap = D.getBitmapFromFile( file );
 		}
@@ -204,7 +203,7 @@ public class ViewImageActivity
 			if (loader == null)
 			{
 				loader = new AsyncImageLoader( this, image, dialog, file );
-				loader.execute( post.file_url );
+				loader.execute( post.sample_url );
 				dialog.setMax( 1 );
 			}
 			else
@@ -377,7 +376,7 @@ public class ViewImageActivity
 			pic_info_dialog.show();
 			break;
 		case R.id.view_image_menu_refresh:
-			File file = filecache.getFile( post.file_url );
+			File file = filecache.getFile( post.sample_url );
 			ProgressDialog dialog = new NoSearchProgressDialog( this );
 			dialog.setTitle( String.format( getString( R.string.view_image_progress_title ), post.width, post.height ) );
 			dialog.setProgressStyle( ProgressDialog.STYLE_HORIZONTAL );
@@ -387,31 +386,29 @@ public class ViewImageActivity
 			loader = new AsyncImageLoader( this, image, dialog, file );
 			dialog.setOnCancelListener( new ProgressOnCancelListener() );
 
-			loader.execute( post.file_url );
+			loader.execute( post.sample_url );
 			break;
-		case R.id.view_image_menu_save:
-			// FIXME: do this in the background, don't block the UI thread.
-			// maybe we shall just do a ln?
-			try
-			{
-				File cachefile = filecache.getFile( post.file_url );
-				File outfile = getOutputFile( new URL( post.file_url ) );
+		case R.id.view_image_menu_download:
+			String title = post.tags;
+			if (host != null)
+				title = String.format( "%1$s - %2$s", host[Hosts.HOST_NAME], post.tags );
 
-				outfile.delete();
+			Uri uri = Uri.parse( post.file_url );
+			String filename = uri.getLastPathSegment();
+			if (filename == null)
+				filename = Uri.encode( uri.toString() );
 
-				D.CopyStream( new FileInputStream( cachefile ), new FileOutputStream( outfile ) );
+			File dest = new File( android.os.Environment.getExternalStorageDirectory(), D.SAVEDIR + "/" + host[Hosts.HOST_NAME] + "/" + filename );
+			if ( !dest.getParentFile().exists())
+				dest.getParentFile().mkdirs();
 
-				Toast.makeText( this, String.format( getString( R.string.view_image_file_saved ), outfile.getPath() ), Toast.LENGTH_SHORT ).show();
+			DownloadManager.Request request = new DownloadManager.Request( uri );
+			request.setTitle( title );
+			request.setDestinationUri( Uri.fromFile( dest ) );
+			DownloadManager downloader = (DownloadManager) getSystemService( DOWNLOAD_SERVICE );
+			downloader.enqueue( request );
 
-				MediaScannerConnection.scanFile( this, new String[] {
-					outfile.getAbsolutePath()
-				}, null, null );
-			}
-			catch (Exception e)
-			{
-				Log.d( D.LOGTAG, Log.getStackTraceString( e ) );
-				Toast.makeText( this, R.string.view_image_file_save_failed, Toast.LENGTH_SHORT ).show();
-			}
+			Toast.makeText( this, String.format( getString( R.string.view_image_menu_downloading ), filename ), Toast.LENGTH_SHORT ).show();
 			break;
 		case R.id.view_image_menu_share:
 			Intent intent = new Intent( Intent.ACTION_SEND );
