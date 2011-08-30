@@ -1,5 +1,7 @@
 package tw.idv.palatis.danboorugallery.model;
 
+import java.util.Comparator;
+
 import org.json.JSONObject;
 
 /**
@@ -12,7 +14,6 @@ import org.json.JSONObject;
  * @author palatis
  */
 public class Tag
-	implements Comparable < Tag >
 {
 	public int		id;
 	public int		type;
@@ -33,9 +34,30 @@ public class Tag
 		name = json.optString( "name" );
 	}
 
-	@Override
-	public int compareTo(Tag another)
+	public static class CompareByCount implements Comparator<Tag>
 	{
-		return name.compareTo( another.name );
+		@Override
+		public int compare(Tag object1, Tag object2)
+		{
+			return object1.count - object2.count;
+		}
+	}
+
+	public static class CompareByName implements Comparator<Tag>
+	{
+		@Override
+		public int compare(Tag object1, Tag object2)
+		{
+			return object1.name.compareTo( object2.name );
+		}
+	}
+
+	public static class CompareById implements Comparator<Tag>
+	{
+		@Override
+		public int compare(Tag object1, Tag object2)
+		{
+			return object1.id - object2.id;
+		}
 	}
 }
