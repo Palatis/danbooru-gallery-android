@@ -29,7 +29,6 @@ import android.app.ActivityManager;
 import android.app.Service;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 
 public class BitmapMemCache
 {
@@ -51,7 +50,7 @@ public class BitmapMemCache
 	{
 		ActivityManager manager = (ActivityManager) context.getSystemService( Service.ACTIVITY_SERVICE );
 		int cache_size = manager.getMemoryClass() * 16;
-		Log.i( D.LOGTAG, "using " + cache_size + " for BitmapMemCache" );
+		D.Log.d( "Using %d for cache size", cache_size );
 		cache = Collections.synchronizedMap( new LruCache < String, Bitmap >( cache_size ) );
 	}
 

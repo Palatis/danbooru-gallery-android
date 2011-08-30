@@ -28,6 +28,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import tw.idv.palatis.danboorugallery.defines.D;
 import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.model.Tag;
 
@@ -127,6 +128,7 @@ public class DanbooruAPI
 		try
 		{
 			fetchUrl = new URL( String.format( mSiteUrl + URL_POSTS_JSON, page, tags, limit ) );
+			D.Log.v( "DanbooruAPI::fetchPostsIndexJSON(): fetching %s", fetchUrl );
 
 			Reader input = new BufferedReader( new InputStreamReader( fetchUrl.openStream(), "UTF-8" ) );
 			Writer output = new StringWriter();
@@ -176,6 +178,7 @@ public class DanbooruAPI
 		try
 		{
 			URL fetchUrl = new URL( String.format( mSiteUrl + URL_POSTS_XML, page, tags, limit ) );
+			D.Log.v( "DanbooruAPI::fetchPostsIndexXML(): fetching %s", fetchUrl );
 
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -237,6 +240,7 @@ public class DanbooruAPI
 			try
 			{
 				URL fetchUrl = new URL( String.format( mSiteUrl + URL_TAGS_JSON, page, keyword, limit ) );
+				D.Log.v( "DanbooruAPI::fetchTagsIndexJSON(): fetching %s", fetchUrl );
 
 				Reader input = new BufferedReader( new InputStreamReader( fetchUrl.openStream(), "UTF-8" ) );
 				Writer output = new StringWriter();
@@ -287,6 +291,7 @@ public class DanbooruAPI
 			try
 			{
 				URL fetchUrl = new URL( String.format( mSiteUrl + URL_TAGS_XML, page, keyword, limit ) );
+				D.Log.v( "DanbooruAPI::fetchTagsIndexXML(): fetching %s", fetchUrl );
 
 				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 				DocumentBuilder db = dbf.newDocumentBuilder();
@@ -297,7 +302,12 @@ public class DanbooruAPI
 
 				int length = nodes.getLength();
 				for (int i = 0; i < length; ++i)
-					ret.add( new Tag( (Element) nodes.item( i ) ) );
+				{
+					Node node = nodes.item( i );
+					ret.add( new Tag( (Element) node ) );
+					if (mIsCanceled)
+						return null;
+				}
 			}
 			catch (UnsupportedEncodingException e)
 			{

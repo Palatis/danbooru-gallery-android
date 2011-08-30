@@ -51,9 +51,9 @@ public class DanbooruUncaughtExceptionHandler
 	@Override
 	public void uncaughtException(final Thread thread, final Throwable ex)
 	{
-		Log.e( D.LOGTAG, Log.getStackTraceString( ex ) );
+		D.Log.wtf( ex );
 		if (ex.getCause() != null)
-			Log.e( D.LOGTAG, Log.getStackTraceString( ex.getCause() ) );
+			D.Log.wtf( ex.getCause() );
 
 		File logdir;
 		File logfile = null;

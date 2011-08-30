@@ -47,7 +47,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -180,7 +179,6 @@ public class MainActivity
 
 	private void handleIntent(Intent intent)
 	{
-		Log.d( D.LOGTAG, "handleIntent(): action = " + intent.getAction() );
 		boolean dosearch = false;
 		String query = "";
 		if (intent.getAction().equals( Intent.ACTION_SEARCH ))

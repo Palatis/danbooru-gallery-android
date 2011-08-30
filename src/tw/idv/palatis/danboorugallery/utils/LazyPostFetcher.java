@@ -29,7 +29,6 @@ import tw.idv.palatis.danboorugallery.siteapi.DanbooruAPI;
 import tw.idv.palatis.danboorugallery.siteapi.ISiteAPI;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
-import android.util.Log;
 
 public class LazyPostFetcher
 {
@@ -195,7 +194,7 @@ public class LazyPostFetcher
 					adapter.addPosts( filtered );
 					fetched_posts_count += filtered.size();
 
-					Log.d( D.LOGTAG, "fetched + skipped / total: " + fetched_posts_count + " + " + skipped_posts_count + " / " + (fetched_posts_count + skipped_posts_count) );
+					D.Log.d( "fetched + skipped / total: %d + %d / %d", fetched_posts_count, skipped_posts_count, fetched_posts_count + skipped_posts_count );
 					++fetcher.enclosure.page;
 				}
 

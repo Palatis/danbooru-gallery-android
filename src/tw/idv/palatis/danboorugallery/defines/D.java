@@ -30,12 +30,10 @@ import java.io.OutputStream;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.widget.Toast;
 
 public class D
 {
-	public static final String	LOGTAG					= "DanbooruGallery";
 	public static final String	CACHEDIR				= "DanbooruGallery/.cache";
 	public static final String	SAVEDIR					= "DanbooruGallery";
 
@@ -68,6 +66,81 @@ public class D
 				Toast.makeText( activity, resourceId, duration ).show();
 			}
 		}.initialize( activity, resourceId, length ) );
+	}
+
+	private static final String	LOGTAG	= "DanbooruGallery";
+
+	public static class Log
+	{
+		public static void d(String format, Object... params)
+		{
+			android.util.Log.d( LOGTAG, String.format( format, params ) );
+		}
+
+		public static void d(Throwable ex, String format, Object... params)
+		{
+			android.util.Log.d( LOGTAG, String.format( format, params ), ex );
+		}
+
+		public static void e(String format, Object... params)
+		{
+			android.util.Log.e( format, format );
+		}
+
+		public static void e(Throwable ex, String format, Object... params)
+		{
+			android.util.Log.e( LOGTAG, String.format( format, params ), ex );
+		}
+
+		public static void i(String format, Object... params)
+		{
+			android.util.Log.i( LOGTAG, String.format( format, params ) );
+		}
+
+		public static void i(Throwable ex, String format, Object... params)
+		{
+			android.util.Log.i( LOGTAG, String.format( format, params ), ex );
+		}
+
+		public static void v(String format, Object... params)
+		{
+			android.util.Log.v( LOGTAG, String.format( format, params ) );
+		}
+
+		public static void v(Throwable ex, String format, Object... params)
+		{
+			android.util.Log.v( LOGTAG, String.format( format, params ), ex );
+		}
+
+		public static void w(Throwable ex)
+		{
+			android.util.Log.w( LOGTAG, ex );
+		}
+
+		public static void w(String format, Object... parmas)
+		{
+			android.util.Log.w( LOGTAG, String.format( format, parmas ) );
+		}
+
+		public static void w(Throwable ex, String format, Object... params)
+		{
+			android.util.Log.w( LOGTAG, String.format( format, params ), ex );
+		}
+
+		public static void wtf(Throwable ex)
+		{
+			android.util.Log.wtf( LOGTAG, ex );
+		}
+
+		public static void wtf(String format, Object... parmas)
+		{
+			android.util.Log.wtf( LOGTAG, String.format( format, parmas ) );
+		}
+
+		public static void wtf(Throwable ex, String format, Object... params)
+		{
+			android.util.Log.wtf( LOGTAG, String.format( format, params ), ex );
+		}
 	}
 
 	public static void makeToastOnUiThread(Activity activity, String message, int length)
@@ -173,7 +246,7 @@ public class D
 		}
 		catch (OutOfMemoryError ex)
 		{
-			Log.d( D.LOGTAG, "decode failed, OutOfMemory occured." );
+			Log.d( "decode failed, OutOfMemory occured." );
 		}
 		catch (FileNotFoundException ex)
 		{

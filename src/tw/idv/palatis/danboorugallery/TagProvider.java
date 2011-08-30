@@ -21,7 +21,6 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.util.Log;
 
 public class TagProvider
 	extends ContentProvider
@@ -172,6 +171,9 @@ public class TagProvider
 
 	Cursor getSuggestions(String query)
 	{
+		query = query.toLowerCase();
+		D.Log.i( "TagProvider::getSuggestions(): query = %s", query );
+
 		try
 		{
 			// get prefered host
@@ -184,10 +186,6 @@ public class TagProvider
 				host = hosts.get( selected_host )[Hosts.HOST_URL];
 
 			site_api.setSiteUrl( host );
-
-			query = query.toLowerCase();
-
-			Log.d( D.LOGTAG, "getSuggestions: query = " + query );
 			List < Tag > tags = site_api.fetchTagsIndex( 1, query, 300 );
 
 			List < ResultSet > results = new ArrayList < ResultSet >( tags.size() );
@@ -246,7 +244,7 @@ public class TagProvider
 		}
 		catch (IOException ex)
 		{
-			Log.d( D.LOGTAG, Log.getStackTraceString( ex ) );
+			D.Log.wtf( ex );
 		}
 		return null;
 	}

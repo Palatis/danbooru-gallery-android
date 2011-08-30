@@ -35,7 +35,6 @@ import tw.idv.palatis.danboorugallery.MainActivity.GalleryItemDisplayer;
 import tw.idv.palatis.danboorugallery.defines.D;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
@@ -143,8 +142,7 @@ public class ImageLoader
 		}
 		catch (Exception ex)
 		{
-			Log.d( D.LOGTAG, "image " + url + " download failed!" );
-			Log.d( D.LOGTAG, ex.getMessage() );
+			D.Log.wtf( ex, "image %s download failed!", url );
 		}
 		return null;
 	}
@@ -290,6 +288,7 @@ public class ImageLoader
 					if (bitmap == null)
 					{
 						// download problem, put this task to the end of the queue and try again later.
+						task.mTimestamp = System.currentTimeMillis();
 						queuePhoto( task );
 						continue;
 					}
@@ -301,6 +300,8 @@ public class ImageLoader
 						if (tag != null && tag.equals( task.mUrl ))
 							new GalleryItemDisplayer( task.mImage, bitmap, ScaleType.CENTER_CROP, true ).display();
 					}
+					else
+						D.Log.d( "fetched image without view: %s", task.mUrl );
 
 					if (Thread.interrupted())
 						break;

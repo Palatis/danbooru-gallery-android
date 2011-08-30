@@ -39,7 +39,6 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
 import android.preference.Preference.OnPreferenceChangeListener;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -91,7 +90,6 @@ public class DanbooruGalleryPreferenceActivity
 			{
 				String name = hosts.get( Integer.parseInt( (String) newValue ) )[Hosts.HOST_NAME];
 				preference.setSummary( String.format( getString( R.string.preferences_hosts_selected_host ), name ) );
-				Log.d( D.LOGTAG, "preference changed... preferences_hosts_selected_host = " + name );
 				return true;
 			}
 		} );
@@ -201,7 +199,7 @@ public class DanbooruGalleryPreferenceActivity
 
 				builder.create().show();
 			}
-			Log.d( D.LOGTAG, "preference clicked: " + preference.getKey() );
+			D.Log.v( "preference clicked: %s", preference.getKey() );
 		}
 		return super.onPreferenceTreeClick( preferenceScreen, preference );
 	}
