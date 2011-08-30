@@ -61,6 +61,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -104,6 +105,14 @@ public class ViewImageActivity
 		page_tags = intent.getStringExtra( "page_tags" );
 
 		image = (ImageViewTouch) findViewById( R.id.view_image_image );
+		image.setOnClickListener( new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				ViewImageActivity.this.openOptionsMenu();
+			}
+		} );
 
 		ConfigurationEnclosure enclosure = (ConfigurationEnclosure) getLastNonConfigurationInstance();
 		Bitmap bitmap = null;
@@ -382,7 +391,6 @@ public class ViewImageActivity
 			dialog.setProgressStyle( ProgressDialog.STYLE_HORIZONTAL );
 			dialog.setMax( 1 );
 
-			ImageViewTouch image = (ImageViewTouch) findViewById( R.id.view_image_image );
 			loader = new AsyncImageLoader( this, image, dialog, file );
 			dialog.setOnCancelListener( new ProgressOnCancelListener() );
 
