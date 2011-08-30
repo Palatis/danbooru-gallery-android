@@ -83,6 +83,8 @@
 	<string name="preferences_options_rating_description">依照等級過濾圖片</string>
 	<string name="preferences_options_page_limit">每頁圖片</string>
 	<string name="preferences_options_page_limit_description">每次要下載多少圖片</string>
+	<string name="preferences_options_aggressive_prefetch">積極預載</string>
+	<string name="preferences_options_aggressive_prefetch_description">積極的載入預覽圖。<b>這可能產生很多流量，請小心使用。</b></string>
 
 	<string name="preferences_category_about">關於</string>
 	<string name="preferences_about_copyright">Copyright (c) 2011</string>

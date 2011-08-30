@@ -83,6 +83,8 @@
 	 <string name="preferences_options_rating_description">Filter the posts by ratings</string>
     <string name="preferences_options_page_limit">Posts per page</string>
 	 <string name="preferences_options_page_limit_description">Posts to retrieve at once</string>
+	 <string name="preferences_options_aggressive_prefetch">Aggressive Prefetch</string>
+	 <string name="preferences_options_aggressive_prefetch_description">Prefetch preview images aggressively. <b>This may cost you a LOT of bandwidth, use with caution.</b></string>
 
 	 <string name="preferences_category_about">About</string>
 	 <string name="preferences_about_copyright">Copyright (c) 2011</string>

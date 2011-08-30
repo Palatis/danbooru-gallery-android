@@ -162,7 +162,7 @@ public class MainActivity
 		} );
 		grid.setNumColumns( numcols );
 
-		adapter = new LazyImageAdapter( this, posts, gallery_item_size, true );
+		adapter = new LazyImageAdapter( this, posts, gallery_item_size, preferences.getBoolean( "aggressive_prefetch", false ) );
 		grid.setAdapter( adapter );
 		grid.setOnScrollListener( new GalleryOnScrollListener( fetcher, adapter, preferences.getInt( "page_limit", 16 ) ) );
 		grid.setOnItemClickListener( new GalleryOnItemClickListener() );
@@ -248,6 +248,9 @@ public class MainActivity
 		if ( !preferences.contains( "rating" ))
 			prefeditor.putString( "rating", "s" );
 
+		if ( !preferences.contains( "aggressive_prefetch" ))
+			prefeditor.putBoolean( "aggressive_prefetch", false );
+
 		prefeditor.apply();
 	}
 
@@ -282,6 +285,8 @@ public class MainActivity
 			adapter.notifyDataSetChanged();
 			fetcher.fetchNextPage( adapter );
 		}
+
+		adapter.setAggressive( preferences.getBoolean( "aggressive_prefetch", false ) );
 
 		super.onStart();
 	}

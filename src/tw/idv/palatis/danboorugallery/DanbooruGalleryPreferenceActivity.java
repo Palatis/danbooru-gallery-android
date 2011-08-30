@@ -32,6 +32,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -58,7 +59,11 @@ public class DanbooruGalleryPreferenceActivity
 
 		preferences = getSharedPreferences( D.SHAREDPREFERENCES_NAME, MODE_PRIVATE );
 		host_dialog_listener = new HostDialogOnClickListener( this );
+	}
 
+	@Override
+	protected void onStart()
+	{
 		try
 		{
 			hosts = Hosts.fromCSV( preferences.getString( "serialized_hosts", "" ) );
@@ -81,14 +86,6 @@ public class DanbooruGalleryPreferenceActivity
 		ListPreference pref_hosts = (ListPreference) findPreference( "preferences_hosts_select" );
 		pref_hosts.setOnPreferenceChangeListener( new OnPreferenceChangeListener()
 		{
-			Hosts	hosts;
-
-			public OnPreferenceChangeListener initialize(Hosts h)
-			{
-				hosts = h;
-				return this;
-			}
-
 			@Override
 			public boolean onPreferenceChange(Preference preference, Object newValue)
 			{
@@ -97,9 +94,14 @@ public class DanbooruGalleryPreferenceActivity
 				Log.d( D.LOGTAG, "preference changed... preferences_hosts_selected_host = " + name );
 				return true;
 			}
-		}.initialize( hosts ) );
+		} );
+
+		CheckBoxPreference pref_aggressive = (CheckBoxPreference) findPreference( "preferences_options_aggressive_prefetch");
+		pref_aggressive.setChecked( preferences.getBoolean( "aggressive_prefetch", false ) );
 
 		notifyHostsChanged();
+
+		super.onStart();
 	}
 
 	private void notifyHostsChanged()
@@ -142,12 +144,14 @@ public class DanbooruGalleryPreferenceActivity
 		String selected_host = findPreference( "preferences_hosts_select" ).getSharedPreferences().getString( "preferences_hosts_select", "0" );
 		String page_limit = findPreference( "preferences_options_page_limit" ).getSharedPreferences().getString( "preferences_options_page_limit", "16" );
 		String rating = findPreference( "preferences_options_rating" ).getSharedPreferences().getString( "preferences_options_rating", "s" );
+		boolean aggressive_prefetch = findPreference( "preferences_options_aggressive_prefetch" ).getSharedPreferences().getBoolean( "preferences_options_aggressive_prefetch", false );
 
 		SharedPreferences.Editor prefeditor = preferences.edit();
 		prefeditor.putInt( "selected_host", Integer.parseInt( selected_host ) );
 		prefeditor.putInt( "page_limit", Integer.parseInt( page_limit ) );
 		prefeditor.putString( "rating", rating );
 		prefeditor.putString( "serialized_hosts", hosts.toCSV() );
+		prefeditor.putBoolean( "aggressive_prefetch", aggressive_prefetch );
 		prefeditor.apply();
 
 		super.onPause();
