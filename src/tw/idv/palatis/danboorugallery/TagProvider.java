@@ -192,7 +192,7 @@ public class TagProvider
 		if (hosts != null)
 			host = hosts.get( selected_host );
 
-		site_api.setSiteUrl( host.url );
+		site_api = ISiteAPI.Factory.createFromString( host.url, host.api );
 		List < Tag > tags = site_api.fetchTagsIndex( 1, query, 300 );
 
 		List < ResultSet > results = new ArrayList < ResultSet >( tags.size() );
