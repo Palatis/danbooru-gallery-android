@@ -207,6 +207,7 @@ public class MainActivity
 				fetcher.setPage( 1 );
 				fetcher.cancel();
 				posts.clear();
+				BitmapMemCache.getInstance().clear();
 				adapter.cancelAll();
 				adapter.notifyDataSetChanged();
 				fetcher.fetchNextPage( adapter );
@@ -287,6 +288,7 @@ public class MainActivity
 			fetcher.cancel();
 			posts.clear();
 			adapter.cancelAll();
+			BitmapMemCache.getInstance().clear();
 			adapter.notifyDataSetChanged();
 			fetcher.fetchNextPage( adapter );
 		}
@@ -334,6 +336,8 @@ public class MainActivity
 					{
 						fetcher.cancel();
 						posts.clear();
+						BitmapMemCache.getInstance().clear();
+						adapter.cancelAll();
 						adapter.notifyDataSetChanged();
 					}
 				}
@@ -361,6 +365,7 @@ public class MainActivity
 				fetcher.setPage( 1 );
 				fetcher.cancel();
 				posts.clear();
+				BitmapMemCache.getInstance().clear();
 				adapter.cancelAll();
 				adapter.notifyDataSetChanged();
 				fetcher.fetchNextPage( adapter );
@@ -370,6 +375,8 @@ public class MainActivity
 			fetcher.cancel();
 			fetcher.setPage( 1 );
 			posts.clear();
+			BitmapMemCache.getInstance().clear();
+			adapter.cancelAll();
 			adapter.notifyDataSetChanged();
 			fetcher.fetchNextPage( adapter );
 			break;
@@ -385,6 +392,7 @@ public class MainActivity
 	@Override
 	public void onDestroy()
 	{
+		BitmapMemCache.getInstance().clear();
 		fetcher.cancel();
 		adapter.onDestroy();
 		super.onDestroy();
