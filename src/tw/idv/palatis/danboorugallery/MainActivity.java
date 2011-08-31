@@ -110,11 +110,13 @@ public class MainActivity
 		if (conf != null)
 		{
 			posts = conf.posts;
+			adapter = conf.adapter;
 			fetcher = conf.fetcher;
 		}
 		else
 		{
 			posts = new ArrayList < Post >();
+			adapter = new LazyImageAdapter( this, posts, gallery_item_size, preferences.getBoolean( "aggressive_prefetch", false ) );
 			fetcher = new LazyPostFetcher();
 		}
 
@@ -164,8 +166,6 @@ public class MainActivity
 
 		} );
 		grid.setNumColumns( numcols );
-
-		adapter = new LazyImageAdapter( this, posts, gallery_item_size, preferences.getBoolean( "aggressive_prefetch", false ) );
 		grid.setAdapter( adapter );
 		grid.setOnScrollListener( new GalleryOnScrollListener( fetcher, adapter, preferences.getInt( "page_limit", 16 ) ) );
 		grid.setOnItemClickListener( new GalleryOnItemClickListener() );
@@ -389,22 +389,16 @@ public class MainActivity
 		return true;
 	}
 
-	@Override
-	public void onDestroy()
-	{
-		fetcher.cancel();
-		adapter.onDestroy();
-		super.onDestroy();
-	}
-
 	private class ConfigurationEnclosure
 	{
 		public List < Post >	posts;
+		public LazyImageAdapter adapter;
 		public LazyPostFetcher	fetcher;
 
-		public ConfigurationEnclosure(List < Post > p, LazyPostFetcher f)
+		public ConfigurationEnclosure(List < Post > p, LazyImageAdapter a, LazyPostFetcher f)
 		{
 			posts = p;
+			adapter = a;
 			fetcher = f;
 		}
 	}
@@ -412,7 +406,7 @@ public class MainActivity
 	@Override
 	public Object onRetainNonConfigurationInstance()
 	{
-		return new ConfigurationEnclosure( posts, fetcher );
+		return new ConfigurationEnclosure( posts, adapter, fetcher );
 	}
 
 	private class GalleryOnItemClickListener
