@@ -95,7 +95,7 @@ public class GelbooruAPI
 		try
 		{
 			URL fetchUrl = new URL( String.format( mSiteUrl + URL_POSTS_XML, page, tags, limit ) );
-			D.Log.v( "DanbooruAPI::fetchPostsIndexXML(): fetching %s", fetchUrl );
+			D.Log.v( "GelbooruAPI::fetchPostsIndex(): fetching %s", fetchUrl );
 
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
@@ -139,12 +139,20 @@ public class GelbooruAPI
 	public List < Tag > fetchTagsIndex(int page, String name, int limit)
 	{
 		List < Tag > tags = new ArrayList < Tag >( 1 );
-		Tag tag = new Tag();
+		Tag tag = null;
+		tag = new Tag();
 		tag.id = 987654321;
 		tag.count = 987654321;
 		tag.type = 987654321;
 		tag.ambiguous = false;
 		tag.name = "Sorry, tag search doesn't work for Gelbooru";
+		tags.add( tag );
+		tag = new Tag();
+		tag.id = 987654321;
+		tag.count = 987654320;
+		tag.type = 987654321;
+		tag.ambiguous = false;
+		tag.name = "You can still manually input tags for filter";
 		tags.add( tag );
 		return tags;
 	}
