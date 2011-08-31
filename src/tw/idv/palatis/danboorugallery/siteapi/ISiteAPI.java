@@ -10,11 +10,16 @@ public interface ISiteAPI
 {
 	public static final int	API_JSON	= 0x01;
 	public static final int	API_XML		= 0x02;
+	public static final int	API_RSS		= 0x04;
+	public static final int	API_HTML	= 0x08; // maybe i'll just never implement one of this...
 
 	/**
 	 * get the supported (implemented) API for a site.
+	 * use
+	 * <code>if (site.getSupportedApi() & ISiteAPI.API_JSON) { ... }</code>
+	 * to check if a specific API is supported.
 	 *
-	 * @return supported API, either API_JSON, API_XML, or API_JSON | API_XML.
+	 * @return supported API, either API_JSON, API_XML, API_RSS, ATI_HTML, or any combinations of them.
 	 */
 	abstract int getSupportedApi();
 
@@ -86,8 +91,10 @@ public interface ISiteAPI
 		/**
 		 * construct the correct API object from url and API
 		 *
-		 * @param url URL of the host
-		 * @param api API to use, either API_JSON or API_XML
+		 * @param url
+		 *            URL of the host
+		 * @param api
+		 *            API to use, either API_JSON or API_XML
 		 * @return the *API object
 		 */
 		public static ISiteAPI createFromString(String url, String api)
@@ -101,7 +108,7 @@ public interface ISiteAPI
 				if (api.equals( "Gelbooru - XML" ))
 					return new GelbooruAPI( url, API_XML );
 				if (api.equals( "Shimmie - XML" ))
-					return new ShimmieAPI( url, API_XML);
+					return new ShimmieAPI( url, API_XML );
 			}
 			catch (UnsupportedAPIException ex)
 			{
