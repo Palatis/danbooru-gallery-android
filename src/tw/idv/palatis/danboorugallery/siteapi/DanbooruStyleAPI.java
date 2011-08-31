@@ -56,7 +56,7 @@ public abstract class DanbooruStyleAPI
 	 *            the XML {@link Element}
 	 * @return the {@link Post}
 	 */
-	protected Post generatePostFromXML(Element node)
+	protected static Post generatePostFromXML(Element node)
 	{
 		Post post = new Post();
 
@@ -126,7 +126,7 @@ public abstract class DanbooruStyleAPI
 	 *            the XML {@link Element}
 	 * @return the {@link Post}
 	 */
-	protected Post generatePostFromJSON(JSONObject json)
+	protected static Post generatePostFromJSON(JSONObject json)
 	{
 		Post post = new Post();
 
