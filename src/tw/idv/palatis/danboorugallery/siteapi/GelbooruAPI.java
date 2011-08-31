@@ -1,27 +1,13 @@
 package tw.idv.palatis.danboorugallery.siteapi;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import tw.idv.palatis.danboorugallery.defines.D;
 import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.model.Tag;
 
 public class GelbooruAPI
+	extends DanbooruStyleAPI
 	implements ISiteAPI
 {
 	public static final String	URL_POSTS_XML	= "/index.php?page=dapi&s=post&q=index&pid=%1$s&tags=%2$s&limit=%3$s";
@@ -90,46 +76,10 @@ public class GelbooruAPI
 	@Override
 	public List < Post > fetchPostsIndex(int page, String tags, int limit)
 	{
-		mIsCanceled = false;
-
-		try
+		if (mApi == API_XML)
 		{
-			URL fetchUrl = new URL( String.format( mSiteUrl + URL_POSTS_XML, page, tags, limit ) );
-			D.Log.v( "GelbooruAPI::fetchPostsIndex(): fetching %s", fetchUrl );
-
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document doc = db.parse( new InputSource( fetchUrl.openStream() ) );
-			doc.getDocumentElement().normalize();
-
-			NodeList nodes = doc.getElementsByTagName( "post" );
-
-			int length = nodes.getLength();
-			ArrayList < Post > posts = new ArrayList < Post >( length );
-			for (int i = 0; i < length; ++i)
-			{
-				Node node = nodes.item( i );
-				posts.add( new Post( (Element) node ) );
-				if (mIsCanceled)
-					return null;
-			}
-			return posts;
-		}
-		catch (UnsupportedEncodingException e)
-		{
-			D.Log.wtf( e );
-		}
-		catch (IOException e)
-		{
-			D.Log.wtf( e );
-		}
-		catch (SAXException e)
-		{
-			D.Log.wtf( e );
-		}
-		catch (ParserConfigurationException e)
-		{
-			D.Log.wtf( e );
+			mIsCanceled = false;
+			return fetchPostsIndexJSON( mSiteUrl + URL_POSTS_XML, page, tags, limit );
 		}
 
 		return null;

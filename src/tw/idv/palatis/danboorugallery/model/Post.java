@@ -20,17 +20,8 @@ package tw.idv.palatis.danboorugallery.model;
  * along with Danbooru Gallery.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Element;
-
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -99,131 +90,6 @@ public class Post
 
 	public Post()
 	{
-	}
-
-	public Post(JSONObject json)
-	{
-		id = json.optInt( "id" );
-		parent_id = json.optInt( "parent_id", -1 );
-		creator_id = json.optInt( "creater_id" );
-		change = json.optInt( "creater_id" );
-		score = json.optInt( "score" );
-		status = json.optString( "status" );
-		rating = json.optString( "rating" );
-		tags = json.optString( "tags" );
-		source = json.optString( "source" );
-		author = json.optString( "author" );
-
-		// date is a little tricky, we might get 2 formats...
-		// we might get a JSONObject with json_class="Time",
-		// or just a long to represent the timestamp.
-		try
-		{
-			// it might just be an long value
-			created_at = new Date( json.getLong( "created_at" ) * 1000 );
-		}
-		catch (JSONException ex)
-		{
-			try
-			{
-				// or it might be a JSONObject with json_class == "Time"
-				JSONObject json_created_at = json.getJSONObject( "created_at" );
-				if (json_created_at.getString( "json_class" ).equals( "Time" ))
-					created_at = new Date( json_created_at.getLong( "s" ) * 1000 + json_created_at.getLong( "n" ) / 1000000 );
-			}
-			catch (JSONException ex2)
-			{
-				// it's okay to not having a date...
-			}
-		}
-
-		has_notes = json.optBoolean( "has_notes" );
-		has_children = json.optBoolean( "has_children" );
-		has_comments = json.optBoolean( "has_comments" );
-
-		md5 = json.optString( "md5" );
-		file_url = json.optString( "file_url" );
-		file_size = json.optInt( "file_size" );
-		width = json.optInt( "width" );
-		height = json.optInt( "height" );
-		sample_url = json.optString( "sample_url" );
-		sample_width = json.optInt( "sample_width" );
-		sample_height = json.optInt( "sample_height" );
-		preview_url = json.optString( "preview_url" );
-		preview_width = json.optInt( "preview_width" );
-		preview_height = json.optInt( "preview_height" );
-
-		// if the preview_url is a relative url, add the host part from file_url to it.
-		Uri puri = Uri.parse( preview_url );
-		if (puri.getHost() == null)
-		{
-			Uri furi = Uri.parse( file_url );
-			preview_url = furi.getScheme() + "://" + furi.getHost() + "/" + preview_url;
-		}
-	}
-
-	// this is used to format the created_at attribute in XML
-	// it is here because Android frees Locale.ENGLISH when formatter destroyed,
-	// resulting reloading of locale data every time which is SLOW.
-	static private DateFormat	formatter	= new SimpleDateFormat( "EEE MMM dd HH:mm:ss Z yyyy", Locale.ENGLISH );
-
-	public Post(Element node)
-	{
-		id = Integer.valueOf( node.getAttribute( "id" ) );
-		try
-		{
-			parent_id = Integer.valueOf( node.getAttribute( "parent_id" ) );
-		}
-		catch (NumberFormatException ex)
-		{
-			parent_id = -1;
-		}
-		try
-		{
-			creator_id = Integer.valueOf( node.getAttribute( "creator_id" ) );
-		}
-		catch (NumberFormatException ex)
-		{
-			creator_id = -1;
-		}
-		change = Integer.valueOf( node.getAttribute( "change" ) );
-		score = Integer.valueOf( node.getAttribute( "score" ) );
-		status = node.getAttribute( "status" );
-		rating = node.getAttribute( "rating" );
-		tags = node.getAttribute( "tags" );
-		source = node.getAttribute( "source" );
-		author = node.getAttribute( "author" );
-		try
-		{
-			created_at = formatter.parse( "Mon Aug 29 12:01:53 -0400 2011" );
-		}
-		catch (ParseException e)
-		{
-		}
-
-		has_notes = node.getAttribute( "has_notes" ).equals( "true" );
-		has_children = node.getAttribute( "has_children" ).equals( "true" );
-		has_comments = node.getAttribute( "has_comments" ).equals( "true" );
-
-		md5 = node.getAttribute( "md5" );
-		file_url = node.getAttribute( "file_url" );
-		file_size = Integer.valueOf( "0" + node.getAttribute( "file_size" ) );
-		width = Integer.valueOf( node.getAttribute( "width" ) );
-		height = Integer.valueOf( node.getAttribute( "height" ) );
-		sample_url = node.getAttribute( "sample_url" );
-		sample_width = Integer.valueOf( node.getAttribute( "sample_width" ) );
-		sample_height = Integer.valueOf( node.getAttribute( "sample_height" ) );
-		preview_url = node.getAttribute( "preview_url" );
-		preview_width = Integer.valueOf( node.getAttribute( "preview_width" ) );
-		preview_height = Integer.valueOf( node.getAttribute( "preview_height" ) );
-
-		// if the preview_url is a relative url, add the host part from file_url to it.
-		Uri puri = Uri.parse( preview_url );
-		if (puri.getHost() == null)
-		{
-			Uri furi = Uri.parse( file_url );
-			preview_url = furi.getScheme() + "://" + furi.getHost() + "/" + preview_url;
-		}
 	}
 
 	// parcelable related
