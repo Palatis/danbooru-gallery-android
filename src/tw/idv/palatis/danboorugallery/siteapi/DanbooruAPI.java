@@ -75,6 +75,12 @@ public class DanbooruAPI
 	}
 
 	@Override
+	protected boolean isCanceled()
+	{
+		return mIsCanceled;
+	}
+
+	@Override
 	public List < Post > fetchPostsIndex(int page, String tags, int limit)
 	{
 		if (mApi == API_JSON)
