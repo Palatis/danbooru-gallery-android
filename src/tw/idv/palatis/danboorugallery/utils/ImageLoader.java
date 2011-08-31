@@ -246,20 +246,23 @@ public class ImageLoader
 				{
 					PhotoToLoad task = pollNextTask();
 
-					Bitmap bitmap = getBitmapDisk( task.mUrl );
-					if (bitmap == null)
-					{
-						mWebLoader.queuePhoto( task );
-						continue;
-					}
-
 					if (task.mImage != null)
 					{
+						Bitmap bitmap = getBitmapDisk( task.mUrl );
+						if (bitmap == null)
+						{
+							mWebLoader.queuePhoto( task );
+							continue;
+						}
+
 						// check if we still want the bitmap
 						String tag = mImageViews.get( task.mImage );
 						if (tag != null && tag.equals( task.mUrl ))
 							new GalleryItemDisplayer( task.mImage, bitmap, ScaleType.CENTER_CROP, true ).display();
 					}
+					// if no image, just check existence, don't load.
+					else if ( !mFileCache.getFile( task.mUrl ).exists() )
+						mWebLoader.queuePhoto( task );
 
 					if (Thread.interrupted())
 						break;
