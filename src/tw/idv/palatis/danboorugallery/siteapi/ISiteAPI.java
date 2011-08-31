@@ -83,6 +83,13 @@ public interface ISiteAPI
 
 	public static class Factory
 	{
+		/**
+		 * construct the correct API object from url and API
+		 *
+		 * @param url URL of the host
+		 * @param api API to use, either API_JSON or API_XML
+		 * @return the *API object
+		 */
 		public static ISiteAPI createFromString(String url, String api)
 		{
 			try
@@ -93,6 +100,8 @@ public interface ISiteAPI
 					return new DanbooruAPI( url, API_XML );
 				if (api.equals( "Gelbooru - XML" ))
 					return new GelbooruAPI( url, API_XML );
+				if (api.equals( "Shimmie - XML" ))
+					return new ShimmieAPI( url, API_XML);
 			}
 			catch (UnsupportedAPIException ex)
 			{

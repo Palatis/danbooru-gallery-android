@@ -176,6 +176,7 @@ public class DanbooruGalleryPreferenceActivity
 										"Danbooru - JSON",
 										"Danbooru - XML",
 										"Gelbooru - XML",
+										"Shimmie - XML",
 									};
 
 		@Override
@@ -265,6 +266,8 @@ public class DanbooruGalleryPreferenceActivity
 					api.setSelection( 1 );
 				else if (host.api.equals( "Gelbooru - XML" ))
 					api.setSelection( 2 );
+				else if (host.api.equals( "Shimmie - XML" ))
+					api.setSelection( 3 );
 
 				Builder builder = new AlertDialog.Builder( this );
 				builder.setTitle( R.string.preferences_hosts_dialog_title );
