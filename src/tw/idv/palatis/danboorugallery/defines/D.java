@@ -78,6 +78,11 @@ public class D
 
 	public static class Log
 	{
+		public static void d(String str)
+		{
+			android.util.Log.d( LOGTAG, str );
+		}
+
 		public static void d(String format, Object... params)
 		{
 			android.util.Log.d( LOGTAG, String.format( format, params ) );
@@ -86,6 +91,11 @@ public class D
 		public static void d(Throwable ex, String format, Object... params)
 		{
 			android.util.Log.d( LOGTAG, String.format( format, params ), ex );
+		}
+
+		public static void e(String str)
+		{
+			android.util.Log.e( LOGTAG, str );
 		}
 
 		public static void e(String format, Object... params)
@@ -98,6 +108,11 @@ public class D
 			android.util.Log.e( LOGTAG, String.format( format, params ), ex );
 		}
 
+		public static void i(String str)
+		{
+			android.util.Log.i( LOGTAG, str );
+		}
+
 		public static void i(String format, Object... params)
 		{
 			android.util.Log.i( LOGTAG, String.format( format, params ) );
@@ -108,6 +123,11 @@ public class D
 			android.util.Log.i( LOGTAG, String.format( format, params ), ex );
 		}
 
+		public static void v(String str)
+		{
+			android.util.Log.v( LOGTAG, str );
+		}
+
 		public static void v(String format, Object... params)
 		{
 			android.util.Log.v( LOGTAG, String.format( format, params ) );
@@ -116,6 +136,11 @@ public class D
 		public static void v(Throwable ex, String format, Object... params)
 		{
 			android.util.Log.v( LOGTAG, String.format( format, params ), ex );
+		}
+
+		public static void w(String str)
+		{
+			android.util.Log.w( LOGTAG, str );
 		}
 
 		public static void w(Throwable ex)
@@ -131,6 +156,11 @@ public class D
 		public static void w(Throwable ex, String format, Object... params)
 		{
 			android.util.Log.w( LOGTAG, String.format( format, params ), ex );
+		}
+
+		public static void wtf(String str)
+		{
+			android.util.Log.wtf( LOGTAG, str );
 		}
 
 		public static void wtf(Throwable ex)
