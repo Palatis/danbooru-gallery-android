@@ -21,12 +21,14 @@ package tw.idv.palatis.danboorugallery;
  */
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import tw.idv.palatis.danboorugallery.defines.D;
-import tw.idv.palatis.danboorugallery.model.Hosts;
+import tw.idv.palatis.danboorugallery.model.Host;
 import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.utils.BitmapMemCache;
 import tw.idv.palatis.danboorugallery.utils.DanbooruUncaughtExceptionHandler;
@@ -77,7 +79,7 @@ public class MainActivity
 	SharedPreferences		preferences;
 
 	List < Post >			posts;
-	Hosts					hosts;
+	List < Host >			hosts;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -133,17 +135,17 @@ public class MainActivity
 					public void onClick(DialogInterface dialog, int which)
 					{
 						Post post = posts.get( position );
-						String host[] = hosts.get( preferences.getInt( "selected_host", 0 ) );
+						Host host = hosts.get( preferences.getInt( "selected_host", 0 ) );
 						String title = post.tags;
 						if (host != null)
-							title = String.format( "%1$s - %2$s", host[Hosts.HOST_NAME], post.tags );
+							title = String.format( "%1$s - %2$s", host.name, post.tags );
 
 						Uri uri = Uri.parse( post.file_url );
 						String filename = uri.getLastPathSegment();
 						if (filename == null)
 							filename = Uri.encode( uri.toString() );
 
-						File dest = new File( android.os.Environment.getExternalStorageDirectory(), D.SAVEDIR + "/" + host[Hosts.HOST_NAME] + "/" + filename );
+						File dest = new File( android.os.Environment.getExternalStorageDirectory(), D.SAVEDIR + "/" + host.name + "/" + filename );
 						if ( !dest.getParentFile().exists())
 							dest.getParentFile().mkdirs();
 
@@ -227,15 +229,15 @@ public class MainActivity
 		if ( !preferences.contains( "preference_version" ))
 			prefeditor.putInt( "preference_version", D.PREFERENCE_VERSION );
 
-		if ( !preferences.contains( "serialized_hosts" ))
+		if ( !preferences.contains( "json_hosts" ))
 		{
-			hosts = new Hosts();
-			hosts.add( "Danbooru", "http://danbooru.donmai.us/" );
-			hosts.add( "Danbooru (mirror)", "http://hijiribe.donmai.us/" );
-			hosts.add( "Konachan", "http://konachan.com/" );
-			hosts.add( "Sankaku Complex (Chan)", "http://chan.sankakucomplex.com/" );
-			hosts.add( "Sankaku Complex (Idol)", "http://idol.sankakucomplex.com/" );
-			prefeditor.putString( "serialized_hosts", hosts.toCSV() );
+			hosts = new ArrayList < Host >( 5 );
+			hosts.add( new Host( "Danbooru", "http://danbooru.donmai.us/" ) );
+			hosts.add( new Host( "Danbooru (mirror)", "http://hijiribe.donmai.us/" ) );
+			hosts.add( new Host( "Konachan", "http://konachan.com/" ) );
+			hosts.add( new Host( "Sankaku Complex (Chan)", "http://chan.sankakucomplex.com/" ) );
+			hosts.add( new Host( "Sankaku Complex (Idol)", "http://idol.sankakucomplex.com/" ) );
+			prefeditor.putString( "json_hosts", D.JSONArrayFromHosts( hosts ).toString() );
 		}
 
 		if ( !preferences.contains( "selected_host" ))
@@ -256,19 +258,22 @@ public class MainActivity
 	@Override
 	public void onStart()
 	{
-		try
-		{
-			hosts = Hosts.fromCSV( preferences.getString( "serialized_hosts", "" ) );
-		}
-		catch (IOException e)
-		{
-			hosts = new Hosts();
-		}
+		if (preferences.contains( "json_hosts" ))
+			try
+			{
+				hosts = D.HostsFromJSONArray( new JSONArray( preferences.getString( "json_hosts", "" ) ) );
+			}
+			catch (JSONException ex)
+			{
+				D.Log.wtf( ex );
+			}
+		else
+			hosts = new ArrayList < Host >();
 
-		String host[] = hosts.get( preferences.getInt( "selected_host", 0 ) );
+		Host host = hosts.get( preferences.getInt( "selected_host", 0 ) );
 		String url = "http://konachan.com/";
 		if (host != null)
-			url = host[Hosts.HOST_URL];
+			url = host.url;
 
 		boolean reset = false;
 		reset |= fetcher.setUrl( url );
@@ -277,6 +282,7 @@ public class MainActivity
 
 		if (reset)
 		{
+			fetcher.setTags( "" );
 			fetcher.setPage( 1 );
 			fetcher.cancel();
 			posts.clear();
@@ -410,11 +416,7 @@ public class MainActivity
 		{
 			Intent intent = new Intent( MainActivity.this, ViewImageActivity.class );
 			intent.putExtra( "post", posts.get( position ) );
-
-			String host[] = hosts.get( preferences.getInt( "selected_host", 0 ) );
-			intent.putExtra( "host_name", host[Hosts.HOST_NAME] );
-			intent.putExtra( "host_url", host[Hosts.HOST_URL] );
-
+			intent.putExtra( "host", hosts.get( preferences.getInt( "selected_host", 0 ) ) );
 			intent.putExtra( "page_tags", fetcher.getURLEnclosure().tags );
 
 			startActivityForResult( intent, REQUEST_TAGCLICKED );

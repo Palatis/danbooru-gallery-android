@@ -20,10 +20,14 @@ package tw.idv.palatis.danboorugallery;
  * along with Danbooru Gallery.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import tw.idv.palatis.danboorugallery.defines.D;
-import tw.idv.palatis.danboorugallery.model.Hosts;
+import tw.idv.palatis.danboorugallery.model.Host;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
@@ -46,7 +50,7 @@ public class DanbooruGalleryPreferenceActivity
 	extends PreferenceActivity
 {
 	SharedPreferences			preferences;
-	Hosts						hosts;
+	List < Host >				hosts;
 
 	HostDialogOnClickListener	host_dialog_listener;
 
@@ -63,14 +67,17 @@ public class DanbooruGalleryPreferenceActivity
 	@Override
 	protected void onStart()
 	{
-		try
-		{
-			hosts = Hosts.fromCSV( preferences.getString( "serialized_hosts", "" ) );
-		}
-		catch (IOException e)
-		{
-			hosts = new Hosts();
-		}
+		if (preferences.contains( "json_hosts" ))
+			try
+			{
+				hosts = D.HostsFromJSONArray( new JSONArray( preferences.getString( "json_hosts", "" ) ) );
+			}
+			catch (JSONException ex)
+			{
+				D.Log.wtf( ex );
+			}
+		else
+			hosts = new ArrayList < Host >();
 
 		try
 		{
@@ -88,13 +95,13 @@ public class DanbooruGalleryPreferenceActivity
 			@Override
 			public boolean onPreferenceChange(Preference preference, Object newValue)
 			{
-				String name = hosts.get( Integer.parseInt( (String) newValue ) )[Hosts.HOST_NAME];
+				String name = hosts.get( Integer.parseInt( (String) newValue ) ).name;
 				preference.setSummary( String.format( getString( R.string.preferences_hosts_selected_host ), name ) );
 				return true;
 			}
 		} );
 
-		CheckBoxPreference pref_aggressive = (CheckBoxPreference) findPreference( "preferences_options_aggressive_prefetch");
+		CheckBoxPreference pref_aggressive = (CheckBoxPreference) findPreference( "preferences_options_aggressive_prefetch" );
 		pref_aggressive.setChecked( preferences.getBoolean( "aggressive_prefetch", false ) );
 
 		notifyHostsChanged();
@@ -110,7 +117,7 @@ public class DanbooruGalleryPreferenceActivity
 		if (hosts.get( selected_host_index ) == null)
 			selected_host_index = -1;
 
-		pref_hosts.setSummary( String.format( getString( R.string.preferences_hosts_selected_host ), (selected_host_index == -1) ? "(NONE)" : hosts.get( selected_host_index )[Hosts.HOST_NAME] ) );
+		pref_hosts.setSummary( String.format( getString( R.string.preferences_hosts_selected_host ), (selected_host_index == -1) ? "(NONE)" : hosts.get( selected_host_index ).name ) );
 
 		android.preference.PreferenceCategory category = (PreferenceCategory) findPreference( "preferences_hosts_manage_category_manage" );
 		category.removeAll();
@@ -120,14 +127,14 @@ public class DanbooruGalleryPreferenceActivity
 
 		for (int i = 0; i < hosts.size(); ++i)
 		{
-			String[] host = hosts.get( i );
-			pref_hosts_entries[i] = host[Hosts.HOST_NAME];
+			Host host = hosts.get( i );
+			pref_hosts_entries[i] = host.name;
 			pref_hosts_entry_values[i] = String.valueOf( i );
 
 			Preference p = new Preference( this );
 			p.setOrder( i );
-			p.setTitle( host[Hosts.HOST_NAME] );
-			p.setSummary( host[Hosts.HOST_URL] );
+			p.setTitle( host.name );
+			p.setSummary( host.url );
 			p.setKey( "auto_generated_host_entry" );
 			category.addPreference( p );
 		}
@@ -148,7 +155,7 @@ public class DanbooruGalleryPreferenceActivity
 		prefeditor.putInt( "selected_host", Integer.parseInt( selected_host ) );
 		prefeditor.putInt( "page_limit", Integer.parseInt( page_limit ) );
 		prefeditor.putString( "rating", rating );
-		prefeditor.putString( "serialized_hosts", hosts.toCSV() );
+		prefeditor.putString( "json_hosts", D.JSONArrayFromHosts( hosts ).toString() );
 		prefeditor.putBoolean( "aggressive_prefetch", aggressive_prefetch );
 		prefeditor.apply();
 
@@ -181,14 +188,14 @@ public class DanbooruGalleryPreferenceActivity
 			}
 			else if (preference.getKey().equals( "auto_generated_host_entry" ))
 			{
-				String[] host = hosts.get( preference.getOrder() );
+				Host host = hosts.get( preference.getOrder() );
 
 				View dialog_view = getLayoutInflater().inflate( R.layout.host_dialog, null );
 				EditText edit_name = (EditText) dialog_view.findViewById( R.id.preferences_hosts_dialog_hosts_name_input );
 				EditText edit_url = (EditText) dialog_view.findViewById( R.id.preferences_hosts_dialog_url_input );
 				edit_name.setTag( preference.getOrder() );
-				edit_name.setText( host[Hosts.HOST_NAME] );
-				edit_url.setText( host[Hosts.HOST_URL] );
+				edit_name.setText( host.name );
+				edit_url.setText( host.url );
 
 				Builder builder = new AlertDialog.Builder( this );
 				builder.setTitle( R.string.preferences_hosts_dialog_title );
@@ -206,19 +213,16 @@ public class DanbooruGalleryPreferenceActivity
 
 	public void newHost(String name, String url)
 	{
-		hosts.add( new String[] {
-			name,
-			url
-		} );
-		preferences.edit().putString( "serialized_hosts", hosts.toCSV() ).apply();
+		hosts.add( new Host( name, url ) );
+		preferences.edit().putString( "json_hosts", D.JSONArrayFromHosts( hosts ).toString() ).apply();
 
 		notifyHostsChanged();
 	}
 
 	public void editHost(int position, String name, String url)
 	{
-		hosts.set( position, name, url );
-		preferences.edit().putString( "serialized_hosts", hosts.toCSV() ).apply();
+		hosts.set( position, new Host( name, url ) );
+		preferences.edit().putString( "json_hosts", D.JSONArrayFromHosts( hosts ).toString() ).apply();
 
 		notifyHostsChanged();
 	}
@@ -231,7 +235,7 @@ public class DanbooruGalleryPreferenceActivity
 			preferences.edit().putInt( "selected_host", selected_host - 1 ).apply();
 
 		hosts.remove( position );
-		preferences.edit().putString( "serialized_hosts", hosts.toCSV() ).apply();
+		preferences.edit().putString( "json_hosts", D.JSONArrayFromHosts( hosts ).toString() ).apply();
 
 		notifyHostsChanged();
 	}
@@ -263,7 +267,8 @@ public class DanbooruGalleryPreferenceActivity
 			case DialogInterface.BUTTON_NEUTRAL: // Delete
 				Builder builder = new AlertDialog.Builder( dialog.getContext() );
 				builder.setTitle( R.string.preferences_hosts_dialog_delete_confirm_title );
-				builder.setMessage( String.format( dialog.getContext().getString( R.string.preferences_hosts_dialog_delete_confirm_message ), hosts.get( (Integer) edit_name.getTag() )[Hosts.HOST_NAME], hosts.get( (Integer) edit_name.getTag() )[Hosts.HOST_URL] ) );
+				Host host = hosts.get( (Integer) edit_name.getTag() );
+				builder.setMessage( String.format( getString( R.string.preferences_hosts_dialog_delete_confirm_message ), host.name, host.url ) );
 				builder.setPositiveButton( android.R.string.ok, new OnClickListener()
 				{
 					@Override

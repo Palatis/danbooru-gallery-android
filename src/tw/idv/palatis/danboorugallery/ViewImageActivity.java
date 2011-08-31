@@ -34,7 +34,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 import tw.idv.palatis.danboorugallery.defines.D;
-import tw.idv.palatis.danboorugallery.model.Hosts;
+import tw.idv.palatis.danboorugallery.model.Host;
 import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.utils.FileCache;
 import android.app.Activity;
@@ -80,11 +80,11 @@ public class ViewImageActivity
 	extends Activity
 {
 	FileCache			filecache;
-	Post				post;
 	AsyncImageLoader	loader;
 	ImageViewTouch		image;
 
-	String				host[];
+	Post				post;
+	Host				host;
 	String				page_tags;
 
 	@Override
@@ -97,11 +97,7 @@ public class ViewImageActivity
 
 		Intent intent = getIntent();
 		post = intent.getParcelableExtra( "post" );
-
-		host = new String[2];
-		host[Hosts.HOST_NAME] = intent.getStringExtra( "host_name" );
-		host[Hosts.HOST_URL] = intent.getStringExtra( "host_url" );
-
+		host = intent.getParcelableExtra( "host" );
 		page_tags = intent.getStringExtra( "page_tags" );
 
 		image = (ImageViewTouch) findViewById( R.id.view_image_image );
@@ -399,14 +395,14 @@ public class ViewImageActivity
 		case R.id.view_image_menu_download:
 			String title = post.tags;
 			if (host != null)
-				title = String.format( "%1$s - %2$s", host[Hosts.HOST_NAME], post.tags );
+				title = String.format( "%1$s - %2$s", host.url, post.tags );
 
 			Uri uri = Uri.parse( post.file_url );
 			String filename = uri.getLastPathSegment();
 			if (filename == null)
 				filename = Uri.encode( uri.toString() );
 
-			File dest = new File( android.os.Environment.getExternalStorageDirectory(), D.SAVEDIR + "/" + host[Hosts.HOST_NAME] + "/" + filename );
+			File dest = new File( android.os.Environment.getExternalStorageDirectory(), D.SAVEDIR + "/" + host.name + "/" + filename );
 			if ( !dest.getParentFile().exists())
 				dest.getParentFile().mkdirs();
 
@@ -439,7 +435,7 @@ public class ViewImageActivity
 		else
 			return null;
 
-		downloaddir = new File( downloaddir, host[Hosts.HOST_NAME] );
+		downloaddir = new File( downloaddir, host.name );
 		if ( !downloaddir.exists())
 			downloaddir.mkdirs();
 

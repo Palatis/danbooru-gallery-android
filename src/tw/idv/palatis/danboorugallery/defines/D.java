@@ -26,7 +26,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import tw.idv.palatis.danboorugallery.model.Host;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -257,5 +263,29 @@ public class D
 			// ok for io exception, get from web anyway.
 		}
 		return null;
+	}
+
+	public static JSONArray JSONArrayFromHosts(List < Host > hosts)
+	{
+		JSONArray array = new JSONArray();
+		for (Host host : hosts)
+			array.put( host.toJSONObject() );
+		return array;
+	}
+
+	public static List < Host > HostsFromJSONArray(JSONArray array)
+	{
+		int length = array.length();
+		List < Host > hosts = new ArrayList < Host >( length );
+		for (int i = 0; i < length; ++i)
+			try
+			{
+				hosts.add( new Host( array.getJSONObject( i ) ) );
+			}
+			catch (JSONException ex)
+			{
+				Log.wtf( ex );
+			}
+		return hosts;
 	}
 }

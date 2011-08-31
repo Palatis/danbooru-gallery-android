@@ -1,13 +1,15 @@
 package tw.idv.palatis.danboorugallery;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import tw.idv.palatis.danboorugallery.defines.D;
-import tw.idv.palatis.danboorugallery.model.Hosts;
+import tw.idv.palatis.danboorugallery.model.Host;
 import tw.idv.palatis.danboorugallery.model.Tag;
 import tw.idv.palatis.danboorugallery.siteapi.DanbooruAPI;
 import tw.idv.palatis.danboorugallery.siteapi.ISiteAPI;
@@ -174,78 +176,77 @@ public class TagProvider
 		query = query.toLowerCase();
 		D.Log.i( "TagProvider::getSuggestions(): query = %s", query );
 
-		try
-		{
-			// get prefered host
-			int selected_host = preferences.getInt( "selected_host", 0 );
-			Hosts hosts = Hosts.fromCSV( preferences.getString( "serialized_hosts", "" ) );
-			String host = null;
-			if (hosts == null)
-				host = "http://konachan.com/";
-			else
-				host = hosts.get( selected_host )[Hosts.HOST_URL];
-
-			site_api.setSiteUrl( host );
-			List < Tag > tags = site_api.fetchTagsIndex( 1, query, 300 );
-
-			List < ResultSet > results = new ArrayList < ResultSet >( tags.size() );
-			if (tags.size() > 0)
+		// get prefered host
+		int selected_host = preferences.getInt( "selected_host", 0 );
+		List < Host > hosts = null;
+		if (preferences.contains( "json_hosts" ))
+			try
 			{
-				String keywords[] = query.split( "\\+" );
+				hosts = D.HostsFromJSONArray( new JSONArray( preferences.getString( "json_hosts", "" ) ) );
+			}
+			catch (JSONException ex)
+			{
+				D.Log.wtf( ex );
+			}
+		Host host = null;
+		if (hosts != null)
+			host = hosts.get( selected_host );
 
-				for (Tag tag : tags)
-					results.add( new ResultSet( tag, "" ) );
+		site_api.setSiteUrl( host.url );
+		List < Tag > tags = site_api.fetchTagsIndex( 1, query, 300 );
 
-				for (String keyword : keywords)
-				{
-					keyword = keyword.trim().replace( ' ', '_' );
+		List < ResultSet > results = new ArrayList < ResultSet >( tags.size() );
+		if (tags.size() > 0)
+		{
+			String keywords[] = query.split( "\\+" );
 
-					for (ResultSet result : results)
-						if (result.tag.name.contains( keyword ))
-							result.keywords += ", " + keyword;
-				}
+			for (Tag tag : tags)
+				results.add( new ResultSet( tag, "" ) );
 
-				// get rid of leading ", "
+			for (String keyword : keywords)
+			{
+				keyword = keyword.trim().replace( ' ', '_' );
+
 				for (ResultSet result : results)
-					result.keywords = result.keywords.substring( 2 );
-
-				// the following 3 sort are just to garentee we have the correct
-				// order:
-				// - one with more keywords in front
-				// - if keyword counts are same, one with more posts in front
-				// - if post counts are same, sort by lexicographically
-
-				// sort by name
-				Collections.sort( results, new ResultSet.CompareName() );
-				// sort by post count
-				Collections.sort( results, new ResultSet.CompareCount() );
-				// sort by keyword count
-				Collections.sort( results, new ResultSet.CompareKeywords() );
+					if (result.tag.name.contains( keyword ))
+						result.keywords += ", " + keyword;
 			}
 
-			// get the result ArrayList into a MatrixCursor
-			int length = results.size();
-			MatrixCursor cursor = new MatrixCursor( new String[] {
-				BaseColumns._ID,
-				SearchManager.SUGGEST_COLUMN_TEXT_1,
-				SearchManager.SUGGEST_COLUMN_TEXT_2,
-				SearchManager.SUGGEST_COLUMN_INTENT_DATA,
-			}, length );
-
+			// get rid of leading ", "
 			for (ResultSet result : results)
-				cursor.addRow( new Object[] {
-					result.tag.id,
-					result.tag.name,
-					String.format( getContext().getString( R.string.search_suggestion_description ), result.tag.count, result.keywords ),
-					result.tag.name,
-				} );
+				result.keywords = result.keywords.substring( 2 );
 
-			return cursor;
+			// the following 3 sort are just to garentee we have the correct
+			// order:
+			// - one with more keywords in front
+			// - if keyword counts are same, one with more posts in front
+			// - if post counts are same, sort by lexicographically
+
+			// sort by name
+			Collections.sort( results, new ResultSet.CompareName() );
+			// sort by post count
+			Collections.sort( results, new ResultSet.CompareCount() );
+			// sort by keyword count
+			Collections.sort( results, new ResultSet.CompareKeywords() );
 		}
-		catch (IOException ex)
-		{
-			D.Log.wtf( ex );
-		}
-		return null;
+
+		// get the result ArrayList into a MatrixCursor
+		int length = results.size();
+		MatrixCursor cursor = new MatrixCursor( new String[] {
+			BaseColumns._ID,
+			SearchManager.SUGGEST_COLUMN_TEXT_1,
+			SearchManager.SUGGEST_COLUMN_TEXT_2,
+			SearchManager.SUGGEST_COLUMN_INTENT_DATA,
+		}, length );
+
+		for (ResultSet result : results)
+			cursor.addRow( new Object[] {
+				result.tag.id,
+				result.tag.name,
+				String.format( getContext().getString( R.string.search_suggestion_description ), result.tag.count, result.keywords ),
+				result.tag.name,
+			} );
+
+		return cursor;
 	}
 }
