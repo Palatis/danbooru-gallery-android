@@ -30,6 +30,7 @@ import org.json.JSONException;
 import tw.idv.palatis.danboorugallery.defines.D;
 import tw.idv.palatis.danboorugallery.model.Host;
 import tw.idv.palatis.danboorugallery.model.Post;
+import tw.idv.palatis.danboorugallery.siteapi.ISiteAPI;
 import tw.idv.palatis.danboorugallery.utils.BitmapMemCache;
 import tw.idv.palatis.danboorugallery.utils.DanbooruUncaughtExceptionHandler;
 import tw.idv.palatis.danboorugallery.utils.LazyImageAdapter;
@@ -233,11 +234,11 @@ public class MainActivity
 		if ( !preferences.contains( "json_hosts" ))
 		{
 			hosts = new ArrayList < Host >( 5 );
-			hosts.add( new Host( "Danbooru", "http://danbooru.donmai.us/" ) );
-			hosts.add( new Host( "Danbooru (mirror)", "http://hijiribe.donmai.us/" ) );
-			hosts.add( new Host( "Konachan", "http://konachan.com/" ) );
-			hosts.add( new Host( "Sankaku Complex (Chan)", "http://chan.sankakucomplex.com/" ) );
-			hosts.add( new Host( "Sankaku Complex (Idol)", "http://idol.sankakucomplex.com/" ) );
+			hosts.add( new Host( "Danbooru", "http://danbooru.donmai.us/", "Danbooru - XML" ) );
+			hosts.add( new Host( "Danbooru (mirror)", "http://hijiribe.donmai.us/", "Danbooru - XML" ) );
+			hosts.add( new Host( "Konachan", "http://konachan.com/", "Danbooru - XML" ) );
+			hosts.add( new Host( "Sankaku Complex (Chan)", "http://chan.sankakucomplex.com/", "Danbooru - JSON" ) );
+			hosts.add( new Host( "Sankaku Complex (Idol)", "http://idol.sankakucomplex.com/", "Danbooru - JSON" ) );
 			prefeditor.putString( "json_hosts", D.JSONArrayFromHosts( hosts ).toString() );
 		}
 
@@ -273,11 +274,17 @@ public class MainActivity
 
 		Host host = hosts.get( preferences.getInt( "selected_host", 0 ) );
 		String url = "http://konachan.com/";
+		String api = "Danbooru - JSON";
 		if (host != null)
+		{
 			url = host.url;
+			api = host.api;
+		}
+
+		D.Log.d( "using api: %s", api );
 
 		boolean reset = false;
-		reset |= fetcher.setUrl( url );
+		reset |= fetcher.setSiteAPI( ISiteAPI.Factory.createFromString( url, api ) );
 		reset |= fetcher.setRating( preferences.getString( "rating", "s" ) );
 		reset |= fetcher.setPageLimit( preferences.getInt( "page_limit", 16 ) );
 

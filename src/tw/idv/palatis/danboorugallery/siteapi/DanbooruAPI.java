@@ -72,7 +72,7 @@ public class DanbooruAPI
 	@Override
 	public void setApi(int api) throws UnsupportedAPIException
 	{
-		if (api != API_JSON || api != API_XML)
+		if (api != API_JSON && api != API_XML)
 			throw new UnsupportedAPIException( api );
 
 		mApi = api;

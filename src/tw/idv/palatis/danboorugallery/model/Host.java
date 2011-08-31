@@ -12,23 +12,25 @@ public class Host
 {
 	public String	name;
 	public String	url;
+	public String	api;
 
 	public Host()
 	{
-		name = "";
-		url = "";
+		this( "", "", "Danbooru - XML" );
 	}
 
-	public Host(String n, String u)
+	public Host(String n, String u, String a)
 	{
 		name = n;
 		url = u;
+		api = a;
 	}
 
 	public Host(JSONObject json)
 	{
 		name = json.optString( "name" );
 		url = json.optString( "url" );
+		api = json.optString( "api" );
 	}
 
 	public JSONObject toJSONObject()
@@ -37,7 +39,8 @@ public class Host
 		{
 			JSONObject json = new JSONObject();
 			json.put( "name", name );
-			json.put( "url", url);
+			json.put( "url", url );
+			json.put( "api", api );
 			return json;
 		}
 		catch (JSONException ex)
@@ -70,6 +73,7 @@ public class Host
 	{
 		name = parcel.readString();
 		url = parcel.readString();
+		api = parcel.readString();
 	}
 
 	@Override
@@ -83,5 +87,6 @@ public class Host
 	{
 		dest.writeString( name );
 		dest.writeString( url );
+		dest.writeString( api );
 	}
 }

@@ -165,7 +165,7 @@ public class Post
 	// this is used to format the created_at attribute in XML
 	// it is here because Android frees Locale.ENGLISH when formatter destroyed,
 	// resulting reloading of locale data every time which is SLOW.
-	static private DateFormat formatter = new SimpleDateFormat( "EEE MMM dd HH:mm:ss Z yyyy", Locale.ENGLISH);
+	static private DateFormat	formatter	= new SimpleDateFormat( "EEE MMM dd HH:mm:ss Z yyyy", Locale.ENGLISH );
 
 	public Post(Element node)
 	{
@@ -207,7 +207,7 @@ public class Post
 
 		md5 = node.getAttribute( "md5" );
 		file_url = node.getAttribute( "file_url" );
-		file_size = Integer.valueOf( node.getAttribute( "file_size" ) );
+		file_size = Integer.valueOf( "0" + node.getAttribute( "file_size" ) );
 		width = Integer.valueOf( node.getAttribute( "width" ) );
 		height = Integer.valueOf( node.getAttribute( "height" ) );
 		sample_url = node.getAttribute( "sample_url" );

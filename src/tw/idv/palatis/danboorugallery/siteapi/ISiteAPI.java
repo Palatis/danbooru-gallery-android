@@ -2,6 +2,7 @@ package tw.idv.palatis.danboorugallery.siteapi;
 
 import java.util.List;
 
+import tw.idv.palatis.danboorugallery.defines.D;
 import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.model.Tag;
 
@@ -79,6 +80,25 @@ public interface ISiteAPI
 	 * as possible.
 	 */
 	abstract void cancel();
+
+	public static class Factory
+	{
+		public static ISiteAPI createFromString(String url, String api)
+		{
+			try
+			{
+				if (api.equals( "Danbooru - JSON" ))
+					return new DanbooruAPI( url, API_JSON );
+				if (api.equals( "Danbooru - XML" ))
+					return new DanbooruAPI( url, API_XML );
+			}
+			catch (UnsupportedAPIException ex)
+			{
+				D.Log.wtf( ex );
+			}
+			return null;
+		}
+	}
 
 	/**
 	 * this exception is thrown when the desired API is not supported.

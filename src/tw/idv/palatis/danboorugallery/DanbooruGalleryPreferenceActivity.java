@@ -44,7 +44,11 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 public class DanbooruGalleryPreferenceActivity
 	extends PreferenceActivity
@@ -61,7 +65,7 @@ public class DanbooruGalleryPreferenceActivity
 		addPreferencesFromResource( R.xml.danbooru_gallery_preference );
 
 		preferences = getSharedPreferences( D.SHAREDPREFERENCES_NAME, MODE_PRIVATE );
-		host_dialog_listener = new HostDialogOnClickListener( this );
+		host_dialog_listener = new HostDialogOnClickListener();
 	}
 
 	@Override
@@ -134,7 +138,7 @@ public class DanbooruGalleryPreferenceActivity
 			Preference p = new Preference( this );
 			p.setOrder( i );
 			p.setTitle( host.name );
-			p.setSummary( host.url );
+			p.setSummary( String.format( "%1$s\n(%2$s)", host.url, host.api ) );
 			p.setKey( "auto_generated_host_entry" );
 			category.addPreference( p );
 		}
@@ -162,6 +166,54 @@ public class DanbooruGalleryPreferenceActivity
 		super.onPause();
 	}
 
+	private BaseAdapter	mSiteApiAdapter	= new SiteApiAdapter();
+
+	private class SiteApiAdapter
+		extends BaseAdapter
+	{
+		// FIXME: auto-detect available APIs
+		private String[]	apis	= new String[] {
+										"Danbooru - JSON",
+										"Danbooru - XML",
+									};
+
+		@Override
+		public int getCount()
+		{
+			return apis.length;
+		}
+
+		@Override
+		public Object getItem(int position)
+		{
+			return apis[position];
+		}
+
+		@Override
+		public long getItemId(int position)
+		{
+			return apis[position].hashCode();
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent)
+		{
+			TextView text = null;
+			if (convertView != null)
+				text = (TextView) convertView;
+			if (text == null)
+			{
+				text = new TextView( DanbooruGalleryPreferenceActivity.this );
+				text.setTextColor( 0xff000000 );
+				text.setPadding( 8, 8, 8, 8 );
+			}
+
+			text.setText( apis[position] );
+
+			return text;
+		}
+	};
+
 	@Override
 	public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference)
 	{
@@ -178,9 +230,15 @@ public class DanbooruGalleryPreferenceActivity
 			}
 			else if (preference.getKey().equals( "preferences_hosts_manage_new" ))
 			{
+				View dialog_view = getLayoutInflater().inflate( R.layout.host_dialog, null );
+				Spinner api = (Spinner) dialog_view.findViewById( R.id.preferences_hosts_dialog_api );
+				api.setPromptId( R.string.preferences_hosts_dialog_api );
+				api.setAdapter( mSiteApiAdapter );
+				api.setSelection( 0 );
+
 				Builder builder = new AlertDialog.Builder( this );
 				builder.setTitle( R.string.preferences_hosts_dialog_title );
-				builder.setView( getLayoutInflater().inflate( R.layout.host_dialog, null ) );
+				builder.setView( dialog_view );
 				builder.setPositiveButton( android.R.string.ok, host_dialog_listener );
 				builder.setNegativeButton( android.R.string.cancel, null );
 				builder.create().show();
@@ -193,9 +251,17 @@ public class DanbooruGalleryPreferenceActivity
 				View dialog_view = getLayoutInflater().inflate( R.layout.host_dialog, null );
 				EditText edit_name = (EditText) dialog_view.findViewById( R.id.preferences_hosts_dialog_hosts_name_input );
 				EditText edit_url = (EditText) dialog_view.findViewById( R.id.preferences_hosts_dialog_url_input );
+				Spinner api = (Spinner) dialog_view.findViewById( R.id.preferences_hosts_dialog_api );
 				edit_name.setTag( preference.getOrder() );
 				edit_name.setText( host.name );
 				edit_url.setText( host.url );
+				api.setPromptId( R.string.preferences_hosts_dialog_api );
+				api.setAdapter( mSiteApiAdapter );
+				// FIXME: think yourself = =
+				if (host.api.equals( "Danbooru - JSON" ))
+					api.setSelection( 0 );
+				else if (host.api.equals( "Danbooru - XML" ))
+					api.setSelection( 1 );
 
 				Builder builder = new AlertDialog.Builder( this );
 				builder.setTitle( R.string.preferences_hosts_dialog_title );
@@ -211,17 +277,17 @@ public class DanbooruGalleryPreferenceActivity
 		return super.onPreferenceTreeClick( preferenceScreen, preference );
 	}
 
-	public void newHost(String name, String url)
+	public void newHost(String name, String url, String api)
 	{
-		hosts.add( new Host( name, url ) );
+		hosts.add( new Host( name, url, api ) );
 		preferences.edit().putString( "json_hosts", D.JSONArrayFromHosts( hosts ).toString() ).apply();
 
 		notifyHostsChanged();
 	}
 
-	public void editHost(int position, String name, String url)
+	public void editHost(int position, String name, String url, String api)
 	{
-		hosts.set( position, new Host( name, url ) );
+		hosts.set( position, new Host( name, url, api ) );
 		preferences.edit().putString( "json_hosts", D.JSONArrayFromHosts( hosts ).toString() ).apply();
 
 		notifyHostsChanged();
@@ -243,26 +309,20 @@ public class DanbooruGalleryPreferenceActivity
 	private class HostDialogOnClickListener
 		implements OnClickListener
 	{
-		DanbooruGalleryPreferenceActivity	activity;
-
-		public HostDialogOnClickListener(DanbooruGalleryPreferenceActivity a)
-		{
-			activity = a;
-		}
-
 		@Override
 		public void onClick(DialogInterface idialog, int which)
 		{
 			final AlertDialog dialog = (AlertDialog) idialog;
 			final EditText edit_name = (EditText) dialog.findViewById( R.id.preferences_hosts_dialog_hosts_name_input );
 			final EditText edit_url = (EditText) dialog.findViewById( R.id.preferences_hosts_dialog_url_input );
+			final Spinner api = (Spinner) dialog.findViewById( R.id.preferences_hosts_dialog_api );
 			switch (which)
 			{
 			case DialogInterface.BUTTON_POSITIVE: // OK
 				if (edit_name.getTag() == null)
-					activity.newHost( edit_name.getText().toString(), edit_url.getText().toString() );
+					newHost( edit_name.getText().toString(), edit_url.getText().toString(), api.getSelectedItem().toString() );
 				else
-					activity.editHost( (Integer) edit_name.getTag(), edit_name.getText().toString(), edit_url.getText().toString() );
+					editHost( (Integer) edit_name.getTag(), edit_name.getText().toString(), edit_url.getText().toString(), api.getSelectedItem().toString() );
 				break;
 			case DialogInterface.BUTTON_NEUTRAL: // Delete
 				Builder builder = new AlertDialog.Builder( dialog.getContext() );
@@ -274,7 +334,7 @@ public class DanbooruGalleryPreferenceActivity
 					@Override
 					public void onClick(DialogInterface dialog, int which)
 					{
-						activity.deleteHost( (Integer) edit_name.getTag() );
+						deleteHost( (Integer) edit_name.getTag() );
 					}
 				} );
 				builder.setNegativeButton( android.R.string.cancel, null );

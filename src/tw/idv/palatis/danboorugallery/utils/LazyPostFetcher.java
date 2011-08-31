@@ -49,10 +49,13 @@ public class LazyPostFetcher
 		site_api = new DanbooruAPI();
 	}
 
-	public boolean setUrl(String url)
+	public boolean setSiteAPI(ISiteAPI sapi)
 	{
-		boolean result = site_api.getSiteUrl().equals( url );
-		site_api.setSiteUrl( url );
+		boolean result = true;
+		result &= site_api.getClass().getName().equals( sapi.getClass().getName() );
+		result &= site_api.getSiteUrl().equals( sapi.getSiteUrl() );;
+		result &= site_api.getApi() == sapi.getApi();
+		site_api = sapi;
 		if ( !result)
 			reached_end = false;
 		return !result;
@@ -175,21 +178,32 @@ public class LazyPostFetcher
 			for (URLEnclosure enclosure : params)
 				while (fetched_posts_count < enclosure.limit)
 				{
+					if ( isCancelled() )
+						break;
+
 					List < Post > posts = fetcher.site_api.fetchPostsIndex( enclosure.page, enclosure.tags, enclosure.limit );
 					if (posts == null)
 						continue;
 					List < Post > filtered = new ArrayList < Post >( posts.size() );
 					for (Post post : posts)
+					{
 						if (enclosure.rating.contains( post.rating ))
 							filtered.add( post );
 						else
 							++skipped_posts_count;
+
+						if ( isCancelled() )
+							break;
+					}
 
 					if (posts.size() == 0)
 					{
 						fetcher.noMorePosts();
 						break;
 					}
+
+					if ( isCancelled() )
+						break;
 
 					adapter.addPosts( filtered );
 					fetched_posts_count += filtered.size();
