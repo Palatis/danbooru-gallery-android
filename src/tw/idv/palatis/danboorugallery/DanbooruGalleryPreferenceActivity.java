@@ -175,6 +175,7 @@ public class DanbooruGalleryPreferenceActivity
 		private String[]	apis	= new String[] {
 										"Danbooru - JSON",
 										"Danbooru - XML",
+										"Gelbooru - XML",
 									};
 
 		@Override
@@ -262,6 +263,8 @@ public class DanbooruGalleryPreferenceActivity
 					api.setSelection( 0 );
 				else if (host.api.equals( "Danbooru - XML" ))
 					api.setSelection( 1 );
+				else if (host.api.equals( "Gelbooru - XML" ))
+					api.setSelection( 2 );
 
 				Builder builder = new AlertDialog.Builder( this );
 				builder.setTitle( R.string.preferences_hosts_dialog_title );

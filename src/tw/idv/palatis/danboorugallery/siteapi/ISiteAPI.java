@@ -91,6 +91,8 @@ public interface ISiteAPI
 					return new DanbooruAPI( url, API_JSON );
 				if (api.equals( "Danbooru - XML" ))
 					return new DanbooruAPI( url, API_XML );
+				if (api.equals( "Gelbooru - XML" ))
+					return new GelbooruAPI( url, API_XML );
 			}
 			catch (UnsupportedAPIException ex)
 			{
