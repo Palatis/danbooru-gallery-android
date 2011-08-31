@@ -79,7 +79,7 @@ public class GelbooruAPI
 		if (mApi == API_XML)
 		{
 			mIsCanceled = false;
-			return fetchPostsIndexJSON( mSiteUrl + URL_POSTS_XML, page, tags, limit );
+			return fetchPostsIndexXML( mSiteUrl + URL_POSTS_XML, page, tags, limit );
 		}
 
 		return null;
