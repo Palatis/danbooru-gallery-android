@@ -49,7 +49,7 @@ public class BitmapMemCache
 	private BitmapMemCache(Context context)
 	{
 		ActivityManager manager = (ActivityManager) context.getSystemService( Service.ACTIVITY_SERVICE );
-		int cache_size = manager.getMemoryClass() * 16;
+		int cache_size = manager.getMemoryClass() * 8;
 		D.Log.d( "Using %d for cache size", cache_size );
 		cache = Collections.synchronizedMap( new LruCache < String, Bitmap >( cache_size ) );
 	}
