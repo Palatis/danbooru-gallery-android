@@ -319,10 +319,19 @@ public class ViewImageActivity
 		switch (item.getItemId())
 		{
 		case R.id.view_image_menu_info:
+		{
 			Builder builder = new AlertDialog.Builder( this );
 			builder.setTitle( R.string.view_image_menu_info );
 			builder.setMessage( String.format( getString( R.string.view_image_pic_info ), post.width, post.height, post.author, post.created_at == null ? "" : post.created_at.toLocaleString() ) );
-			ListView listview = new ListView( ViewImageActivity.this );
+			builder.setPositiveButton( android.R.string.ok, null );
+			builder.create().show();
+			break;
+		}
+		case R.id.view_image_menu_tags:
+		{
+			Builder builder = new AlertDialog.Builder( this );
+			builder.setTitle( R.string.view_image_tags );
+			ListView listview = new ListView( this );
 			listview.setAdapter( new BaseAdapter()
 			{
 				String	tags[]	= post.tags.split( " " );
@@ -358,13 +367,13 @@ public class ViewImageActivity
 					text.setText( tags[position] );
 					text.setLayoutParams( new ListView.LayoutParams( ListView.LayoutParams.MATCH_PARENT, ListView.LayoutParams.WRAP_CONTENT ) );
 					text.setGravity( Gravity.CENTER_HORIZONTAL );
-					text.setPadding( 4, 4, 4, 4 );
+					text.setPadding( 8, 8, 8, 8 );
 					return text;
 				}
 			} );
 			builder.setView( listview );
 			builder.setPositiveButton( android.R.string.ok, null );
-			final AlertDialog pic_info_dialog = builder.create();
+			final AlertDialog dialog = builder.create();
 			listview.setOnItemClickListener( new OnItemClickListener()
 			{
 				@Override
@@ -374,12 +383,13 @@ public class ViewImageActivity
 					Intent intent = new Intent( Intent.ACTION_SEARCH );
 					intent.putExtra( SearchManager.QUERY, text.getText() );
 					setResult( RESULT_OK, intent );
-					pic_info_dialog.dismiss();
+					dialog.dismiss();
 					finish();
 				}
 			} );
-			pic_info_dialog.show();
+			dialog.show();
 			break;
+		}
 		case R.id.view_image_menu_refresh:
 			File file = filecache.getFile( post.sample_url );
 			ProgressDialog dialog = new NoSearchProgressDialog( this );

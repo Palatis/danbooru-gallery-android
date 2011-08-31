@@ -44,12 +44,14 @@
 	<string name="main_goto_page_dialog_title">跳至頁面...</string>
 
 	<!-- View Image Activity -->
-	<string name="view_image_pic_info">大小：%1$dx%2$d\n作者：%3$s\n建立時間：\n%4$s\n標籤：</string>
+	<string name="view_image_pic_info">大小：%1$dx%2$d\n作者：%3$s\n建立時間：\n%4$s</string>
+	<string name="view_image_tags">標籤</string>
 	<string name="view_image_download_failed">下載失敗！</string>
 	<string name="view_image_user_canceled">使用者取消</string>
 	<string name="view_image_progress_title">%1$sx%2$s</string>
 
 	<string name="view_image_menu_info">圖片資訊</string>
+	<string name="view_image_menu_tags">標籤</string>
 	<string name="view_image_menu_share">分享</string>
 	<string name="view_image_menu_refresh">重新整理</string>
 	<string name="view_image_menu_download">下載</string>

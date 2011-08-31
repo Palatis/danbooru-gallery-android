@@ -44,12 +44,14 @@
 	 <string name="main_goto_page_dialog_title">Go to page...</string>
 
     <!-- View Image Activity -->
-    <string name="view_image_pic_info">Size: %1$dx%2$d\nAuthor: %3$s\nCreated At:\n%4$s\nTags:</string>
+    <string name="view_image_pic_info">Size: %1$dx%2$d\nAuthor: %3$s\nCreated At:\n%4$s</string>
+    <string name="view_image_tags">Tags</string>
     <string name="view_image_download_failed">Download failed!</string>
     <string name="view_image_user_canceled">User canceled.</string>
     <string name="view_image_progress_title">%1$sx%2$s</string>
 
     <string name="view_image_menu_info">Picture Info</string>
+    <string name="view_image_menu_tags">Tags</string>
     <string name="view_image_menu_share">Share</string>
 	 <string name="view_image_menu_refresh">Refresh</string>
 	 <string name="view_image_menu_download">Download</string>
