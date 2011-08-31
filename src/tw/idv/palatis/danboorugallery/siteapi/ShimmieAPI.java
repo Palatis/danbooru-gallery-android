@@ -1,6 +1,9 @@
 package tw.idv.palatis.danboorugallery.siteapi;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.text.DateFormat;
@@ -81,8 +84,8 @@ public class ShimmieAPI
 			post.file_url = Uri.encode( String.format( siteUrl + URL_FILE, post.md5, post.id, post.tags, file_extension ), ":/?&" );
 			post.sample_url = post.file_url;
 			post.preview_url = String.format( siteUrl + URL_PREVIEW, post.md5 );
-			D.Log.d( post.file_url );
-			D.Log.d( post.preview_url );
+			// D.Log.d( post.file_url );
+			// D.Log.d( post.preview_url );
 		}
 		catch (StringIndexOutOfBoundsException e)
 		{
@@ -169,14 +172,19 @@ public class ShimmieAPI
 		{
 			URL fetchUrl = null;
 			if (tags.isEmpty())
-				fetchUrl = new URL( String.format( mSiteUrl + URL_POSTS_XML, page * limit, limit ) );
+				fetchUrl = new URL( String.format( mSiteUrl + URL_POSTS_XML, (page - 1) * limit, limit ) );
 			else
-				fetchUrl = new URL( String.format( mSiteUrl + URL_POSTS_XML, page * limit, limit, tags ) );
+				fetchUrl = new URL( String.format( mSiteUrl + URL_POSTS_XML_TAGS, (page - 1) * limit, limit, tags ) );
 			D.Log.v( "DanbooruStyleAPI::fetchPostsIndexXML(): fetching %s", fetchUrl );
+
+			InputStream input = fetchUrl.openStream();
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+			D.CopyStream( input, output );
+			output.flush();
 
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document doc = db.parse( new InputSource( fetchUrl.openStream() ) );
+			Document doc = db.parse( new InputSource( new StringReader( output.toString().replace( "&", "&amp;" ) ) ) );
 			doc.getDocumentElement().normalize();
 
 			NodeList nodes = doc.getElementsByTagName( "post" );
