@@ -11,7 +11,7 @@ public class GelbooruAPI
 	implements ISiteAPI
 {
 	public static final String	URL_POSTS_XML	= "/index.php?page=dapi&s=post&q=index&pid=%1$s&tags=%2$s&limit=%3$s";
-	// public static final String URL_TAGS_XML = "/tag/index.xml?order=count&page=%1$s&name=*%2$s*&limit=%3$s";
+	// public static final String URL_TAGS_XML = "/index.php?page=dapi&s=tag&q=index&order=count&pid=%1$s&name_pattern=%2$s&limit=%3$s";
 
 	String						mSiteUrl;
 	int							mApi;
