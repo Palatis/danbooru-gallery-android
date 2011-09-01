@@ -135,7 +135,7 @@ public class ShimmieAPI
 	@Override
 	public void setApi(int api) throws UnsupportedAPIException
 	{
-		if (api != API_JSON && api != API_XML)
+		if (api != API_XML)
 			throw new UnsupportedAPIException( api );
 
 		mApi = api;
@@ -144,7 +144,7 @@ public class ShimmieAPI
 	@Override
 	public int getSupportedApi()
 	{
-		return API_JSON;
+		return API_XML;
 	}
 
 	@Override
