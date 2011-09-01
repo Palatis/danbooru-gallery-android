@@ -33,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import tw.idv.palatis.danboorugallery.model.Host;
+import tw.idv.palatis.danboorugallery.utils.BitmapMemCache;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -283,6 +284,7 @@ public class D
 		catch (OutOfMemoryError ex)
 		{
 			Log.d( "decode failed, OutOfMemory occured." );
+			BitmapMemCache.getInstance().clear();
 		}
 		catch (FileNotFoundException ex)
 		{

@@ -31,10 +31,10 @@ import java.util.WeakHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
 
 import tw.idv.palatis.danboorugallery.R;
-import tw.idv.palatis.danboorugallery.MainActivity.GalleryItemDisplayer;
 import tw.idv.palatis.danboorugallery.defines.D;
-import android.content.Context;
 import android.graphics.Bitmap;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
@@ -46,7 +46,7 @@ public class ImageLoader
 	private PhotosLoaderWeb				mWebLoader;
 	private PhotosLoaderDisk			mDiskLoader;
 
-	public ImageLoader(Context context)
+	public ImageLoader()
 	{
 		// Make the background thread low priority. This way it will not affect
 		// the UI performance
@@ -58,7 +58,7 @@ public class ImageLoader
 		mDiskLoader.setPriority( Thread.MIN_PRIORITY );
 		mDiskLoader.start();
 
-		mFileCache = new FileCache( context );
+		mFileCache = FileCache.getInstance();
 		mMemCache = BitmapMemCache.getInstance();
 	}
 
@@ -258,10 +258,10 @@ public class ImageLoader
 						// check if we still want the bitmap
 						String tag = mImageViews.get( task.mImage );
 						if (tag != null && tag.equals( task.mUrl ))
-							new GalleryItemDisplayer( task.mImage, bitmap, ScaleType.CENTER_CROP, true ).display();
+							task.mImage.post( new GalleryItemDisplayer( task.mImage, bitmap, ScaleType.CENTER_CROP, true ) );
 					}
 					// if no image, just check existence, don't load.
-					else if ( !mFileCache.getFile( task.mUrl ).exists() )
+					else if ( !mFileCache.getFile( task.mUrl ).exists())
 						mWebLoader.queuePhoto( task );
 
 					if (Thread.interrupted())
@@ -301,7 +301,7 @@ public class ImageLoader
 						// check if we still want the bitmap
 						String tag = mImageViews.get( task.mImage );
 						if (tag != null && tag.equals( task.mUrl ))
-							new GalleryItemDisplayer( task.mImage, bitmap, ScaleType.CENTER_CROP, true ).display();
+							task.mImage.post( new GalleryItemDisplayer( task.mImage, bitmap, ScaleType.CENTER_CROP, true ) );
 					}
 					else
 						D.Log.d( "fetched image without view: %s", task.mUrl );
@@ -321,5 +321,54 @@ public class ImageLoader
 	{
 		mDiskLoader.discardAllNoImage();
 		mWebLoader.discardAllNoImage();
+	}
+
+	private static class GalleryItemDisplayer
+		implements Runnable
+	{
+		final ImageView	image;
+		final Bitmap	bitmap;
+		final ScaleType	scale_type;
+		final boolean	do_animation;
+
+		public GalleryItemDisplayer(ImageView v, Bitmap b, ScaleType t, boolean anim)
+		{
+			image = v;
+			bitmap = b;
+			scale_type = t;
+			do_animation = anim;
+		}
+
+		@Override
+		public void run()
+		{
+			if (image.getTag() == null)
+				return;
+
+			if (bitmap != null)
+			{
+				if (bitmap != null)
+					image.setImageBitmap( bitmap );
+
+				image.setScaleType( scale_type );
+
+				if (do_animation)
+				{
+					Animation anim = image.getAnimation();
+					if (anim != null)
+					{
+						if (anim.hasEnded())
+						{
+							anim.reset();
+							image.startAnimation( anim );
+						}
+					}
+					else
+						image.startAnimation( AnimationUtils.loadAnimation( image.getContext(), android.R.anim.fade_in ) );
+				}
+
+				image.setTag( null );
+			}
+		}
 	}
 }

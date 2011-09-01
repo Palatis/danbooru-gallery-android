@@ -25,7 +25,6 @@ import java.util.List;
 import tw.idv.palatis.danboorugallery.R;
 import tw.idv.palatis.danboorugallery.model.Post;
 import android.app.Activity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -36,9 +35,6 @@ import android.widget.ImageView.ScaleType;
 public class LazyImageAdapter
 	extends BaseAdapter
 {
-	final LayoutInflater	inflater;
-
-	Activity				activity;
 	List < Post >			posts;
 	ImageLoader				loader;
 	int						item_size;
@@ -69,10 +65,8 @@ public class LazyImageAdapter
 
 	public LazyImageAdapter(Activity a, List < Post > p, int sz, boolean ag)
 	{
-		activity = a;
 		posts = p;
-		inflater = activity.getLayoutInflater();
-		loader = new ImageLoader( activity.getApplicationContext() );
+		loader = new ImageLoader();
 		item_size = sz;
 		aggressive = ag;
 	}
@@ -80,11 +74,6 @@ public class LazyImageAdapter
 	public void cancelAll()
 	{
 		loader.cancelAll();
-	}
-
-	public Activity getActivity()
-	{
-		return activity;
 	}
 
 	public void addPosts(List < Post > commit)
@@ -98,15 +87,6 @@ public class LazyImageAdapter
 		if (aggressive)
 			for (Post post : commit)
 				loader.DisplayImage( post.preview_url, null );
-
-		activity.runOnUiThread( new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				LazyImageAdapter.this.notifyDataSetChanged();
-			}
-		} );
 	}
 
 	@Override
@@ -139,18 +119,15 @@ public class LazyImageAdapter
 
 		if (image == null)
 		{
-			image = (ImageView) inflater.inflate( R.layout.gallery_image, null );
+			image = new ImageView( parent.getContext() );
+			image.setImageResource( R.drawable.icon );
+			image.setScaleType( ScaleType.CENTER );
 			image.setLayoutParams( new GridView.LayoutParams( item_size, item_size ) );
 		}
 
 		loader.DisplayImage( posts.get( position ).preview_url, image );
 
 		return image;
-	}
-
-	public void onDestroy()
-	{
-		loader.stopThread();
 	}
 
 	public void onLowMemory()

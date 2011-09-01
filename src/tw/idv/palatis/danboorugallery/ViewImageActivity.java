@@ -93,7 +93,9 @@ public class ViewImageActivity
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.view_image );
 
-		filecache = new FileCache( getApplicationContext() );
+		// parpare the cache if it's not there (although this shouldn't happen)
+		FileCache.prepare( getApplicationContext() );
+		filecache = FileCache.getInstance();
 
 		Intent intent = getIntent();
 		post = intent.getParcelableExtra( "post" );

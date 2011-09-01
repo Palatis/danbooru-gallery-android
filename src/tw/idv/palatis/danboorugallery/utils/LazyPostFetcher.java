@@ -214,5 +214,17 @@ public class LazyPostFetcher
 
 			return fetched_posts_count;
 		}
+
+		@Override
+		protected void onCancelled()
+		{
+			fetcher.fetcher = null;
+		}
+
+		@Override
+		protected void onPostExecute(Integer result)
+		{
+			adapter.notifyDataSetChanged();
+		}
 	}
 }

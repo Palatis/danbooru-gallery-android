@@ -33,6 +33,7 @@ import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.siteapi.ISiteAPI;
 import tw.idv.palatis.danboorugallery.utils.BitmapMemCache;
 import tw.idv.palatis.danboorugallery.utils.DanbooruUncaughtExceptionHandler;
+import tw.idv.palatis.danboorugallery.utils.FileCache;
 import tw.idv.palatis.danboorugallery.utils.LazyImageAdapter;
 import tw.idv.palatis.danboorugallery.utils.LazyPostFetcher;
 import android.app.Activity;
@@ -46,7 +47,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences.Editor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
@@ -57,8 +57,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.View.OnFocusChangeListener;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -68,7 +66,6 @@ import android.widget.Toast;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ImageView.ScaleType;
 
 public class MainActivity
 	extends Activity
@@ -91,10 +88,10 @@ public class MainActivity
 		// register a global exception handler here so we don't just quit...
 		Thread.setDefaultUncaughtExceptionHandler( new DanbooruUncaughtExceptionHandler( this ) );
 
-		if (BitmapMemCache.getInstance() == null)
-			BitmapMemCache.prepare( this );
+		// preparing the cache
+		BitmapMemCache.prepare( getApplicationContext() );
+		FileCache.prepare( getApplicationContext() );
 
-		GalleryItemDisplayer.setActivity( this );
 		preferences = getSharedPreferences( D.SHAREDPREFERENCES_NAME, MODE_PRIVATE );
 		loadPreferences();
 
@@ -110,8 +107,8 @@ public class MainActivity
 		if (conf != null)
 		{
 			posts = conf.posts;
-			adapter = conf.adapter;
 			fetcher = conf.fetcher;
+			adapter = conf.adapter;
 		}
 		else
 		{
@@ -392,7 +389,7 @@ public class MainActivity
 	private class ConfigurationEnclosure
 	{
 		public List < Post >	posts;
-		public LazyImageAdapter adapter;
+		public LazyImageAdapter	adapter;
 		public LazyPostFetcher	fetcher;
 
 		public ConfigurationEnclosure(List < Post > p, LazyImageAdapter a, LazyPostFetcher f)
@@ -449,7 +446,7 @@ public class MainActivity
 		{
 			fetcher = f;
 			adapter = a;
-			toast_loading = Toast.makeText( a.getActivity(), R.string.main_loading_next_page, Toast.LENGTH_SHORT );
+			toast_loading = Toast.makeText( MainActivity.this, R.string.main_loading_next_page, Toast.LENGTH_SHORT );
 			fetch_threshold = l;
 		}
 
@@ -467,81 +464,6 @@ public class MainActivity
 		public void onScrollStateChanged(AbsListView view, int scrollState)
 		{
 			// do nothing
-		}
-	}
-
-	static public class GalleryItemDisplayer
-		implements Runnable
-	{
-		private static Activity	activity;
-
-		final ImageView			image;
-		final Integer			res_id;
-		final Bitmap			bitmap;
-		final ScaleType			scale_type;
-		final boolean			do_animation;
-
-		static public void setActivity(Activity a)
-		{
-			activity = a;
-		}
-
-		public GalleryItemDisplayer(ImageView v, Bitmap b, ScaleType t, boolean anim)
-		{
-			res_id = null;
-			image = v;
-			bitmap = b;
-			scale_type = t;
-			do_animation = anim;
-		}
-
-		public GalleryItemDisplayer(ImageView v, int rid, ScaleType t, boolean anim)
-		{
-			res_id = rid;
-			image = v;
-			bitmap = null;
-			scale_type = t;
-			do_animation = anim;
-		}
-
-		public void display()
-		{
-			activity.runOnUiThread( this );
-		}
-
-		@Override
-		public void run()
-		{
-			if (image.getTag() == null)
-				return;
-
-			if (bitmap != null || res_id != null)
-			{
-				if (bitmap != null)
-					image.setImageBitmap( bitmap );
-
-				if (res_id != null)
-					image.setImageResource( res_id );
-
-				image.setScaleType( scale_type );
-
-				if (do_animation)
-				{
-					Animation anim = image.getAnimation();
-					if (anim != null)
-					{
-						if ( !anim.hasStarted() || anim.hasEnded())
-						{
-							anim.reset();
-							image.startAnimation( anim );
-						}
-					}
-					else
-						image.startAnimation( AnimationUtils.loadAnimation( image.getContext(), android.R.anim.fade_in ) );
-				}
-
-				image.setTag( null );
-			}
 		}
 	}
 }

@@ -27,9 +27,22 @@ import android.content.Context;
 
 public class FileCache
 {
+	private static FileCache	instance	= null;
+
+	public static final FileCache getInstance()
+	{
+		return instance;
+	}
+
+	public static void prepare(Context context)
+	{
+		if (instance == null)
+			instance = new FileCache( context );
+	}
+
 	private File	chunkdirs[]	= null;
 
-	public FileCache(Context context)
+	private FileCache(Context context)
 	{
 		// Find the directory to save cached images
 		File cachedir;
