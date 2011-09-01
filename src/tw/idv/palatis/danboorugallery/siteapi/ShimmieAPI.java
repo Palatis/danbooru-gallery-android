@@ -132,11 +132,11 @@ public class ShimmieAPI
 				else if (element.getTagName().equals( "link" ))
 					post.source = element.getTextContent();
 				else if (element.getTagName().equals( "media:thumbnail" ))
-					post.preview_url = siteUrl + element.getAttribute( "url" );
+					post.preview_url = element.getAttribute( "url" );
 				else if (element.getTagName().equals( "media:content" ))
 				{
-					post.sample_url = siteUrl + element.getAttribute( "url" );
-					post.file_url = siteUrl + element.getAttribute( "url" );
+					post.sample_url = element.getAttribute( "url" );
+					post.file_url = element.getAttribute( "url" );
 				}
 				else if (element.getTagName().equals( "pubDate" ))
 					try
@@ -160,6 +160,13 @@ public class ShimmieAPI
 			catch (ClassCastException e)
 			{
 			}
+
+		if (post.preview_url.startsWith( "/" ))
+			post.preview_url = siteUrl + post.preview_url;
+		if (post.sample_url.startsWith( "/" ))
+			post.sample_url = siteUrl + post.sample_url;
+		if (post.file_url.startsWith( "/" ))
+			post.file_url = siteUrl + post.file_url;
 
 		return post;
 	}
