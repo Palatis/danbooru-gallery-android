@@ -235,12 +235,17 @@ public class MainActivity
 
 		if ( !preferences.contains( "json_hosts" ))
 		{
-			hosts = new ArrayList < Host >( 5 );
-			hosts.add( new Host( "Danbooru", "http://danbooru.donmai.us/", "Danbooru - XML" ) );
-			hosts.add( new Host( "Danbooru (mirror)", "http://hijiribe.donmai.us/", "Danbooru - XML" ) );
-			hosts.add( new Host( "Konachan", "http://konachan.com/", "Danbooru - XML" ) );
-			hosts.add( new Host( "Sankaku Complex (Chan)", "http://chan.sankakucomplex.com/", "Danbooru - JSON" ) );
-			hosts.add( new Host( "Sankaku Complex (Idol)", "http://idol.sankakucomplex.com/", "Danbooru - JSON" ) );
+			hosts = new ArrayList < Host >();
+			/*
+			 * hosts.add( new Host( "Danbooru", "http://danbooru.donmai.us/", "Danbooru - XML" ) );
+			 * hosts.add( new Host( "Danbooru (mirror)", "http://hijiribe.donmai.us/", "Danbooru - XML" ) );
+			 * hosts.add( new Host( "Konachan", "http://konachan.com/", "Danbooru - XML" ) );
+			 * hosts.add( new Host( "Sankaku Complex (Chan)", "http://chan.sankakucomplex.com/", "Danbooru - JSON" ) );
+			 * hosts.add( new Host( "Sankaku Complex (Idol)", "http://idol.sankakucomplex.com/", "Danbooru - JSON" ) );
+			 */
+			hosts.add( new Host( "Gununubooru", "http://gununu.nipah.co.uk/", "Shimmie - XML" ) );
+			hosts.add( new Host( "Dollbooru", "http://www.dollbooru.org/", "Shimmie - RSS" ) );
+			hosts.add( new Host( "Safebooru", "http://safebooru.org/", "Gelbooru - XML" ) );
 			prefeditor.putString( "json_hosts", D.JSONArrayFromHosts( hosts ).toString() );
 		}
 
