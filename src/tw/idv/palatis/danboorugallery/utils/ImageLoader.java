@@ -356,30 +356,25 @@ public class ImageLoader
 			if (image.getTag() == null)
 				return;
 
-			if (bitmap != null)
+			image.setImageBitmap( bitmap );
+			image.setScaleType( scale_type );
+
+			if (do_animation)
 			{
-				if (bitmap != null)
-					image.setImageBitmap( bitmap );
-
-				image.setScaleType( scale_type );
-
-				if (do_animation)
+				Animation anim = image.getAnimation();
+				if (anim != null)
 				{
-					Animation anim = image.getAnimation();
-					if (anim != null)
+					if (anim.hasEnded())
 					{
-						if (anim.hasEnded())
-						{
-							anim.reset();
-							image.startAnimation( anim );
-						}
+						anim.reset();
+						image.startAnimation( anim );
 					}
-					else
-						image.startAnimation( AnimationUtils.loadAnimation( image.getContext(), android.R.anim.fade_in ) );
 				}
-
-				image.setTag( null );
+				else
+					image.startAnimation( AnimationUtils.loadAnimation( image.getContext(), android.R.anim.fade_in ) );
 			}
+
+			image.setTag( null );
 		}
 	}
 }
