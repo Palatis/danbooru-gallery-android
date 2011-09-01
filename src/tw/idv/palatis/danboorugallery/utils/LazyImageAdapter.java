@@ -74,6 +74,7 @@ public class LazyImageAdapter
 	public void cancelAll()
 	{
 		loader.cancelAll();
+		loader.cancelAllPrefetch();
 	}
 
 	public void addPosts(List < Post > commit)
