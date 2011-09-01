@@ -48,14 +48,13 @@ public class ImageLoader
 
 	public ImageLoader()
 	{
-		// Make the background thread low priority. This way it will not affect
-		// the UI performance
 		mWebLoader = new PhotosLoaderWeb();
-		mWebLoader.setPriority( Thread.MIN_PRIORITY );
 		mWebLoader.start();
 
+		// Make the background thread low priority. This way it will not affect
+		// the UI performance
 		mDiskLoader = new PhotosLoaderDisk();
-		mDiskLoader.setPriority( Thread.MIN_PRIORITY );
+		mDiskLoader.setPriority( Thread.currentThread().getPriority() - 1 );
 		mDiskLoader.start();
 
 		mFileCache = FileCache.getInstance();
@@ -91,7 +90,6 @@ public class ImageLoader
 		else
 		{
 			mDiskLoader.queuePhoto( new PhotoToLoad( url, image ) );
-			image.setImageResource( stub_id );
 			image.setTag( this );
 		}
 	}
