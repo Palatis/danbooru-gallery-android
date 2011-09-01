@@ -211,6 +211,7 @@ public class LazyPostFetcher
 						break;
 
 					adapter.addPosts( filtered );
+					publishProgress();
 					fetched_posts_count += filtered.size();
 
 					D.Log.d( "AsyncPostFetcher::doInBackground(): fetched + skipped / total: %d + %d / %d", fetched_posts_count, skipped_posts_count, fetched_posts_count + skipped_posts_count );
@@ -218,6 +219,12 @@ public class LazyPostFetcher
 				}
 
 			return fetched_posts_count;
+		}
+
+		@Override
+		protected void onProgressUpdate(Integer... values)
+		{
+			adapter.notifyDataSetChanged();
 		}
 
 		@Override
