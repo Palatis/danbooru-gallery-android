@@ -1,6 +1,7 @@
 package it.sephiroth.android.library.imagezoom;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -51,9 +52,9 @@ public class ImageViewTouch
 	}
 
 	@Override
-	public void setImageRotateBitmapReset(RotateBitmap bitmap, boolean reset)
+	public void setImageBitmapReset(Bitmap bitmap, boolean reset)
 	{
-		super.setImageRotateBitmapReset( bitmap, reset );
+		super.setImageBitmapReset( bitmap, reset );
 		mScaleFactor = getMaxZoom() / 2.0f;
 	}
 

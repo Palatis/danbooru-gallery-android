@@ -39,7 +39,7 @@ public class ImageViewTouchBase
 	protected int					mThisWidth			= -1;
 	protected int					mThisHeight			= -1;
 
-	final protected RotateBitmap	mBitmapDisplayed	= new RotateBitmap( null, 0 );
+	protected Bitmap				mBitmapDisplayed	= null;
 	final protected float			MAX_ZOOM			= 2.0f;
 
 	private OnBitmapChangedListener	mListener;
@@ -142,7 +142,7 @@ public class ImageViewTouchBase
 			mOnLayoutRunnable = null;
 			r.run();
 		}
-		if (mBitmapDisplayed.getBitmap() != null)
+		if (mBitmapDisplayed != null)
 		{
 			getProperBaseMatrix( mBitmapDisplayed, mBaseMatrix );
 			setImageMatrix( getImageViewMatrix() );
@@ -151,16 +151,6 @@ public class ImageViewTouchBase
 
 	public void setImageBitmapReset(final Bitmap bitmap, final boolean reset)
 	{
-		setImageRotateBitmapReset( new RotateBitmap( bitmap, 0 ), reset );
-	}
-
-	public void setImageBitmapReset(final Bitmap bitmap, final int rotation, final boolean reset)
-	{
-		setImageRotateBitmapReset( new RotateBitmap( bitmap, rotation ), reset );
-	}
-
-	public void setImageRotateBitmapReset(final RotateBitmap bitmap, final boolean reset)
-	{
 		final int viewWidth = getWidth();
 		if (viewWidth <= 0)
 		{
@@ -168,16 +158,16 @@ public class ImageViewTouchBase
 			{
 				public void run()
 				{
-					setImageBitmapReset( bitmap.getBitmap(), bitmap.getRotation(), reset );
+					setImageBitmapReset( bitmap, reset );
 				}
 			};
 			return;
 		}
 
-		if (bitmap.getBitmap() != null)
+		if (bitmap != null)
 		{
 			getProperBaseMatrix( bitmap, mBaseMatrix );
-			setImageBitmap( bitmap.getBitmap(), bitmap.getRotation() );
+			setImageBitmap( bitmap );
 		}
 		else
 		{
@@ -192,19 +182,19 @@ public class ImageViewTouchBase
 		mMaxZoom = maxZoom();
 
 		if (mListener != null)
-			mListener.onBitmapChanged( bitmap.getBitmap() );
+			mListener.onBitmapChanged( bitmap );
 	}
 
 	protected float maxZoom()
 	{
-		if (mBitmapDisplayed.getBitmap() == null)
+		if (mBitmapDisplayed == null)
 			return 1F;
 
 		float max = Math.max( (float) mBitmapDisplayed.getWidth() / mThisWidth, (float) mBitmapDisplayed.getHeight() / mThisHeight ) * 4;
 		return max;
 	}
 
-	public RotateBitmap getDisplayBitmap()
+	public Bitmap getDisplayBitmap()
 	{
 		return mBitmapDisplayed;
 	}
@@ -214,26 +204,20 @@ public class ImageViewTouchBase
 		return mMaxZoom;
 	}
 
-	@Override
-	public void setImageBitmap(Bitmap bitmap)
-	{
-		setImageBitmap( bitmap, 0 );
-	}
-
 	/**
 	 * This is the ultimate method called when a new bitmap is set
 	 *
 	 * @param bitmap
 	 * @param rotation
 	 */
-	protected void setImageBitmap(Bitmap bitmap, int rotation)
+	@Override
+	public void setImageBitmap(Bitmap bitmap)
 	{
 		super.setImageBitmap( bitmap );
 		Drawable d = getDrawable();
 		if (d != null)
 			d.setDither( true );
-		mBitmapDisplayed.setBitmap( bitmap );
-		mBitmapDisplayed.setRotation( rotation );
+		mBitmapDisplayed = bitmap;
 	}
 
 	protected Matrix getImageViewMatrix()
@@ -249,7 +233,7 @@ public class ImageViewTouchBase
 	 * @param bitmap
 	 * @param matrix
 	 */
-	protected void getProperBaseMatrix(RotateBitmap bitmap, Matrix matrix)
+	protected void getProperBaseMatrix(Bitmap bitmap, Matrix matrix)
 	{
 		float viewWidth = getWidth();
 		float viewHeight = getHeight();
@@ -259,7 +243,6 @@ public class ImageViewTouchBase
 		float widthScale = Math.min( viewWidth / w, MAX_ZOOM );
 		float heightScale = Math.min( viewHeight / h, MAX_ZOOM );
 		float scale = Math.min( widthScale, heightScale );
-		matrix.postConcat( bitmap.getRotateMatrix() );
 		matrix.postScale( scale, scale );
 		matrix.postTranslate( (viewWidth - w * scale) / MAX_ZOOM, (viewHeight - h * scale) / MAX_ZOOM );
 	}
@@ -272,10 +255,10 @@ public class ImageViewTouchBase
 
 	public RectF getBitmapRect()
 	{
-		if (mBitmapDisplayed.getBitmap() == null)
+		if (mBitmapDisplayed == null)
 			return null;
 		Matrix m = getImageViewMatrix();
-		RectF rect = new RectF( 0, 0, mBitmapDisplayed.getBitmap().getWidth(), mBitmapDisplayed.getBitmap().getHeight() );
+		RectF rect = new RectF( 0, 0, mBitmapDisplayed.getWidth(), mBitmapDisplayed.getHeight() );
 		m.mapRect( rect );
 		return rect;
 	}
@@ -292,7 +275,7 @@ public class ImageViewTouchBase
 
 	public void center(boolean horizontal, boolean vertical)
 	{
-		if (mBitmapDisplayed.getBitmap() == null)
+		if (mBitmapDisplayed == null)
 			return;
 
 		final PointF pt = getCenter( horizontal, vertical );
@@ -302,7 +285,7 @@ public class ImageViewTouchBase
 
 	public void center(boolean horizontal, boolean vertical, final float durationMs)
 	{
-		if (mBitmapDisplayed.getBitmap() == null)
+		if (mBitmapDisplayed == null)
 			return;
 
 		final PointF pt = getCenter( horizontal, vertical );
@@ -318,7 +301,7 @@ public class ImageViewTouchBase
 
 	public PointF getCenter(boolean horizontal, boolean vertical)
 	{
-		if (mBitmapDisplayed.getBitmap() == null)
+		if (mBitmapDisplayed == null)
 			return new PointF( 0, 0 );
 
 		RectF rect = getBitmapRect();
@@ -426,9 +409,12 @@ public class ImageViewTouchBase
 
 	public void dispose()
 	{
-		if (mBitmapDisplayed.getBitmap() != null)
-			if ( !mBitmapDisplayed.getBitmap().isRecycled())
-				mBitmapDisplayed.getBitmap().recycle();
+		if (mBitmapDisplayed != null)
+			if ( !mBitmapDisplayed.isRecycled())
+			{
+				mBitmapDisplayed.recycle();
+				mBitmapDisplayed = null;
+			}
 		clear();
 	}
 }
