@@ -215,6 +215,13 @@ public class ImageLoader
 					tasks.remove( task );
 		}
 
+		public void discardImagesWithView()
+		{
+			for (PhotoToLoad task : tasks)
+				if (task.mImage != null)
+					tasks.remove( task );
+		}
+
 		public void queuePhoto(PhotoToLoad task)
 		{
 			tasks.put( task );
@@ -321,6 +328,12 @@ public class ImageLoader
 	{
 		mDiskLoader.discardAllNoImage();
 		mWebLoader.discardAllNoImage();
+	}
+
+	public void discardImagesWithView()
+	{
+		mDiskLoader.discardImagesWithView();
+		mWebLoader.discardImagesWithView();
 	}
 
 	private static class GalleryItemDisplayer

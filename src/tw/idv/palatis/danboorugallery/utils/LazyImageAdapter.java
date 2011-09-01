@@ -130,6 +130,11 @@ public class LazyImageAdapter
 		return image;
 	}
 
+	public void onDestroy()
+	{
+		loader.discardImagesWithView();
+	}
+
 	public void onLowMemory()
 	{
 		loader.onLowMemory();

@@ -214,6 +214,13 @@ public class MainActivity
 	}
 
 	@Override
+	public void onDestroy()
+	{
+		adapter.onDestroy();
+		super.onDestroy();
+	}
+
+	@Override
 	public boolean onSearchRequested()
 	{
 		startSearch( fetcher.getURLEnclosure().tags, true, null, false );
