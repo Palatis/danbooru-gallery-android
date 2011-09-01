@@ -207,7 +207,6 @@ public class MainActivity
 				posts.clear();
 				adapter.cancelAll();
 				adapter.notifyDataSetChanged();
-				fetcher.fetchNextPage( adapter );
 			}
 		}
 		setIntent( intent );
@@ -263,6 +262,8 @@ public class MainActivity
 	@Override
 	public void onStart()
 	{
+		adapter.setAggressive( preferences.getBoolean( "aggressive_prefetch", false ) );
+
 		if (preferences.contains( "json_hosts" ))
 			try
 			{
@@ -299,10 +300,7 @@ public class MainActivity
 			posts.clear();
 			adapter.cancelAll();
 			adapter.notifyDataSetChanged();
-			fetcher.fetchNextPage( adapter );
 		}
-
-		adapter.setAggressive( preferences.getBoolean( "aggressive_prefetch", false ) );
 
 		super.onStart();
 	}
@@ -374,7 +372,6 @@ public class MainActivity
 				posts.clear();
 				adapter.cancelAll();
 				adapter.notifyDataSetChanged();
-				fetcher.fetchNextPage( adapter );
 			}
 			break;
 		case R.id.main_menu_refresh:
@@ -382,7 +379,6 @@ public class MainActivity
 			fetcher.setPage( 1 );
 			posts.clear();
 			adapter.notifyDataSetChanged();
-			fetcher.fetchNextPage( adapter );
 			break;
 		case R.id.main_menu_preferences:
 			startActivity( new Intent( this, DanbooruGalleryPreferenceActivity.class ) );
