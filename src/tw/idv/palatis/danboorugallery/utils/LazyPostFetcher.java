@@ -25,10 +25,8 @@ import java.util.List;
 
 import tw.idv.palatis.danboorugallery.defines.D;
 import tw.idv.palatis.danboorugallery.model.Post;
-import tw.idv.palatis.danboorugallery.siteapi.DanbooruAPI;
 import tw.idv.palatis.danboorugallery.siteapi.ISiteAPI;
 import android.os.AsyncTask;
-import android.os.AsyncTask.Status;
 
 public class LazyPostFetcher
 {
@@ -40,20 +38,24 @@ public class LazyPostFetcher
 	public LazyPostFetcher()
 	{
 		enclosure = new URLEnclosure();
-		site_api = new DanbooruAPI();
 	}
 
 	public LazyPostFetcher(URLEnclosure e)
 	{
 		enclosure = e;
-		site_api = new DanbooruAPI();
 	}
 
 	public boolean setSiteAPI(ISiteAPI sapi)
 	{
+		if (site_api == null)
+		{
+			site_api = sapi;
+			return false;
+		}
+
 		boolean result = true;
 		result &= site_api.getClass().getName().equals( sapi.getClass().getName() );
-		result &= site_api.getSiteUrl().equals( sapi.getSiteUrl() );;
+		result &= site_api.getSiteUrl().equals( sapi.getSiteUrl() );
 		result &= site_api.getApi() == sapi.getApi();
 		site_api = sapi;
 		if ( !result)
@@ -110,16 +112,16 @@ public class LazyPostFetcher
 
 	public void fetchNextPage(LazyImageAdapter adapter)
 	{
-		if (fetcher != null && fetcher.getStatus() == Status.RUNNING)
-			return;
-
-		fetcher = new AsyncPostFetcher( adapter, this );
-		fetcher.execute( enclosure );
+		if (fetcher == null)
+		{
+			fetcher = new AsyncPostFetcher( adapter, this );
+			fetcher.execute( enclosure );
+		}
 	}
 
 	public void cancel()
 	{
-		if (fetcher != null && fetcher.getStatus() == Status.RUNNING)
+		if (fetcher != null)
 		{
 			fetcher.cancel( true );
 			fetcher = null;
@@ -178,7 +180,10 @@ public class LazyPostFetcher
 			for (URLEnclosure enclosure : params)
 				while (fetched_posts_count < enclosure.limit)
 				{
-					if ( isCancelled() )
+					if (isCancelled())
+						break;
+
+					if (fetcher.site_api == null)
 						break;
 
 					List < Post > posts = fetcher.site_api.fetchPostsIndex( enclosure.page, enclosure.tags, enclosure.limit );
@@ -192,7 +197,7 @@ public class LazyPostFetcher
 						else
 							++skipped_posts_count;
 
-						if ( isCancelled() )
+						if (isCancelled())
 							break;
 					}
 
@@ -202,13 +207,13 @@ public class LazyPostFetcher
 						break;
 					}
 
-					if ( isCancelled() )
+					if (isCancelled())
 						break;
 
 					adapter.addPosts( filtered );
 					fetched_posts_count += filtered.size();
 
-					D.Log.d( "fetched + skipped / total: %d + %d / %d", fetched_posts_count, skipped_posts_count, fetched_posts_count + skipped_posts_count );
+					D.Log.d( "AsyncPostFetcher::doInBackground(): fetched + skipped / total: %d + %d / %d", fetched_posts_count, skipped_posts_count, fetched_posts_count + skipped_posts_count );
 					++fetcher.enclosure.page;
 				}
 
@@ -224,6 +229,7 @@ public class LazyPostFetcher
 		@Override
 		protected void onPostExecute(Integer result)
 		{
+			fetcher.fetcher = null;
 			adapter.notifyDataSetChanged();
 		}
 	}
