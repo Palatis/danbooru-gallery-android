@@ -25,9 +25,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Collections;
-import java.util.Map;
-import java.util.WeakHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
 
 import tw.idv.palatis.danboorugallery.R;
@@ -42,7 +39,6 @@ public class ImageLoader
 {
 	private BitmapMemCache				mMemCache;
 	private FileCache					mFileCache;
-	private Map < ImageView, String >	mImageViews	= Collections.synchronizedMap( new WeakHashMap < ImageView, String >() );
 	private PhotosLoaderWeb				mWebLoader;
 	private PhotosLoaderDisk			mDiskLoader;
 
@@ -70,8 +66,6 @@ public class ImageLoader
 		mDiskLoader.discard( image );
 		mWebLoader.discard( image );
 
-		mImageViews.put( image, url );
-
 		Bitmap bitmap = getBitmapCache( url );
 		if (image == null)
 		{
@@ -88,10 +82,7 @@ public class ImageLoader
 			image.setTag( null );
 		}
 		else
-		{
 			mDiskLoader.queuePhoto( new PhotoToLoad( url, image ) );
-			image.setTag( this );
-		}
 	}
 
 	public void onLowMemory()
@@ -260,10 +251,7 @@ public class ImageLoader
 							continue;
 						}
 
-						// check if we still want the bitmap
-						String tag = mImageViews.get( task.mImage );
-						if (tag != null && tag.equals( task.mUrl ))
-							task.mImage.post( new GalleryItemDisplayer( task.mImage, bitmap, ScaleType.CENTER_CROP, true ) );
+						task.mImage.post( new GalleryItemDisplayer( task.mUrl, task.mImage, bitmap, ScaleType.CENTER_CROP, true ) );
 					}
 					// if no image, just check existence, don't load.
 					else if ( !mFileCache.getFile( task.mUrl ).exists())
@@ -302,12 +290,7 @@ public class ImageLoader
 					}
 
 					if (task.mImage != null)
-					{
-						// check if we still want the bitmap
-						String tag = mImageViews.get( task.mImage );
-						if (tag != null && tag.equals( task.mUrl ))
-							task.mImage.post( new GalleryItemDisplayer( task.mImage, bitmap, ScaleType.CENTER_CROP, true ) );
-					}
+						task.mImage.post( new GalleryItemDisplayer( task.mUrl, task.mImage, bitmap, ScaleType.CENTER_CROP, true ) );
 					else
 						D.Log.d( "fetched image without view: %s", task.mUrl );
 
@@ -337,13 +320,15 @@ public class ImageLoader
 	private static class GalleryItemDisplayer
 		implements Runnable
 	{
+		final String image_url;
 		final ImageView	image;
 		final Bitmap	bitmap;
 		final ScaleType	scale_type;
 		final boolean	do_animation;
 
-		public GalleryItemDisplayer(ImageView v, Bitmap b, ScaleType t, boolean anim)
+		public GalleryItemDisplayer(String url, ImageView v, Bitmap b, ScaleType t, boolean anim)
 		{
+			image_url = url;
 			image = v;
 			bitmap = b;
 			scale_type = t;
@@ -356,25 +341,29 @@ public class ImageLoader
 			if (image.getTag() == null)
 				return;
 
-			image.setImageBitmap( bitmap );
-			image.setScaleType( scale_type );
-
-			if (do_animation)
+			String url = (String) image.getTag();
+			if (url.equals( image_url ))
 			{
-				Animation anim = image.getAnimation();
-				if (anim != null)
-				{
-					if (anim.hasEnded())
-					{
-						anim.reset();
-						image.startAnimation( anim );
-					}
-				}
-				else
-					image.startAnimation( AnimationUtils.loadAnimation( image.getContext(), android.R.anim.fade_in ) );
-			}
+				image.setImageBitmap( bitmap );
+				image.setScaleType( scale_type );
 
-			image.setTag( null );
+				if (do_animation)
+				{
+					Animation anim = image.getAnimation();
+					if (anim != null)
+					{
+						if (anim.hasEnded())
+						{
+							anim.reset();
+							image.startAnimation( anim );
+						}
+					}
+					else
+						image.startAnimation( AnimationUtils.loadAnimation( image.getContext(), android.R.anim.fade_in ) );
+				}
+
+				image.setTag( null );
+			}
 		}
 	}
 }

@@ -120,11 +120,12 @@ public class LazyImageAdapter
 		if (image == null)
 		{
 			image = new ImageView( parent.getContext() );
-			image.setImageResource( R.drawable.icon );
-			image.setScaleType( ScaleType.CENTER );
 			image.setLayoutParams( new GridView.LayoutParams( item_size, item_size ) );
 		}
 
+		image.setImageResource( R.drawable.icon );
+		image.setScaleType( ScaleType.CENTER );
+		image.setTag( posts.get( position ).preview_url );
 		loader.DisplayImage( posts.get( position ).preview_url, image );
 
 		return image;
