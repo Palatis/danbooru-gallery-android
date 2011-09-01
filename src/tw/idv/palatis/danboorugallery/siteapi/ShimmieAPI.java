@@ -165,16 +165,11 @@ public class ShimmieAPI
 		mIsCanceled = true;
 	}
 
-	@Override
-	public List < Post > fetchPostsIndex(int page, String tags, int limit)
+	protected List < Post > fetchPostsIndexXML(String url)
 	{
 		try
 		{
-			URL fetchUrl = null;
-			if (tags.isEmpty())
-				fetchUrl = new URL( String.format( mSiteUrl + URL_POSTS_XML, (page - 1) * limit, limit ) );
-			else
-				fetchUrl = new URL( String.format( mSiteUrl + URL_POSTS_XML_TAGS, (page - 1) * limit, limit, tags ) );
+			URL fetchUrl = new URL( url );
 			D.Log.v( "DanbooruStyleAPI::fetchPostsIndexXML(): fetching %s", fetchUrl );
 
 			InputStream input = fetchUrl.openStream();
@@ -217,6 +212,17 @@ public class ShimmieAPI
 			D.Log.wtf( e );
 		}
 		return null;
+	}
+
+	@Override
+	public List < Post > fetchPostsIndex(int page, String tags, int limit)
+	{
+		String url;
+		if (tags.isEmpty())
+			url = String.format( mSiteUrl + URL_POSTS_XML, (page - 1) * limit, limit );
+		else
+			url = String.format( mSiteUrl + URL_POSTS_XML_TAGS, (page - 1) * limit, limit, tags );
+		return fetchPostsIndexXML(url);
 	}
 
 	@Override
