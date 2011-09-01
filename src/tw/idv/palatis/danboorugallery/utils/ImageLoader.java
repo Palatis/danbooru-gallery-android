@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.PriorityBlockingQueue;
 
@@ -118,9 +117,7 @@ public class ImageLoader
 	{
 		try
 		{
-			URL imageUrl = new URL( url );
-			HttpURLConnection conn = (HttpURLConnection) imageUrl.openConnection();
-			InputStream is = conn.getInputStream();
+			InputStream is = new URL( url ).openStream();
 			OutputStream os = new FileOutputStream( mFileCache.getFile( url ) );
 			D.CopyStream( is, os );
 			os.close();
