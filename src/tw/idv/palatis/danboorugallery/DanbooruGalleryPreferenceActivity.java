@@ -174,6 +174,7 @@ public class DanbooruGalleryPreferenceActivity
 											"Danbooru - XML",
 											"Gelbooru - XML",
 											"Shimmie2 - XML",
+											"Shimmie2 - RSS",
 										};
 
 	private class SiteApiAdapter

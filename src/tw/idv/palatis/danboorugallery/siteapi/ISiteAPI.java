@@ -109,6 +109,8 @@ public interface ISiteAPI
 					return new GelbooruAPI( url, API_XML );
 				if (api.equals( "Shimmie2 - XML" ))
 					return new ShimmieAPI( url, API_XML );
+				if (api.equals( "Shimmie2 - RSS" ))
+					return new ShimmieAPI( url, API_RSS );
 			}
 			catch (UnsupportedAPIException ex)
 			{
