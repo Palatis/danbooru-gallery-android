@@ -168,6 +168,14 @@ public class ShimmieAPI
 		if (post.file_url.startsWith( "/" ))
 			post.file_url = siteUrl + post.file_url;
 
+		// replace // with / for buggy Shimmie2 handlers
+		post.preview_url = post.preview_url.replace(  "//", "/" );
+		post.preview_url = post.preview_url.replace( ":/", "://");
+		post.sample_url = post.sample_url.replace(  "//", "/" );
+		post.sample_url = post.sample_url.replace( ":/", "://");
+		post.file_url = post.file_url.replace(  "//", "/" );
+		post.file_url = post.file_url.replace( ":/", "://");
+
 		return post;
 	}
 
