@@ -11,6 +11,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -33,15 +36,13 @@ public class ShimmieAPI
 {
 	public static final String	URL_POSTS_XML		= "/api/danbooru/post/index.xml&offset=%1$s&limit=%2$s";
 	public static final String	URL_POSTS_XML_TAGS	= "/api/danbooru/post/index.xml&offset=%1$s&limit=%2$s&tags=%3$s";
+	public static final String	URL_POSTS_RSS		= "/rss/images/%1$s";
+	public static final String	URL_POSTS_RSS_TAGS	= "/rss/images/%2$s/%1$s";
 
 	// this isn't working...
 	// public static final String URL_TAGS_XML = "/api/danbooru/find_tags/??????";
 
-	// this is used to format the created_at attribute in XML
-	// it is here because Android frees Locale.ENGLISH when formatter destroyed,
-	// resulting reloading of locale data every time which is SLOW.
-	static private DateFormat	formatter			= new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
-
+	static private DateFormat	formatter_xml		= new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
 	private static final String	URL_FILE			= "/_images/%1$s/%2$d - %3$s.%4$s";
 	private static final String	URL_PREVIEW			= "/_thumbs/%1$s/thumb.jpg";
 
@@ -59,7 +60,7 @@ public class ShimmieAPI
 
 		try
 		{
-			post.created_at = formatter.parse( node.getAttribute( "date" ) );
+			post.created_at = formatter_xml.parse( node.getAttribute( "date" ) );
 		}
 		catch (ParseException e)
 		{
@@ -105,6 +106,64 @@ public class ShimmieAPI
 		return post;
 	}
 
+	private static DateFormat	formatter_rss		= new SimpleDateFormat( "EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH );
+	private static Pattern		id_tags				= Pattern.compile( "(\\d+) - (.*)" );
+	private static Pattern		width_height_author	= Pattern.compile( "([0-9]+)x([0-9]+).*&lt;p&gt;Uploaded by (.*)&lt;/p&gt;", Pattern.MULTILINE | Pattern.DOTALL );
+
+	private static Post generatePostFromRSS(String siteUrl, Element node)
+	{
+		Post post = new Post();
+		post.rating = "s";
+
+		NodeList childnodes = node.getChildNodes();
+		for (int i = 0; i < childnodes.getLength(); ++i)
+			try
+			{
+				Element element = (Element) childnodes.item( i );
+				if (element.getTagName().equals( "title" ))
+				{
+					Matcher matcher = id_tags.matcher( element.getTextContent() );
+					if (matcher.find())
+					{
+						post.id = Integer.valueOf( matcher.group( 1 ) );
+						post.tags = matcher.group( 2 );
+					}
+				}
+				else if (element.getTagName().equals( "link" ))
+					post.source = element.getTextContent();
+				else if (element.getTagName().equals( "media:thumbnail" ))
+					post.preview_url = siteUrl + element.getAttribute( "url" );
+				else if (element.getTagName().equals( "media:content" ))
+				{
+					post.sample_url = siteUrl + element.getAttribute( "url" );
+					post.file_url = siteUrl + element.getAttribute( "url" );
+				}
+				else if (element.getTagName().equals( "pubDate" ))
+					try
+					{
+						post.created_at = formatter_rss.parse( element.getTextContent() );
+					}
+					catch (ParseException e)
+					{
+					}
+				else if (element.getTagName().equals( "description" ))
+				{
+					Matcher matcher = width_height_author.matcher( element.getTextContent() );
+					if (matcher.find())
+					{
+						post.width = Integer.valueOf( matcher.group( 1 ) );
+						post.height = Integer.valueOf( matcher.group( 2 ) );
+						post.author = matcher.group( 3 );
+					}
+				}
+			}
+			catch (ClassCastException e)
+			{
+			}
+
+		return post;
+	}
+
 	String	mSiteUrl;
 	int		mApi;
 	boolean	mIsCanceled;
@@ -135,7 +194,7 @@ public class ShimmieAPI
 	@Override
 	public void setApi(int api) throws UnsupportedAPIException
 	{
-		if (api != API_XML)
+		if (api != API_XML && api != API_RSS)
 			throw new UnsupportedAPIException( api );
 
 		mApi = api;
@@ -144,7 +203,7 @@ public class ShimmieAPI
 	@Override
 	public int getSupportedApi()
 	{
-		return API_XML;
+		return API_XML | API_RSS;
 	}
 
 	@Override
@@ -214,15 +273,83 @@ public class ShimmieAPI
 		return null;
 	}
 
+	public List < Post > fetchPostsIndexRSS(String url)
+	{
+		try
+		{
+			URL fetchUrl = new URL( url );
+			D.Log.v( "DanbooruStyleAPI::fetchPostsIndexXML(): fetching %s", fetchUrl );
+
+			InputStream input = fetchUrl.openStream();
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+			D.CopyStream( input, output );
+			output.flush();
+
+			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			DocumentBuilder db = dbf.newDocumentBuilder();
+			Document doc = db.parse( new InputSource( new StringReader( output.toString().replace( "&", "&amp;" ) ) ) );
+			doc.getDocumentElement().normalize();
+
+			NodeList nodes = doc.getElementsByTagName( "item" );
+
+			int length = nodes.getLength();
+			D.Log.d( "got %d items", length );
+			ArrayList < Post > posts = new ArrayList < Post >( length );
+			String siteUrlHost = fetchUrl.getProtocol() + "://" + fetchUrl.getHost() + "/";
+			for (int i = 0; i < length; ++i)
+			{
+				Node node = nodes.item( i );
+				posts.add( generatePostFromRSS( siteUrlHost, (Element) node ) );
+				if (mIsCanceled)
+					return null;
+			}
+			return posts;
+		}
+		catch (UnsupportedEncodingException e)
+		{
+			D.Log.wtf( e );
+		}
+		catch (IOException e)
+		{
+			D.Log.wtf( e );
+		}
+		catch (SAXException e)
+		{
+			D.Log.wtf( e );
+		}
+		catch (ParserConfigurationException e)
+		{
+			D.Log.wtf( e );
+		}
+		return null;
+	}
+
 	@Override
 	public List < Post > fetchPostsIndex(int page, String tags, int limit)
 	{
-		String url;
-		if (tags.isEmpty())
-			url = String.format( mSiteUrl + URL_POSTS_XML, (page - 1) * limit, limit );
-		else
-			url = String.format( mSiteUrl + URL_POSTS_XML_TAGS, (page - 1) * limit, limit, tags );
-		return fetchPostsIndexXML(url);
+		if (mApi == API_XML)
+		{
+			String url;
+			if (tags.isEmpty())
+				url = String.format( mSiteUrl + URL_POSTS_XML, (page - 1) * limit, limit );
+			else
+				url = String.format( mSiteUrl + URL_POSTS_XML_TAGS, (page - 1) * limit, limit, tags );
+
+			return fetchPostsIndexXML( url );
+		}
+
+		if (mApi == API_RSS)
+		{
+			String url;
+			if (tags.isEmpty())
+				url = String.format( mSiteUrl + URL_POSTS_RSS, page );
+			else
+				url = String.format( mSiteUrl + URL_POSTS_RSS_TAGS, page, tags );
+
+			return fetchPostsIndexRSS( url );
+		}
+
+		return null;
 	}
 
 	@Override
