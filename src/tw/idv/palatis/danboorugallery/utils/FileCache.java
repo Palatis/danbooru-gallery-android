@@ -21,6 +21,10 @@ package tw.idv.palatis.danboorugallery.utils;
  */
 
 import java.io.File;
+import java.lang.ref.WeakReference;
+import java.util.Collections;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 import tw.idv.palatis.danboorugallery.defines.D;
 import android.content.Context;
@@ -40,7 +44,8 @@ public class FileCache
 			instance = new FileCache( context );
 	}
 
-	private File	chunkdirs[]	= null;
+	private Map < String, WeakReference < File >>	mCacheFiles	= Collections.synchronizedMap( new WeakHashMap < String, WeakReference < File >>() );
+	private File									mCunkDirs[]	= null;
 
 	private FileCache(Context context)
 	{
@@ -51,23 +56,36 @@ public class FileCache
 		else
 			cachedir = context.getCacheDir();
 
-		chunkdirs = new File[100];
+		mCunkDirs = new File[100];
 		for (int i = 0; i < 100; ++i)
 		{
-			chunkdirs[i] = new File( cachedir, String.valueOf( i ) );
-			if ( !chunkdirs[i].exists())
-				chunkdirs[i].mkdirs();
+			mCunkDirs[i] = new File( cachedir, String.valueOf( i ) );
+			if ( !mCunkDirs[i].exists())
+				mCunkDirs[i].mkdirs();
 		}
 	}
 
 	public File getFile(String url)
 	{
-		return new File( chunkdirs[Math.abs( url.hashCode() % 100 )], String.valueOf( url.hashCode() ) );
+		File file = null;
+		if ( mCacheFiles.containsKey( url ))
+			file = mCacheFiles.get( url ).get();
+
+		if (file == null)
+		{
+			file = new File( mCunkDirs[Math.abs( url.hashCode() % 100 )], String.valueOf( url.hashCode() ) );
+			mCacheFiles.put( url, new WeakReference < File >( file ) );
+		}
+
+		synchronized (file)
+		{
+			return file;
+		}
 	}
 
 	public void clear()
 	{
-		for (File chunkdir : chunkdirs)
+		for (File chunkdir : mCunkDirs)
 		{
 			File[] files = chunkdir.listFiles();
 			for (File f : files)

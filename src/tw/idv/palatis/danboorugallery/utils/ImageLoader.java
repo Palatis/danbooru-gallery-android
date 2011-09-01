@@ -20,6 +20,7 @@ package tw.idv.palatis.danboorugallery.utils;
  * along with Danbooru Gallery.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -37,10 +38,10 @@ import android.widget.ImageView.ScaleType;
 
 public class ImageLoader
 {
-	private BitmapMemCache				mMemCache;
-	private FileCache					mFileCache;
-	private PhotosLoaderWeb				mWebLoader;
-	private PhotosLoaderDisk			mDiskLoader;
+	private BitmapMemCache		mMemCache;
+	private FileCache			mFileCache;
+	private PhotosLoaderWeb		mWebLoader;
+	private PhotosLoaderDisk	mDiskLoader;
 
 	public ImageLoader()
 	{
@@ -105,6 +106,7 @@ public class ImageLoader
 	// from SD cache
 	private Bitmap getBitmapDisk(String url)
 	{
+
 		Bitmap bitmap = D.getBitmapFromFile( mFileCache.getFile( url ) );
 		if (bitmap != null)
 			mMemCache.put( url, bitmap );
@@ -247,7 +249,19 @@ public class ImageLoader
 						Bitmap bitmap = getBitmapDisk( task.mUrl );
 						if (bitmap == null)
 						{
-							mWebLoader.queuePhoto( task );
+							File file = mFileCache.getFile( task.mUrl );
+							if (file.exists())
+							{
+								// a problem occurred, the file is there but unable to load.
+								// delete it before we queue it to the webloader for a reload.
+								D.Log.d( "the file %s is there but unable to load, delete it before hand to webloader.", task.mUrl );
+								file.delete();
+								// D.Log.d( "the file %s is there but unable to load, queue it..", task.mUrl );
+								// task.mTimestamp = System.currentTimeMillis();
+								// queuePhoto( task );
+							}
+							else
+								mWebLoader.queuePhoto( task );
 							continue;
 						}
 
@@ -280,6 +294,19 @@ public class ImageLoader
 				{
 					PhotoToLoad task = pollNextTask();
 
+					if (mFileCache.getFile( task.mUrl ).exists())
+					{
+						if (task.mImage != null)
+						{
+							D.Log.d( "the file %s is there already, hand back to mDiskLoader.", task.mUrl );
+							mDiskLoader.queuePhoto( task );
+						}
+						else
+							D.Log.d( "the file %s is there already and there's no view, skip.", task.mUrl );
+
+						continue;
+					}
+
 					Bitmap bitmap = getBitmapWeb( task.mUrl );
 					if (bitmap == null)
 					{
@@ -292,7 +319,7 @@ public class ImageLoader
 					if (task.mImage != null)
 						task.mImage.post( new GalleryItemDisplayer( task.mUrl, task.mImage, bitmap, ScaleType.CENTER_CROP, true ) );
 					else
-						D.Log.d( "fetched image without view: %s", task.mUrl );
+						D.Log.d( "fetched image without a view: %s", task.mUrl );
 
 					if (Thread.interrupted())
 						break;
@@ -320,7 +347,7 @@ public class ImageLoader
 	private static class GalleryItemDisplayer
 		implements Runnable
 	{
-		final String image_url;
+		final String	image_url;
 		final ImageView	image;
 		final Bitmap	bitmap;
 		final ScaleType	scale_type;
