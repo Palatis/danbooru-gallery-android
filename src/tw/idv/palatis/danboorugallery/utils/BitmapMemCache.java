@@ -36,7 +36,8 @@ public class BitmapMemCache
 
 	public static void prepare(Context context)
 	{
-		instance = new BitmapMemCache( context );
+		if (instance == null)
+			instance = new BitmapMemCache( context );
 	}
 
 	public static BitmapMemCache getInstance()
