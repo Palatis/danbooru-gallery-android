@@ -107,7 +107,7 @@ public interface ISiteAPI
 					return new DanbooruAPI( url, API_XML );
 				if (api.equals( "Gelbooru - XML" ))
 					return new GelbooruAPI( url, API_XML );
-				if (api.equals( "Shimmie - XML" ))
+				if (api.equals( "Shimmie2 - XML" ))
 					return new ShimmieAPI( url, API_XML );
 			}
 			catch (UnsupportedAPIException ex)

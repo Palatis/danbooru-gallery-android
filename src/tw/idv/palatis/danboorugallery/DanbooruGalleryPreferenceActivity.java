@@ -173,7 +173,7 @@ public class DanbooruGalleryPreferenceActivity
 											"Danbooru - JSON",
 											"Danbooru - XML",
 											"Gelbooru - XML",
-											"Shimmie - XML",
+											"Shimmie2 - XML",
 										};
 
 	private class SiteApiAdapter
