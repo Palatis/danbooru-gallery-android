@@ -168,17 +168,17 @@ public class DanbooruGalleryPreferenceActivity
 
 	private BaseAdapter	mSiteApiAdapter	= new SiteApiAdapter();
 
+	// FIXME: auto-detect available APIs
+	private String[]	apis			= new String[] {
+											"Danbooru - JSON",
+											"Danbooru - XML",
+											"Gelbooru - XML",
+											"Shimmie - XML",
+										};
+
 	private class SiteApiAdapter
 		extends BaseAdapter
 	{
-		// FIXME: auto-detect available APIs
-		private String[]	apis	= new String[] {
-										"Danbooru - JSON",
-										"Danbooru - XML",
-										"Gelbooru - XML",
-										"Shimmie - XML",
-									};
-
 		@Override
 		public int getCount()
 		{
@@ -260,14 +260,12 @@ public class DanbooruGalleryPreferenceActivity
 				api.setPromptId( R.string.preferences_hosts_dialog_api );
 				api.setAdapter( mSiteApiAdapter );
 				// FIXME: think yourself = =
-				if (host.api.equals( "Danbooru - JSON" ))
-					api.setSelection( 0 );
-				else if (host.api.equals( "Danbooru - XML" ))
-					api.setSelection( 1 );
-				else if (host.api.equals( "Gelbooru - XML" ))
-					api.setSelection( 2 );
-				else if (host.api.equals( "Shimmie - XML" ))
-					api.setSelection( 3 );
+				for (int i = 0 ;i < apis.length; ++i)
+					if (host.api.equals( apis[i] ))
+					{
+						api.setSelection( i );
+						break;
+					}
 
 				Builder builder = new AlertDialog.Builder( this );
 				builder.setTitle( R.string.preferences_hosts_dialog_title );
