@@ -45,6 +45,7 @@
 
     <!-- View Image Activity -->
     <string name="view_image_pic_info">Size: %1$dx%2$d\nAuthor: %3$s\nCreated At:\n%4$s</string>
+    <string name="view_image_infopane_message">Size: %1$dx%2$d\tAuthor: %3$s\nCreated At: %4$s</string>
     <string name="view_image_tags">Tags</string>
     <string name="view_image_download_failed">Download failed!</string>
     <string name="view_image_user_canceled">User canceled.</string>

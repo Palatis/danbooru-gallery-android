@@ -114,7 +114,7 @@ public class ViewImageActivity
 		registerForContextMenu( image );
 
 		TextView infopane_info = (TextView) findViewById( R.id.view_image_infopane_info );
-		infopane_info.setText( String.format( getString( R.string.view_image_pic_info ), post.width, post.height, post.author, post.created_at ) );
+		infopane_info.setText( String.format( getString( R.string.view_image_infopane_message ), post.width, post.height, post.author, post.created_at ) );
 
 		ImageView infopane_back = (ImageView) findViewById( R.id.view_image_infopane_back );
 		infopane_back.setOnClickListener( new OnClickListener()

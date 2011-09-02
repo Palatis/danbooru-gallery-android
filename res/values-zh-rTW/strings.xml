@@ -45,6 +45,7 @@
 
 	<!-- View Image Activity -->
 	<string name="view_image_pic_info">大小：%1$dx%2$d\n作者：%3$s\n建立時間：\n%4$s</string>
+	<string name="view_image_infopane_message">大小：%1$dx%2$d\t作者：%3$s\n建立時間：%4$s</string>
 	<string name="view_image_tags">標籤</string>
 	<string name="view_image_download_failed">下載失敗！</string>
 	<string name="view_image_user_canceled">使用者取消</string>
