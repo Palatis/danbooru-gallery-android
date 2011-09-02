@@ -92,11 +92,6 @@ public class ImageViewTouch
 			mCurrentScaleFactor = scale;
 	}
 
-	protected float onDoubleTapPost(float scale, float maxZoom)
-	{
-		return (scale >= mScaleFactor) ? 1f : scale + mScaleFactor;
-	}
-
 	class GestureListener
 		extends GestureDetector.SimpleOnGestureListener
 	{
@@ -116,7 +111,7 @@ public class ImageViewTouch
 		{
 			float scale = getScale();
 			float targetScale = scale;
-			targetScale = onDoubleTapPost( scale, getMaxZoom() );
+			targetScale = (scale >= mScaleFactor) ? 1f : scale + mScaleFactor;
 			targetScale = Math.min( getMaxZoom(), Math.max( targetScale, MIN_ZOOM ) );
 			mCurrentScaleFactor = targetScale;
 			zoomTo( targetScale, e.getX(), e.getY(), 500 );
