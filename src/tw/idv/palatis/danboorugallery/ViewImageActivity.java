@@ -56,7 +56,6 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
@@ -159,12 +158,6 @@ public class ViewImageActivity
 			@Override
 			public void onClick(View v)
 			{
-				/*
-				 * // if we're clicking too fast, don't bring up the menu.
-				 * if (System.currentTimeMillis() - mLastOptionsMenuClosedTime > DOUBLE_TAP_TIMEOUT)
-				 * ViewImageActivity.this.openOptionsMenu();
-				 */
-
 				lastClick = System.currentTimeMillis();
 
 				if (infopane.getVisibility() != View.VISIBLE)
@@ -406,28 +399,9 @@ public class ViewImageActivity
 		return super.onCreateOptionsMenu( menu );
 	}
 
-	private boolean				mOptionsMenuClosedButNothingSelected	= false;
-	private long				mLastOptionsMenuClosedTime				= 0;
-	private static final int	DOUBLE_TAP_TIMEOUT						= ViewConfiguration.getDoubleTapTimeout() * 2;
-
-	@Override
-	public boolean onMenuOpened(int featureId, Menu menu)
-	{
-		mOptionsMenuClosedButNothingSelected = true;
-		return super.onMenuOpened( featureId, menu );
-	}
-
-	@Override
-	public void onOptionsMenuClosed(Menu menu)
-	{
-		if (mOptionsMenuClosedButNothingSelected)
-			mLastOptionsMenuClosedTime = System.currentTimeMillis();
-	}
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		mOptionsMenuClosedButNothingSelected = false;
 		if (onMenuItemSelected( item ))
 			return true;
 		return super.onOptionsItemSelected( item );
