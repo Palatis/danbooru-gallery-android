@@ -131,6 +131,13 @@ public class ImageViewTouch
 			invalidate();
 			return super.onFling( e1, e2, velocityX, velocityY );
 		}
+
+		@Override
+		public void onLongPress(MotionEvent e)
+		{
+			super.onLongPress( e );
+			performLongClick();
+		}
 	}
 
 	class ScaleListener
