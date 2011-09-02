@@ -20,18 +20,6 @@ public class ImageViewTouch
 	protected float					mScaleFactor;
 	protected GestureListener		mGestureListener;
 	protected ScaleListener			mScaleListener;
-	protected OnClickListener		mOnClickListener;
-
-	public OnClickListener getOnClickListener()
-	{
-		return mOnClickListener;
-	}
-
-	@Override
-	public void setOnClickListener(OnClickListener listener)
-	{
-		mOnClickListener = listener;
-	}
 
 	public ImageViewTouch(Context context, AttributeSet attrs)
 	{
@@ -98,11 +86,8 @@ public class ImageViewTouch
 		@Override
 		public boolean onSingleTapConfirmed(MotionEvent e)
 		{
-			if ( mOnClickListener != null )
-			{
-				mOnClickListener.onClick( ImageViewTouch.this );
+			if (performClick())
 				return true;
-			}
 			return super.onSingleTapConfirmed( e );
 		}
 
