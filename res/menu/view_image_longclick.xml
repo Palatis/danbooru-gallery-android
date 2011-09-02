@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+	xmlns:android="http://schemas.android.com/apk/res/android"
+>
+	<item
+		android:icon="@android:drawable/ic_menu_info_details"
+		android:id="@+id/view_menu_longclick_info"
+		android:title="@string/view_image_menu_info"
+	></item>
+	<item
+		android:id="@+id/view_menu_longclick_tags"
+		android:icon="@android:drawable/ic_menu_agenda"
+		android:title="@string/view_image_menu_tags"
+	></item>
+	<item
+		android:icon="@android:drawable/ic_menu_save"
+		android:id="@+id/view_menu_longclick_download"
+		android:title="@string/view_image_menu_download"
+	></item>
+	<item android:id="@+id/view_menu_longclick_back" android:icon="@android:drawable/ic_menu_revert" android:title="@string/view_image_longclick_back"></item>
+</menu>

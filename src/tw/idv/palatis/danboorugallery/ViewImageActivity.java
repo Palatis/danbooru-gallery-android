@@ -55,13 +55,14 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.AsyncTask.Status;
+import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
@@ -104,6 +105,7 @@ public class ViewImageActivity
 		page_tags = intent.getStringExtra( "page_tags" );
 
 		image = (ImageViewTouch) findViewById( R.id.view_image_image );
+		registerForContextMenu( image );
 		image.setOnClickListener( new OnClickListener()
 		{
 			@Override
@@ -311,10 +313,24 @@ public class ViewImageActivity
 	}
 
 	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo)
+	{
+		getMenuInflater().inflate( R.menu.view_image_longclick, menu );
+		super.onCreateContextMenu( menu, v, menuInfo );
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item)
+	{
+		if (onMenuItemSelected( item ))
+			return true;
+		return super.onContextItemSelected( item );
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate( R.menu.view_image_menu, menu );
+		getMenuInflater().inflate( R.menu.view_image_menu, menu );
 		return super.onCreateOptionsMenu( menu );
 	}
 
@@ -340,9 +356,17 @@ public class ViewImageActivity
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		mOptionsMenuClosedButNothingSelected = false;
+		if (onMenuItemSelected( item ))
+			return true;
+		return super.onOptionsItemSelected( item );
+	}
+
+	private boolean onMenuItemSelected(MenuItem item)
+	{
 		switch (item.getItemId())
 		{
 		case R.id.view_image_menu_info:
+		case R.id.view_menu_longclick_info:
 		{
 			Builder builder = new AlertDialog.Builder( this );
 			builder.setTitle( R.string.view_image_menu_info );
@@ -352,6 +376,7 @@ public class ViewImageActivity
 			break;
 		}
 		case R.id.view_image_menu_tags:
+		case R.id.view_menu_longclick_tags:
 		{
 			Builder builder = new AlertDialog.Builder( this );
 			builder.setTitle( R.string.view_image_tags );
@@ -427,6 +452,7 @@ public class ViewImageActivity
 			loader.execute( post.sample_url );
 			break;
 		case R.id.view_image_menu_download:
+		case R.id.view_menu_longclick_download:
 			String title = post.tags;
 			if (host != null)
 				title = String.format( "%1$s - %2$s", host.url, post.tags );
@@ -454,8 +480,11 @@ public class ViewImageActivity
 			intent.putExtra( android.content.Intent.EXTRA_TEXT, post.file_url );
 			startActivity( Intent.createChooser( intent, getText( R.string.view_image_menu_share_chooser_title ) ) );
 			break;
+		case R.id.view_menu_longclick_back:
+			finish();
+			break;
 		default:
-			return super.onOptionsItemSelected( item );
+			return false;
 		}
 		return true;
 	}

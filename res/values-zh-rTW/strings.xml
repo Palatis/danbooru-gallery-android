@@ -58,6 +58,8 @@
 	<string name="view_image_menu_downloading">檔案加入佇列：\n%1$s</string>
 
 	<string name="view_image_menu_share_chooser_title">分享至...</string>
+	
+	<string name="view_image_longclick_back">回前頁</string>
 
 	<!-- Preferences -->
 	<string name="preferences_category_hosts">站台</string>

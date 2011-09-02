@@ -58,6 +58,8 @@
 	 <string name="view_image_menu_downloading">Download enqueued:\n%1$s</string>
 
 	 <string name="view_image_menu_share_chooser_title">Share using...</string>
+	 
+	 <string name="view_image_longclick_back">Back</string>
 
 	 <!-- Preferences -->
 	 <string name="preferences_category_hosts">Hosts</string>
