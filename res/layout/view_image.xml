@@ -29,6 +29,31 @@
 		android:id="@+id/view_image_image"
 		android:layout_height="match_parent"
 		android:layout_width="match_parent" />
+	<RelativeLayout
+		android:id="@+id/view_image_infopane"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+	>
+		<TextView
+			android:id="@+id/view_image_infopane_info"
+			android:padding="6dip"
+			android:background="@color/view_image_progress_background"
+			android:gravity="center_horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentTop="true"
+			android:layout_centerHorizontal="true" />
+
+		<ImageView
+			android:id="@+id/view_image_infopane_back"
+			android:background="@color/view_image_progress_background"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_centerVertical="true"
+			android:src="@android:drawable/ic_menu_revert"></ImageView>
+
+	</RelativeLayout>
 
 	<RelativeLayout
 		android:id="@+id/view_image_progress_indicator"

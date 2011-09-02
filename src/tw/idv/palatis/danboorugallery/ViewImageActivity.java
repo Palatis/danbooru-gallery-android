@@ -69,6 +69,7 @@ import android.view.animation.OvershootInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -80,13 +81,19 @@ import android.widget.ImageView.ScaleType;
 public class ViewImageActivity
 	extends Activity
 {
+	private static int	INFOPANE_DELAY	= 4000;
+
 	FileCache			filecache;
 	AsyncImageLoader	loader;
+
 	ImageViewTouch		image;
+	RelativeLayout		infopane;
 
 	Post				post;
 	Host				host;
 	String				page_tags;
+
+	long				lastClick;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -104,15 +111,95 @@ public class ViewImageActivity
 		page_tags = intent.getStringExtra( "page_tags" );
 
 		image = (ImageViewTouch) findViewById( R.id.view_image_image );
+		infopane = (RelativeLayout) findViewById( R.id.view_image_infopane );
 		registerForContextMenu( image );
+
+		TextView infopane_info = (TextView) findViewById( R.id.view_image_infopane_info );
+		infopane_info.setText( String.format( getString( R.string.view_image_pic_info ), post.width, post.height, post.author, post.created_at ) );
+
+		ImageView infopane_back = (ImageView) findViewById( R.id.view_image_infopane_back );
+		infopane_back.setOnClickListener( new OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				finish();
+				overridePendingTransition( R.anim.zoom_enter, R.anim.zoom_exit );
+			}
+		} );
+
+		infopane.postDelayed( new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				if (System.currentTimeMillis() - lastClick < INFOPANE_DELAY)
+					return;
+
+				infopane.clearAnimation();
+
+				Animation anim = new AlphaAnimation( 1.0f, 0.0f );
+				anim.setDuration( 300 );
+				infopane.startAnimation( anim );
+				infopane.postDelayed( new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						if (System.currentTimeMillis() - lastClick < INFOPANE_DELAY + 300)
+							return;
+
+						infopane.setVisibility( View.GONE );
+					}
+				}, 300 );
+			}
+		}, INFOPANE_DELAY );
 		image.setOnClickListener( new OnClickListener()
 		{
 			@Override
 			public void onClick(View v)
 			{
-				// if we're clicking too fast, don't bring up the menu.
-				if (System.currentTimeMillis() - mLastOptionsMenuClosedTime > DOUBLE_TAP_TIMEOUT)
-					ViewImageActivity.this.openOptionsMenu();
+				/*
+				 * // if we're clicking too fast, don't bring up the menu.
+				 * if (System.currentTimeMillis() - mLastOptionsMenuClosedTime > DOUBLE_TAP_TIMEOUT)
+				 * ViewImageActivity.this.openOptionsMenu();
+				 */
+
+				lastClick = System.currentTimeMillis();
+
+				if (infopane.getVisibility() != View.VISIBLE)
+				{
+					infopane.setVisibility( View.VISIBLE );
+					Animation anim = new AlphaAnimation( 0.0f, 1.0f );
+					anim.setDuration( 300 );
+					infopane.startAnimation( anim );
+				}
+				infopane.postDelayed( new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						if (System.currentTimeMillis() - lastClick < INFOPANE_DELAY)
+							return;
+
+						infopane.clearAnimation();
+
+						Animation anim = new AlphaAnimation( 1.0f, 0.0f );
+						anim.setDuration( 300 );
+						infopane.startAnimation( anim );
+						infopane.postDelayed( new Runnable()
+						{
+							@Override
+							public void run()
+							{
+								if (System.currentTimeMillis() - lastClick < INFOPANE_DELAY + 300)
+									return;
+
+								infopane.setVisibility( View.GONE );
+							}
+						}, 300 );
+					}
+				}, INFOPANE_DELAY );
 			}
 		} );
 
@@ -419,6 +506,7 @@ public class ViewImageActivity
 					setResult( RESULT_OK, intent );
 					dialog.dismiss();
 					finish();
+					overridePendingTransition( R.anim.zoom_enter, R.anim.zoom_exit );
 				}
 			} );
 			dialog.show();
@@ -464,6 +552,7 @@ public class ViewImageActivity
 			break;
 		case R.id.view_menu_longclick_back:
 			finish();
+			overridePendingTransition( R.anim.zoom_enter, R.anim.zoom_exit );
 			break;
 		default:
 			return false;
