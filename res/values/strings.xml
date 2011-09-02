@@ -48,7 +48,7 @@
     <string name="view_image_tags">Tags</string>
     <string name="view_image_download_failed">Download failed!</string>
     <string name="view_image_user_canceled">User canceled.</string>
-    <string name="view_image_progress_title">%1$sx%2$s</string>
+    <string name="view_image_progress_message">Getting image size information...</string>
 
     <string name="view_image_menu_info">Picture Info</string>
     <string name="view_image_menu_tags">Tags</string>

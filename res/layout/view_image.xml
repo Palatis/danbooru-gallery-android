@@ -20,8 +20,41 @@
 ** along with Danbooru Gallery.  If not, see <http://www.gnu.org/licenses/>.
 **/
 -->
-<it.sephiroth.android.library.imagezoom.ImageViewTouch
+<FrameLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/view_image_image"
 	android:layout_height="match_parent"
-	android:layout_width="match_parent" />
+	android:layout_width="match_parent" >
+
+	<it.sephiroth.android.library.imagezoom.ImageViewTouch
+		android:id="@+id/view_image_image"
+		android:layout_height="match_parent"
+		android:layout_width="match_parent" />
+
+	<RelativeLayout
+		android:id="@+id/view_image_progress_indicator"
+		android:visibility="gone"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" >
+
+		<TextView
+			android:id="@+id/view_image_progress_message"
+			android:padding="6dip"
+			android:text="@string/view_image_progress_message"
+			android:background="@color/view_image_progress_background"
+			android:layout_above="@+id/view_image_progress_progressbar"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center_horizontal" />
+
+		<ProgressBar
+			android:id="@+id/view_image_progress_progressbar"
+			style="?android:attr/progressBarStyleHorizontal"
+			android:background="@color/view_image_progress_background"
+			android:padding="6dip"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_alignParentBottom="true" />
+
+	</RelativeLayout>
+
+</FrameLayout>

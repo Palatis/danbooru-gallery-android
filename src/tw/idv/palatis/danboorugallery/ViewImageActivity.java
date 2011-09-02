@@ -40,13 +40,9 @@ import tw.idv.palatis.danboorugallery.utils.FileCache;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.app.AlertDialog.Builder;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -65,6 +61,7 @@ import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.DecelerateInterpolator;
@@ -73,6 +70,8 @@ import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -206,28 +205,14 @@ public class ViewImageActivity
 
 		if (bitmap == null)
 		{
-			ProgressDialog dialog = new NoSearchProgressDialog( this );
-			dialog.setTitle( String.format( getString( R.string.view_image_progress_title ), post.width, post.height ) );
-			dialog.setProgressStyle( ProgressDialog.STYLE_HORIZONTAL );
-			dialog.setOnCancelListener( new ProgressOnCancelListener() );
-			dialog.show();
-
 			if (loader == null)
 			{
-				loader = new AsyncImageLoader( this, image, dialog, file );
+				loader = new AsyncImageLoader( this, file );
 				loader.execute( post.sample_url );
-				dialog.setMax( 1 );
 			}
 			else
-			{
-				dialog.setMax( loader.dialog.getMax() );
-				dialog.setProgress( loader.dialog.getProgress() );
-				loader.reattach( this, image, dialog );
-			}
-		}
+				loader.reattach( this );
 
-		if (bitmap == null)
-		{
 			bitmap = D.getBitmapFromFile( filecache.getFile( post.preview_url ) );
 			image.setScaleType( ScaleType.FIT_CENTER );
 		}
@@ -441,13 +426,10 @@ public class ViewImageActivity
 		}
 		case R.id.view_image_menu_refresh:
 			File file = filecache.getFile( post.sample_url );
-			ProgressDialog dialog = new NoSearchProgressDialog( this );
-			dialog.setTitle( String.format( getString( R.string.view_image_progress_title ), post.width, post.height ) );
-			dialog.setProgressStyle( ProgressDialog.STYLE_HORIZONTAL );
-			dialog.setMax( 1 );
+			TextView progress_message = (TextView) findViewById( R.id.view_image_progress_message );
+			progress_message.setText( R.string.view_image_progress_message );
 
-			loader = new AsyncImageLoader( this, image, dialog, file );
-			dialog.setOnCancelListener( new ProgressOnCancelListener() );
+			loader = new AsyncImageLoader( this, file );
 
 			loader.execute( post.sample_url );
 			break;
@@ -510,18 +492,6 @@ public class ViewImageActivity
 		return new File( downloaddir, URLDecoder.decode( filename ) );
 	}
 
-	private class ProgressOnCancelListener
-		implements OnCancelListener
-	{
-		@Override
-		public void onCancel(DialogInterface dialog)
-		{
-			finish();
-			overridePendingTransition( R.anim.zoom_enter, R.anim.zoom_exit );
-			loader.cancel( true );
-		}
-	}
-
 	@Override
 	public void onBackPressed()
 	{
@@ -552,7 +522,6 @@ public class ViewImageActivity
 		private static final int	PROGRESS_SETMAX			= 0x01;
 		private static final int	PROGRESS_SETPROGRESS	= 0x02;
 		private static final int	PROGRESS_INCREMENTBY	= 0x03;
-		private static final int	PROGRESS_SETMESSAGE		= 0x04;
 
 		private static final int	RESULT_SUCCESS			= 0x00;
 		private static final int	RESULT_FAILED			= 0x01;
@@ -560,28 +529,43 @@ public class ViewImageActivity
 
 		ViewImageActivity			activity;
 		ImageViewTouch				image;
-		ProgressDialog				dialog;
 		File						file;
 
-		public AsyncImageLoader(ViewImageActivity a, ImageViewTouch i, ProgressDialog p, File f)
+		RelativeLayout				progress_indicator;
+		TextView					progress_message;
+		ProgressBar					progress_progressbar;
+
+		public void init(ViewImageActivity a)
 		{
 			activity = a;
-			image = i;
-			dialog = p;
-			file = f;
+			image = (ImageViewTouch) activity.findViewById( R.id.view_image_image );
+			progress_indicator = (RelativeLayout) activity.findViewById( R.id.view_image_progress_indicator );
+			progress_message = (TextView) activity.findViewById( R.id.view_image_progress_message );
+			progress_progressbar = (ProgressBar) activity.findViewById( R.id.view_image_progress_progressbar );
 		}
 
-		public void reattach(ViewImageActivity a, ImageViewTouch i, ProgressDialog p)
+		public AsyncImageLoader(ViewImageActivity a, File f)
 		{
-			activity = a;
-			image = i;
-			dialog = p;
+			file = f;
+			init( a );
+		}
+
+		public void reattach(ViewImageActivity a)
+		{
+			int old_max = progress_progressbar.getMax();
+			int old_progress = progress_progressbar.getProgress();
+			init( a );
+			progress_progressbar.setMax( old_max );
+			progress_progressbar.setProgress( old_progress );
+			progress_indicator.setVisibility( View.VISIBLE );
 		}
 
 		@Override
 		protected void onPreExecute()
 		{
-			dialog.show();
+			progress_progressbar.setMax( 1 );
+			progress_progressbar.setProgress( 0 );
+			progress_indicator.setVisibility( View.VISIBLE );
 		}
 
 		@Override
@@ -648,17 +632,26 @@ public class ViewImageActivity
 				}
 				else
 					Toast.makeText( image.getContext(), R.string.view_image_download_failed, Toast.LENGTH_SHORT ).show();
-				dialog.dismiss();
 				break;
 			case RESULT_FAILED:
 				Toast.makeText( image.getContext(), R.string.view_image_download_failed, Toast.LENGTH_SHORT ).show();
-				dialog.dismiss();
 				break;
 			case RESULT_CANCELLED:
 				Toast.makeText( image.getContext(), R.string.view_image_user_canceled, Toast.LENGTH_SHORT ).show();
-				dialog.cancel();
 				break;
 			}
+
+			Animation anim = new AlphaAnimation( 1.0f, 0.0f );
+			anim.setDuration( 500 );
+			progress_indicator.startAnimation( anim );
+			progress_indicator.postDelayed( new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					progress_indicator.setVisibility( View.GONE );
+				}
+			}, 500 );
 
 			activity.loader = null;
 		}
@@ -669,43 +662,16 @@ public class ViewImageActivity
 			switch (values[0])
 			{
 			case PROGRESS_SETMAX:
-				dialog.setMax( values[1] );
+				progress_progressbar.setMax( values[1] );
 				break;
 			case PROGRESS_SETPROGRESS:
-				dialog.setProgress( values[1] );
+				progress_progressbar.setProgress( values[1] );
 				break;
 			case PROGRESS_INCREMENTBY:
-				dialog.incrementProgressBy( values[1] );
-				break;
-			case PROGRESS_SETMESSAGE:
-				dialog.setMessage( "" );
+				progress_progressbar.incrementProgressBy( values[1] );
 				break;
 			}
-		}
-	}
-
-	/**
-	 * this is just a progress dialog that disables the ability to open up a search dialog
-	 *
-	 * @author palatis
-	 */
-	private class NoSearchProgressDialog
-		extends ProgressDialog
-	{
-		public NoSearchProgressDialog(Context context)
-		{
-			super( context );
-		}
-
-		public NoSearchProgressDialog(Context context, int theme)
-		{
-			super( context, theme );
-		}
-
-		@Override
-		public boolean onSearchRequested()
-		{
-			return false;
+			progress_message.setText( String.format( "%d / %d", progress_progressbar.getProgress(), progress_progressbar.getMax() ) );
 		}
 	}
 }
