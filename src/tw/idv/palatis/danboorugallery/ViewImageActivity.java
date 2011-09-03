@@ -36,6 +36,7 @@ import java.net.URLEncoder;
 import tw.idv.palatis.danboorugallery.defines.D;
 import tw.idv.palatis.danboorugallery.model.Host;
 import tw.idv.palatis.danboorugallery.model.Post;
+import tw.idv.palatis.danboorugallery.utils.BitmapMemCache;
 import tw.idv.palatis.danboorugallery.utils.FileCache;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -287,13 +288,22 @@ public class ViewImageActivity
 		{
 			if (loader == null)
 			{
+				if (file == null)
+					file = filecache.getFile( post.sample_url );
 				loader = new AsyncImageLoader( this, file );
 				loader.execute( post.sample_url );
 			}
 			else
 				loader.reattach( this );
 
-			bitmap = D.getBitmapFromFile( filecache.getFile( post.preview_url ) );
+			BitmapMemCache memcache = BitmapMemCache.getInstance();
+			bitmap = memcache.get( post.preview_url );
+			if (bitmap == null)
+			{
+				bitmap = D.getBitmapFromFile( filecache.getFile( post.preview_url ) );
+				if (bitmap != null)
+					memcache.put( post.preview_url, bitmap );
+			}
 			image.setScaleType( ScaleType.FIT_CENTER );
 		}
 		image.setImageBitmapReset( bitmap, true );
@@ -307,9 +317,10 @@ public class ViewImageActivity
 		{
 			Bitmap bitmap = drawable.getBitmap();
 			if (bitmap != null)
-				bitmap.recycle();
+				if (BitmapMemCache.getInstance().get( post.preview_url ) != bitmap)
+					bitmap.recycle();
 		}
-
+		image.setImageDrawable( null );
 		super.onDestroy();
 	}
 
