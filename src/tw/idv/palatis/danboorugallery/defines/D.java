@@ -21,9 +21,6 @@ package tw.idv.palatis.danboorugallery.defines;
  */
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -274,25 +271,14 @@ public class D
 			opt.inSampleSize = computeSampleSize( opt, -1, 2048 * 2048 );
 			opt.inJustDecodeBounds = false;
 			opt.inPurgeable = true;
+			opt.inInputShareable = true;
 
-			// decodeFile() gets OutOfMemoryError very often, try
-			// decodeFileDescriptor()
-			// return BitmapFactory.decodeFile( file.getAbsolutePath(), opt );
-			FileInputStream input = new FileInputStream( file );
-			return BitmapFactory.decodeFileDescriptor( input.getFD(), null, opt );
+			return BitmapFactory.decodeFile( file.getAbsolutePath(), opt );
 		}
 		catch (OutOfMemoryError ex)
 		{
 			Log.d( "decode failed, OutOfMemory occured." );
 			BitmapMemCache.getInstance().clear();
-		}
-		catch (FileNotFoundException ex)
-		{
-			// ok for file not found, get from web anyway.
-		}
-		catch (IOException ex)
-		{
-			// ok for io exception, get from web anyway.
 		}
 		return null;
 	}
