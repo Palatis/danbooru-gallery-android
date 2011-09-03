@@ -67,8 +67,6 @@ public class BitmapMemCache
 
 	public void clear()
 	{
-		for (Map.Entry < String, Bitmap > entry : cache.entrySet())
-			entry.getValue().recycle();
 		cache.clear();
 	}
 
