@@ -32,7 +32,6 @@ import tw.idv.palatis.danboorugallery.model.Host;
 import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.siteapi.ISiteAPI;
 import tw.idv.palatis.danboorugallery.utils.BitmapMemCache;
-import tw.idv.palatis.danboorugallery.utils.DanbooruUncaughtExceptionHandler;
 import tw.idv.palatis.danboorugallery.utils.FileCache;
 import tw.idv.palatis.danboorugallery.utils.LazyImageAdapter;
 import tw.idv.palatis.danboorugallery.utils.LazyPostFetcher;
@@ -84,9 +83,6 @@ public class MainActivity
 	{
 		super.onCreate( savedInstanceState );
 		setContentView( R.layout.main );
-
-		// register a global exception handler here so we don't just quit...
-		Thread.setDefaultUncaughtExceptionHandler( new DanbooruUncaughtExceptionHandler( this ) );
 
 		// preparing the cache
 		BitmapMemCache.prepare( getApplicationContext() );
