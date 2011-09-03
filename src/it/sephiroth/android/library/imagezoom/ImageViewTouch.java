@@ -18,6 +18,7 @@ public class ImageViewTouch
 	protected int					mTouchSlop;
 	protected float					mCurrentScaleFactor;
 	protected float					mScaleFactor;
+	protected boolean				mIsZooming;
 	protected GestureListener		mGestureListener;
 	protected ScaleListener			mScaleListener;
 
@@ -58,6 +59,7 @@ public class ImageViewTouch
 		{
 		case MotionEvent.ACTION_DOWN:
 		case MotionEvent.ACTION_POINTER_DOWN:
+			mIsZooming = false;
 			cancelScroll();
 			break;
 		case MotionEvent.ACTION_UP:
@@ -136,7 +138,8 @@ public class ImageViewTouch
 		public void onLongPress(MotionEvent e)
 		{
 			super.onLongPress( e );
-			performLongClick();
+			if ( !mIsZooming)
+				performLongClick();
 		}
 	}
 
@@ -146,6 +149,7 @@ public class ImageViewTouch
 		@Override
 		public boolean onScale(ScaleGestureDetector detector)
 		{
+			mIsZooming = true;
 			mCurrentScaleFactor = Math.min( getMaxZoom() * MAX_ZOOM, Math.max( mCurrentScaleFactor * detector.getScaleFactor(), MIN_ZOOM ) );
 			zoomTo( mCurrentScaleFactor, detector.getFocusX(), detector.getFocusY() );
 			invalidate();
