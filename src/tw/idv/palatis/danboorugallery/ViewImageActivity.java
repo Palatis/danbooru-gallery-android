@@ -44,6 +44,7 @@ import android.app.DownloadManager;
 import android.app.SearchManager;
 import android.app.AlertDialog.Builder;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.graphics.RectF;
@@ -92,6 +93,7 @@ public class ViewImageActivity
 	Post				post;
 	Host				host;
 	String				page_tags;
+	String				image_url;
 
 	long				lastClick;
 
@@ -109,6 +111,11 @@ public class ViewImageActivity
 		post = intent.getParcelableExtra( "post" );
 		host = intent.getParcelableExtra( "host" );
 		page_tags = intent.getStringExtra( "page_tags" );
+
+		SharedPreferences preferences = getSharedPreferences( D.SHAREDPREFERENCES_NAME, MODE_PRIVATE );
+		image_url = post.sample_url;
+		if (preferences.getBoolean( "high_quality_image", false ))
+			image_url = post.file_url;
 
 		image = (ImageViewTouch) findViewById( R.id.view_image_image );
 		infopane = (RelativeLayout) findViewById( R.id.view_image_infopane );
@@ -279,7 +286,7 @@ public class ViewImageActivity
 		File file = null;
 		if (bitmap == null)
 		{
-			file = filecache.getFile( post.sample_url );
+			file = filecache.getFile( image_url );
 			if (file.exists())
 				bitmap = D.getBitmapFromFile( file );
 		}
@@ -289,9 +296,9 @@ public class ViewImageActivity
 			if (loader == null)
 			{
 				if (file == null)
-					file = filecache.getFile( post.sample_url );
+					file = filecache.getFile( image_url );
 				loader = new AsyncImageLoader( this, file );
-				loader.execute( post.sample_url );
+				loader.execute( image_url );
 			}
 			else
 				loader.reattach( this );
@@ -498,13 +505,12 @@ public class ViewImageActivity
 			break;
 		}
 		case R.id.view_image_menu_refresh:
-			File file = filecache.getFile( post.sample_url );
+			File file = filecache.getFile( image_url );
 			TextView progress_message = (TextView) findViewById( R.id.view_image_progress_message );
 			progress_message.setText( R.string.view_image_progress_message );
 
 			loader = new AsyncImageLoader( this, file );
-
-			loader.execute( post.sample_url );
+			loader.execute( image_url );
 			break;
 		case R.id.view_image_menu_download:
 		case R.id.view_menu_longclick_download:

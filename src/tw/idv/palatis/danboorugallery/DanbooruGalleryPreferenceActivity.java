@@ -108,6 +108,9 @@ public class DanbooruGalleryPreferenceActivity
 		CheckBoxPreference pref_aggressive = (CheckBoxPreference) findPreference( "preferences_options_aggressive_prefetch" );
 		pref_aggressive.setChecked( preferences.getBoolean( "aggressive_prefetch", false ) );
 
+		CheckBoxPreference pref_hqimage = (CheckBoxPreference) findPreference("preferences_options_high_quality_image" );
+		pref_hqimage.setChecked( preferences.getBoolean( "high_quality_image", false ) );
+
 		notifyHostsChanged();
 
 		super.onStart();
@@ -154,6 +157,7 @@ public class DanbooruGalleryPreferenceActivity
 		String page_limit = findPreference( "preferences_options_page_limit" ).getSharedPreferences().getString( "preferences_options_page_limit", "16" );
 		String rating = findPreference( "preferences_options_rating" ).getSharedPreferences().getString( "preferences_options_rating", "s" );
 		boolean aggressive_prefetch = findPreference( "preferences_options_aggressive_prefetch" ).getSharedPreferences().getBoolean( "preferences_options_aggressive_prefetch", false );
+		boolean high_quality_image = findPreference("preferences_options_high_quality_image" ).getSharedPreferences().getBoolean( "preferences_options_high_quality_image", false );
 
 		SharedPreferences.Editor prefeditor = preferences.edit();
 		prefeditor.putInt( "selected_host", Integer.parseInt( selected_host ) );
@@ -161,6 +165,7 @@ public class DanbooruGalleryPreferenceActivity
 		prefeditor.putString( "rating", rating );
 		prefeditor.putString( "json_hosts", D.JSONArrayFromHosts( hosts ).toString() );
 		prefeditor.putBoolean( "aggressive_prefetch", aggressive_prefetch );
+		prefeditor.putBoolean( "high_quality_image", high_quality_image );
 		prefeditor.apply();
 
 		super.onPause();

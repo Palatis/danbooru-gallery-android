@@ -90,6 +90,8 @@
 	 <string name="preferences_options_page_limit_description">Posts to retrieve at once</string>
 	 <string name="preferences_options_aggressive_prefetch">Aggressive Prefetch</string>
 	 <string name="preferences_options_aggressive_prefetch_description">Prefetch preview images aggressively.<b>This may cost you a LOT of bandwidth, use with caution.</b></string>
+	 <string name="preferences_options_high_quality_image">High Quality Images</string>
+	 <string name="preferences_options_high_quality_image_description">By default, it only downloads lower quality sample image in view image mode. Enable this if you want the higher quality images (bigger files) instead.</string>
 
 	 <string name="preferences_category_about">About</string>
 	 <string name="preferences_about_copyright">Copyright (c) 2011</string>

@@ -72,6 +72,7 @@
 			android:key="preferences_options_aggressive_prefetch"
 			android:summary="@string/preferences_options_aggressive_prefetch_description"
 		></CheckBoxPreference>
+		<CheckBoxPreference android:title="@string/preferences_options_high_quality_image" android:key="preferences_options_high_quality_image" android:summary="@string/preferences_options_high_quality_image_description"></CheckBoxPreference>
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:key="preferences_category_about"
