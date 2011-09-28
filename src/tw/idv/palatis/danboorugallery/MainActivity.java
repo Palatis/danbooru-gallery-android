@@ -239,8 +239,8 @@ public class MainActivity
 			 * hosts.add( new Host( "Sankaku Complex (Chan)", "http://chan.sankakucomplex.com/", "Danbooru - JSON" ) );
 			 * hosts.add( new Host( "Sankaku Complex (Idol)", "http://idol.sankakucomplex.com/", "Danbooru - JSON" ) );
 			 */
-			hosts.add( new Host( "Gununubooru", "http://gununu.nipah.co.uk/", "Shimmie - XML" ) );
-			hosts.add( new Host( "Dollbooru", "http://www.dollbooru.org/", "Shimmie - RSS" ) );
+			hosts.add( new Host( "Gununubooru", "http://gununu.nipah.co.uk/", "Shimmie2 - XML" ) );
+			hosts.add( new Host( "Dollbooru", "http://www.dollbooru.org/", "Shimmie2 - RSS" ) );
 			hosts.add( new Host( "Safebooru", "http://safebooru.org/", "Gelbooru - XML" ) );
 			prefeditor.putString( "json_hosts", D.JSONArrayFromHosts( hosts ).toString() );
 		}
