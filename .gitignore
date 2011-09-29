@@ -3,4 +3,5 @@
 .project
 .settings/
 bin/
+gen/
 proguard.cfg
