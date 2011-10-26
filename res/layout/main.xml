@@ -20,17 +20,10 @@
 ** along with Danbooru Gallery.  If not, see <http://www.gnu.org/licenses/>.
 **/
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/gallery_grid"
+    android:verticalSpacing="3dip"
+    android:horizontalSpacing="5dip"
+    android:fastScrollEnabled="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <GridView
-        android:id="@+id/gallery_grid"
-        android:verticalSpacing="3dip"
-        android:horizontalSpacing="5dip"
-        android:fastScrollEnabled="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-</LinearLayout>
+    android:layout_height="match_parent" />
