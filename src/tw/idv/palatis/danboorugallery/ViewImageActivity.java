@@ -432,11 +432,9 @@ public class ViewImageActivity
 		case R.id.view_image_menu_info:
 		case R.id.view_menu_longclick_info:
 		{
-			Builder builder = new AlertDialog.Builder( this );
-			builder.setTitle( R.string.view_image_menu_info );
-			builder.setMessage( String.format( getString( R.string.view_image_pic_info ), post.width, post.height, post.author, post.created_at == null ? "" : post.created_at.toLocaleString() ) );
-			builder.setPositiveButton( android.R.string.ok, null );
-			builder.create().show();
+			Intent intent = new Intent( ViewImageActivity.this, ViewImageInfoActivity.class );
+			intent.putExtra( "post", post );
+			startActivityForResult( intent, -1 );
 			break;
 		}
 		case R.id.view_image_menu_tags:

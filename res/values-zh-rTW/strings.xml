@@ -44,7 +44,6 @@
 	<string name="main_goto_page_dialog_title">跳至頁面...</string>
 
 	<!-- View Image Activity -->
-	<string name="view_image_pic_info">大小：%1$dx%2$d\n作者：%3$s\n建立時間：\n%4$s</string>
 	<string name="view_image_infopane_message">大小：%1$dx%2$d\t作者：%3$s\n建立時間：%4$s</string>
 	<string name="view_image_tags">標籤</string>
 	<string name="view_image_download_failed">下載失敗！</string>
@@ -61,6 +60,10 @@
 	<string name="view_image_menu_share_chooser_title">分享至...</string>
 	
 	<string name="view_image_longclick_back">回前頁</string>
+
+	<!-- ViewImageInfoActivity -->
+	<string name="view_image_info_nulltime">&gt;沒有日期資訊&lt;</string>
+	<string name="view_image_info_post_info">大小：%1$dx%2$d\n作者：%3$s\n建立時間：%4$s\n留言：</string>
 
 	<!-- Preferences -->
 	<string name="preferences_category_hosts">站台</string>

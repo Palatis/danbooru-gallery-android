@@ -44,7 +44,6 @@
 	 <string name="main_goto_page_dialog_title">Go to page...</string>
 
     <!-- View Image Activity -->
-    <string name="view_image_pic_info">Size: %1$dx%2$d\nAuthor: %3$s\nCreated At:\n%4$s</string>
     <string name="view_image_infopane_message">Size: %1$dx%2$d\tAuthor: %3$s\nCreated At: %4$s</string>
     <string name="view_image_tags">Tags</string>
     <string name="view_image_download_failed">Download failed!</string>
@@ -61,6 +60,10 @@
 	 <string name="view_image_menu_share_chooser_title">Share using...</string>
 	 
 	 <string name="view_image_longclick_back">Back</string>
+
+    <!-- ViewImageInfoActivity -->
+    <string name="view_image_info_nulltime">&gt;no time info&lt;</string>
+    <string name="view_image_info_post_info">Size: %1$dx%2$d\nAuthor: %3$s\nCreated At: %4$s\nComments:</string>
 
 	 <!-- Preferences -->
 	 <string name="preferences_category_hosts">Hosts</string>
