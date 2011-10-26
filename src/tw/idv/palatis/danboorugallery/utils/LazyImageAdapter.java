@@ -36,7 +36,7 @@ public class LazyImageAdapter
 	extends BaseAdapter
 {
 	List < Post >			posts;
-	ImageLoader				loader;
+	ImageLoader				loader = ImageLoader.getInstance();
 	int						item_size;
 	boolean					aggressive;
 
@@ -66,7 +66,6 @@ public class LazyImageAdapter
 	public LazyImageAdapter(Activity a, List < Post > p, int sz, boolean ag)
 	{
 		posts = p;
-		loader = new ImageLoader();
 		item_size = sz;
 		aggressive = ag;
 	}

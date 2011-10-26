@@ -37,12 +37,19 @@ import android.widget.ImageView.ScaleType;
 
 public class ImageLoader
 {
+	private static ImageLoader	instance	= new ImageLoader();
+
+	public static ImageLoader getInstance()
+	{
+		return instance;
+	}
+
 	private BitmapMemCache		mMemCache;
 	private FileCache			mFileCache;
 	private PhotosLoaderWeb		mWebLoader;
 	private PhotosLoaderDisk	mDiskLoader;
 
-	public ImageLoader()
+	private ImageLoader()
 	{
 		mWebLoader = new PhotosLoaderWeb();
 		mWebLoader.start();
