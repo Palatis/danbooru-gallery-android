@@ -35,8 +35,8 @@
     <string name="main_download_dialog_title">Download this image?</string>
 
     <string name="main_menu_goto">Go to</string>
-    <string name="main_menu_goto_page">Page</string>
-    <string name="main_menu_goto_tags">Tags</string>
+    <string name="main_menu_goto_page">Page...</string>
+    <string name="main_menu_goto_tags">Tags...</string>
     <string name="main_menu_goto_reset_tags">Reset tags</string>
     <string name="main_menu_preferences">Preferences</string>
     <string name="main_menu_refresh">Refresh</string>
