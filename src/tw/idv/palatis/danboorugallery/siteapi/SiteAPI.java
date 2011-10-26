@@ -6,7 +6,7 @@ import tw.idv.palatis.danboorugallery.defines.D;
 import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.model.Tag;
 
-public abstract class ISiteAPI
+public abstract class SiteAPI
 {
 	public static final int	API_JSON	= 0x01;
 	public static final int	API_XML		= 0x02;
@@ -97,7 +97,7 @@ public abstract class ISiteAPI
 		 *            API to use, either API_JSON or API_XML
 		 * @return the *API object
 		 */
-		public static ISiteAPI createFromString(String url, String api)
+		public static SiteAPI createFromString(String url, String api)
 		{
 			try
 			{

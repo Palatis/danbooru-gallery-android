@@ -30,7 +30,7 @@ import org.json.JSONException;
 import tw.idv.palatis.danboorugallery.defines.D;
 import tw.idv.palatis.danboorugallery.model.Host;
 import tw.idv.palatis.danboorugallery.model.Post;
-import tw.idv.palatis.danboorugallery.siteapi.ISiteAPI;
+import tw.idv.palatis.danboorugallery.siteapi.SiteAPI;
 import tw.idv.palatis.danboorugallery.utils.BitmapMemCache;
 import tw.idv.palatis.danboorugallery.utils.FileCache;
 import tw.idv.palatis.danboorugallery.utils.LazyImageAdapter;
@@ -289,7 +289,7 @@ public class MainActivity
 		D.Log.d( "using api: %s", api );
 
 		boolean reset = false;
-		reset |= fetcher.setSiteAPI( ISiteAPI.Factory.createFromString( url, api ) );
+		reset |= fetcher.setSiteAPI( SiteAPI.Factory.createFromString( url, api ) );
 		reset |= fetcher.setRating( preferences.getString( "rating", "s" ) );
 		reset |= fetcher.setPageLimit( preferences.getInt( "page_limit", 16 ) );
 

@@ -39,7 +39,7 @@ import tw.idv.palatis.danboorugallery.model.Tag;
 import android.net.Uri;
 
 public abstract class DanbooruStyleAPI
-	extends ISiteAPI
+	extends SiteAPI
 {
 	private static final int	_BUFFER_SIZE	= 8192;
 

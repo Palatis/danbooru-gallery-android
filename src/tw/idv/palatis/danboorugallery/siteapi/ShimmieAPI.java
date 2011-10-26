@@ -32,7 +32,7 @@ import tw.idv.palatis.danboorugallery.model.Tag;
 import android.net.Uri;
 
 public class ShimmieAPI
-	extends ISiteAPI
+	extends SiteAPI
 {
 	public static final String	URL_POSTS_XML		= "/api/danbooru/post/index.xml&offset=%1$s&limit=%2$s";
 	public static final String	URL_POSTS_XML_TAGS	= "/api/danbooru/post/index.xml&offset=%1$s&limit=%2$s&tags=%3$s";

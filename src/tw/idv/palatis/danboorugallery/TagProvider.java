@@ -12,7 +12,7 @@ import tw.idv.palatis.danboorugallery.defines.D;
 import tw.idv.palatis.danboorugallery.model.Host;
 import tw.idv.palatis.danboorugallery.model.Tag;
 import tw.idv.palatis.danboorugallery.siteapi.DanbooruAPI;
-import tw.idv.palatis.danboorugallery.siteapi.ISiteAPI;
+import tw.idv.palatis.danboorugallery.siteapi.SiteAPI;
 import android.app.SearchManager;
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -68,7 +68,7 @@ public class TagProvider
 	}
 
 	SharedPreferences	preferences	= null;
-	ISiteAPI			site_api	= null;
+	SiteAPI			site_api	= null;
 
 	@Override
 	public boolean onCreate()
@@ -192,7 +192,7 @@ public class TagProvider
 		if (hosts != null)
 			host = hosts.get( selected_host );
 
-		site_api = ISiteAPI.Factory.createFromString( host.url, host.api );
+		site_api = SiteAPI.Factory.createFromString( host.url, host.api );
 		List < Tag > tags = site_api.fetchTagsIndex( 1, query, 300 );
 
 		List < ResultSet > results = new ArrayList < ResultSet >( tags.size() );

@@ -25,14 +25,14 @@ import java.util.List;
 
 import tw.idv.palatis.danboorugallery.defines.D;
 import tw.idv.palatis.danboorugallery.model.Post;
-import tw.idv.palatis.danboorugallery.siteapi.ISiteAPI;
+import tw.idv.palatis.danboorugallery.siteapi.SiteAPI;
 import android.os.AsyncTask;
 
 public class LazyPostFetcher
 {
 	private AsyncPostFetcher	fetcher		= null;
 	private URLEnclosure		enclosure	= null;
-	private ISiteAPI			site_api	= null;
+	private SiteAPI			site_api	= null;
 	boolean						reached_end	= false;
 
 	public LazyPostFetcher()
@@ -45,7 +45,7 @@ public class LazyPostFetcher
 		enclosure = e;
 	}
 
-	public boolean setSiteAPI(ISiteAPI sapi)
+	public boolean setSiteAPI(SiteAPI sapi)
 	{
 		if (site_api == null)
 		{
