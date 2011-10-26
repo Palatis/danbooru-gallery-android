@@ -109,7 +109,7 @@ public class DanbooruAPI
 		if (mApi == API_XML)
 		{
 			mIsCanceled = false;
-			return fetchTagsIndexXML( mSiteUrl + URL_TAGS_XML, page, name, limit);
+			return fetchTagsIndexXML( mSiteUrl + URL_TAGS_XML, page, name, limit );
 		}
 
 		return null;
