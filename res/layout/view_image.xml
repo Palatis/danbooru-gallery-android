@@ -29,11 +29,12 @@
 		android:id="@+id/view_image_image"
 		android:layout_height="match_parent"
 		android:layout_width="match_parent" />
+
 	<RelativeLayout
 		android:id="@+id/view_image_infopane"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-	>
+		android:layout_height="match_parent">
+
 		<TextView
 			android:id="@+id/view_image_infopane_info"
 			android:padding="6dip"
