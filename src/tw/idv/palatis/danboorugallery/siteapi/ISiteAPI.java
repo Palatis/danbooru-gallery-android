@@ -136,6 +136,10 @@ public abstract class ISiteAPI
 				return "API_JSON";
 			if (api == API_XML)
 				return "API_XML";
+			if (api == API_RSS)
+				return "API_RSS";
+			if (api == API_HTML)
+				return "API_HTML";
 			return "Unknown API (" + api + ")";
 		}
 
