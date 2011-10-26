@@ -169,50 +169,29 @@ public class ShimmieAPI
 			post.file_url = siteUrl + post.file_url;
 
 		// replace // with / for buggy Shimmie2 handlers
-		post.preview_url = post.preview_url.replace(  "//", "/" );
-		post.preview_url = post.preview_url.replace( ":/", "://");
-		post.sample_url = post.sample_url.replace(  "//", "/" );
-		post.sample_url = post.sample_url.replace( ":/", "://");
-		post.file_url = post.file_url.replace(  "//", "/" );
-		post.file_url = post.file_url.replace( ":/", "://");
+		post.preview_url = post.preview_url.replace( "//", "/" );
+		post.preview_url = post.preview_url.replace( ":/", "://" );
+		post.sample_url = post.sample_url.replace( "//", "/" );
+		post.sample_url = post.sample_url.replace( ":/", "://" );
+		post.file_url = post.file_url.replace( "//", "/" );
+		post.file_url = post.file_url.replace( ":/", "://" );
 
 		return post;
 	}
 
-	String	mSiteUrl;
-	int		mApi;
-	boolean	mIsCanceled;
-
 	public ShimmieAPI()
 	{
-		this( "" );
+		super();
 	}
 
 	public ShimmieAPI(String siteUrl)
 	{
-		mSiteUrl = siteUrl;
-		mApi = API_XML;
+		super( siteUrl );
 	}
 
 	public ShimmieAPI(String siteUrl, int api) throws UnsupportedAPIException
 	{
-		mSiteUrl = siteUrl;
-		setApi( api );
-	}
-
-	@Override
-	public int getApi()
-	{
-		return mApi;
-	}
-
-	@Override
-	public void setApi(int api) throws UnsupportedAPIException
-	{
-		if (api != API_XML && api != API_RSS)
-			throw new UnsupportedAPIException( api );
-
-		mApi = api;
+		super( siteUrl, api );
 	}
 
 	@Override
@@ -222,21 +201,9 @@ public class ShimmieAPI
 	}
 
 	@Override
-	public String getSiteUrl()
+	public int getDefaultApi()
 	{
-		return mSiteUrl;
-	}
-
-	@Override
-	public void setSiteUrl(String siteUrl)
-	{
-		mSiteUrl = siteUrl;
-	}
-
-	@Override
-	public void cancel()
-	{
-		mIsCanceled = true;
+		return API_XML;
 	}
 
 	protected List < Post > fetchPostsIndexXML(String url)
@@ -263,8 +230,8 @@ public class ShimmieAPI
 			for (int i = 0; i < length; ++i)
 			{
 				Node node = nodes.item( i );
-				posts.add( generatePostFromXML( mSiteUrl, (Element) node ) );
-				if (mIsCanceled)
+				posts.add( generatePostFromXML( getSiteUrl(), (Element) node ) );
+				if (isCanceled())
 					return null;
 			}
 			return posts;
@@ -315,7 +282,7 @@ public class ShimmieAPI
 			{
 				Node node = nodes.item( i );
 				posts.add( generatePostFromRSS( siteUrlHost, (Element) node ) );
-				if (mIsCanceled)
+				if (isCanceled())
 					return null;
 			}
 			return posts;
@@ -342,24 +309,25 @@ public class ShimmieAPI
 	@Override
 	public List < Post > fetchPostsIndex(int page, String tags, int limit)
 	{
-		if (mApi == API_XML)
+		uncancel();
+		if (getApi() == API_XML)
 		{
 			String url;
 			if (tags.isEmpty())
-				url = String.format( mSiteUrl + URL_POSTS_XML, (page - 1) * limit, limit );
+				url = String.format( getSiteUrl() + URL_POSTS_XML, (page - 1) * limit, limit );
 			else
-				url = String.format( mSiteUrl + URL_POSTS_XML_TAGS, (page - 1) * limit, limit, tags );
+				url = String.format( getSiteUrl() + URL_POSTS_XML_TAGS, (page - 1) * limit, limit, tags );
 
 			return fetchPostsIndexXML( url );
 		}
 
-		if (mApi == API_RSS)
+		if (getApi() == API_RSS)
 		{
 			String url;
 			if (tags.isEmpty())
-				url = String.format( mSiteUrl + URL_POSTS_RSS, page );
+				url = String.format( getSiteUrl() + URL_POSTS_RSS, page );
 			else
-				url = String.format( mSiteUrl + URL_POSTS_RSS_TAGS, page, tags );
+				url = String.format( getSiteUrl() + URL_POSTS_RSS_TAGS, page, tags );
 
 			return fetchPostsIndexRSS( url );
 		}

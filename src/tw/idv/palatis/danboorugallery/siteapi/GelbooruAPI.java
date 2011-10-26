@@ -12,37 +12,19 @@ public class GelbooruAPI
 	public static final String	URL_POSTS_XML	= "/index.php?page=dapi&s=post&q=index&pid=%1$s&tags=%2$s&limit=%3$s";
 	// public static final String URL_TAGS_XML = "/index.php?page=dapi&s=tag&q=index&order=count&pid=%1$s&name_pattern=%2$s&limit=%3$s";
 
-	String						mSiteUrl;
-	int							mApi;
-	boolean						mIsCanceled;
-
 	public GelbooruAPI()
 	{
-		this( "" );
+		super();
 	}
 
 	public GelbooruAPI(String siteUrl)
 	{
-		mSiteUrl = siteUrl;
-		mApi = API_XML;
+		super(siteUrl);
 	}
 
 	public GelbooruAPI(String siteUrl, int api) throws UnsupportedAPIException
 	{
-		mSiteUrl = siteUrl;
-		setApi( api );
-	}
-
-	@Override
-	public String getSiteUrl()
-	{
-		return mSiteUrl;
-	}
-
-	@Override
-	public void setSiteUrl(String siteUrl)
-	{
-		mSiteUrl = siteUrl;
+		super(siteUrl, api);
 	}
 
 	@Override
@@ -52,39 +34,18 @@ public class GelbooruAPI
 	}
 
 	@Override
-	public int getApi()
+	public int getDefaultApi()
 	{
-		return mApi;
-	}
-
-	@Override
-	public void setApi(int api) throws UnsupportedAPIException
-	{
-		if (api != API_XML)
-			throw new UnsupportedAPIException( api );
-
-		mApi = api;
-	}
-
-	@Override
-	public void cancel()
-	{
-		mIsCanceled = true;
-	}
-
-	@Override
-	protected boolean isCanceled()
-	{
-		return mIsCanceled;
+		return API_XML;
 	}
 
 	@Override
 	public List < Post > fetchPostsIndex(int page, String tags, int limit)
 	{
-		if (mApi == API_XML)
+		if (getApi() == API_XML)
 		{
-			mIsCanceled = false;
-			return fetchPostsIndexXML( mSiteUrl + URL_POSTS_XML, page, tags, limit );
+			uncancel();
+			return fetchPostsIndexXML( getSiteUrl() + URL_POSTS_XML, page, tags, limit );
 		}
 
 		return null;

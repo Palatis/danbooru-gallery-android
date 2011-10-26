@@ -48,6 +48,21 @@ public abstract class DanbooruStyleAPI
 	// resulting reloading of locale data every time which is SLOW.
 	static private DateFormat	formatter		= new SimpleDateFormat( "EEE MMM dd HH:mm:ss Z yyyy", Locale.ENGLISH );
 
+	public DanbooruStyleAPI()
+	{
+		super();
+	}
+
+	public DanbooruStyleAPI(String siteUrl)
+	{
+		super( siteUrl );
+	}
+
+	public DanbooruStyleAPI(String siteUrl, int api) throws UnsupportedAPIException
+	{
+		super( siteUrl, api );
+	}
+
 	/**
 	 * Generate Post from XML node ({@link Element}), it takes an XML node and try parse it into a {@link Post} structure.
 	 *
@@ -188,18 +203,6 @@ public abstract class DanbooruStyleAPI
 		}
 
 		return post;
-	}
-
-	/**
-	 * Inherited class should overwrite this function to indicate that if a fetch
-	 * operation is canceled or not.
-	 * Default behavior will always return ${@literal false}.
-	 *
-	 * @return {@literal true} if canceled, {@literal false} otherwise.
-	 */
-	protected boolean isCanceled()
-	{
-		return false;
 	}
 
 	/**

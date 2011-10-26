@@ -13,6 +13,10 @@ public abstract class SiteAPI
 	public static final int	API_RSS		= 0x04;
 	public static final int	API_HTML	= 0x08; // maybe i'll just never implement one of this...
 
+	private String			mSiteUrl;
+	private int				mApi;
+	private boolean			mIsCanceled = false;
+
 	/**
 	 * get the supported (implemented) API for a site.
 	 * use
@@ -22,37 +26,6 @@ public abstract class SiteAPI
 	 * @return supported API, either API_JSON, API_XML, API_RSS, ATI_HTML, or any combinations of them.
 	 */
 	public abstract int getSupportedApi();
-
-	/**
-	 * choose the API to use for this site.
-	 *
-	 * @param api
-	 *            the API to use, can be API_JSON or API_XML.
-	 * @throws UnsupportedAPIException
-	 */
-	public abstract void setApi(int api) throws UnsupportedAPIException;
-
-	/**
-	 * get the selected API
-	 *
-	 * @return the API which is using, can be API_JSON or API_XML.
-	 */
-	public abstract int getApi();
-
-	/**
-	 * get the site's URL
-	 *
-	 * @return the site's URL
-	 */
-	public abstract String getSiteUrl();
-
-	/**
-	 * set the site's URL
-	 *
-	 * @param siteUrl
-	 *            the URL to set
-	 */
-	public abstract void setSiteUrl(String siteUrl);
 
 	/**
 	 * get the posts, just like when you're browsing the post list page.
@@ -81,10 +54,100 @@ public abstract class SiteAPI
 	public abstract List < Tag > fetchTagsIndex(int page, String name, int limit);
 
 	/**
+	 * get the default API for this implementation
+	 *
+	 * @return the default API
+	 */
+	protected abstract int getDefaultApi();
+
+	public SiteAPI()
+	{
+		this( "" );
+	}
+
+	public SiteAPI(String siteUrl)
+	{
+		mSiteUrl = siteUrl;
+		mApi = getDefaultApi();
+	}
+
+	public SiteAPI(String siteUrl, int api) throws UnsupportedAPIException
+	{
+		mSiteUrl = siteUrl;
+		setApi( api );
+	}
+
+	/**
+	 * choose the API to use for this site.
+	 *
+	 * @param api
+	 *            the API to use, can be API_JSON or API_XML.
+	 * @throws UnsupportedAPIException
+	 */
+	public final void setApi(int api) throws UnsupportedAPIException
+	{
+		if ((api & getSupportedApi()) == 0)
+			throw new UnsupportedAPIException( api );
+		mApi = api;
+	}
+
+	/**
+	 * get the selected API
+	 *
+	 * @return the API which is using, can be API_JSON or API_XML.
+	 */
+	public final int getApi()
+	{
+		return mApi;
+	}
+
+	/**
+	 * get the site's URL
+	 *
+	 * @return the site's URL
+	 */
+	public final String getSiteUrl()
+	{
+		return mSiteUrl;
+	}
+
+	/**
+	 * set the site's URL
+	 *
+	 * @param siteUrl
+	 *            the URL to set
+	 */
+	public final void setSiteUrl(String siteUrl)
+	{
+		mSiteUrl = siteUrl;
+	}
+
+	/**
 	 * cancels the operation in action, it should cancel the operation as soon
 	 * as possible.
 	 */
-	public abstract void cancel();
+	public void cancel()
+	{
+		mIsCanceled = true;
+	}
+
+	/**
+	 * uncancel the cancel status
+	 */
+	protected void uncancel()
+	{
+		mIsCanceled = false;
+	}
+
+	/**
+	 * check if the fetch operation is canceled.
+	 *
+	 * @return true if canceled, false otherwise.
+	 */
+	public boolean isCanceled()
+	{
+		return mIsCanceled;
+	}
 
 	public static class Factory
 	{

@@ -13,85 +13,46 @@ public class DanbooruAPI
 	public static final String	URL_POSTS_XML	= "/post/index.xml?page=%1$s&tags=%2$s&limit=%3$s";
 	public static final String	URL_TAGS_XML	= "/tag/index.xml?order=count&page=%1$s&name=*%2$s*&limit=%3$s";
 
-	String						mSiteUrl;
-	int							mApi;
-	boolean						mIsCanceled;
-
 	public DanbooruAPI()
 	{
-		this( "" );
+		super();
 	}
 
 	public DanbooruAPI(String siteUrl)
 	{
-		mSiteUrl = siteUrl;
-		mApi = API_XML;
+		super(siteUrl);
 	}
 
 	public DanbooruAPI(String siteUrl, int api) throws UnsupportedAPIException
 	{
-		mSiteUrl = siteUrl;
-		setApi( api );
-	}
-
-	@Override
-	public int getApi()
-	{
-		return mApi;
-	}
-
-	@Override
-	public void setApi(int api) throws UnsupportedAPIException
-	{
-		if (api != API_JSON && api != API_XML)
-			throw new UnsupportedAPIException( api );
-
-		mApi = api;
+		super(siteUrl, api);
 	}
 
 	@Override
 	public int getSupportedApi()
 	{
+		return API_JSON | API_XML;
+	}
+
+	@Override
+	public int getDefaultApi()
+	{
 		return API_JSON;
-	}
-
-	@Override
-	public String getSiteUrl()
-	{
-		return mSiteUrl;
-	}
-
-	@Override
-	public void setSiteUrl(String siteUrl)
-	{
-		mSiteUrl = siteUrl;
-	}
-
-	@Override
-	public void cancel()
-	{
-		mIsCanceled = true;
-	}
-
-	@Override
-	protected boolean isCanceled()
-	{
-		return mIsCanceled;
 	}
 
 	@Override
 	public List < Post > fetchPostsIndex(int page, String tags, int limit)
 	{
-		if (mApi == API_JSON)
+		if (getApi() == API_JSON)
 		{
-			mIsCanceled = false;
-			return fetchPostsIndexJSON( mSiteUrl + URL_POSTS_JSON, page, tags, limit );
+			uncancel();
+			return fetchPostsIndexJSON( getSiteUrl() + URL_POSTS_JSON, page, tags, limit );
 		}
 
-		if (mApi == API_XML)
+		if (getApi() == API_XML)
 		{
-			mIsCanceled = false;
-			return fetchPostsIndexXML( mSiteUrl + URL_POSTS_XML, page, tags, limit );
+			uncancel();
+			return fetchPostsIndexXML( getSiteUrl() + URL_POSTS_XML, page, tags, limit );
 		}
 
 		return null;
@@ -100,16 +61,16 @@ public class DanbooruAPI
 	@Override
 	public List < Tag > fetchTagsIndex(int page, String name, int limit)
 	{
-		if (mApi == API_JSON)
+		if (getApi() == API_JSON)
 		{
-			mIsCanceled = false;
-			return fetchTagsIndexJSON( mSiteUrl + URL_TAGS_JSON, page, name, limit );
+			uncancel();
+			return fetchTagsIndexJSON( getSiteUrl() + URL_TAGS_JSON, page, name, limit );
 		}
 
-		if (mApi == API_XML)
+		if (getApi() == API_XML)
 		{
-			mIsCanceled = false;
-			return fetchTagsIndexXML( mSiteUrl + URL_TAGS_XML, page, name, limit );
+			uncancel();
+			return fetchTagsIndexXML( getSiteUrl() + URL_TAGS_XML, page, name, limit );
 		}
 
 		return null;
