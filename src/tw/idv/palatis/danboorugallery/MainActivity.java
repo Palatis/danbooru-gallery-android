@@ -421,7 +421,7 @@ public class MainActivity
 			intent.putExtra( "host", hosts.get( preferences.getInt( "selected_host", 0 ) ) );
 			intent.putExtra( "page_tags", fetcher.getURLEnclosure().tags );
 
-			startActivityForResult( intent, REQUEST_TAGCLICKED );
+			startActivityForResult( intent, -1 );
 			overridePendingTransition( R.anim.zoom_up, R.anim.zoom_exit );
 		}
 	}
