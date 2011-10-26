@@ -7,7 +7,6 @@ import tw.idv.palatis.danboorugallery.model.Tag;
 
 public class DanbooruAPI
 	extends DanbooruStyleAPI
-	implements ISiteAPI
 {
 	public static final String	URL_POSTS_JSON	= "/post/index.json?page=%1$s&tags=%2$s&limit=%3$s";
 	public static final String	URL_TAGS_JSON	= "/tag/index.json?order=count&page=%1$s&name=*%2$s*&limit=%3$s";

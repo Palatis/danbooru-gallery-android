@@ -6,7 +6,7 @@ import tw.idv.palatis.danboorugallery.defines.D;
 import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.model.Tag;
 
-public interface ISiteAPI
+public abstract class ISiteAPI
 {
 	public static final int	API_JSON	= 0x01;
 	public static final int	API_XML		= 0x02;
@@ -21,7 +21,7 @@ public interface ISiteAPI
 	 *
 	 * @return supported API, either API_JSON, API_XML, API_RSS, ATI_HTML, or any combinations of them.
 	 */
-	abstract int getSupportedApi();
+	public abstract int getSupportedApi();
 
 	/**
 	 * choose the API to use for this site.
@@ -30,21 +30,21 @@ public interface ISiteAPI
 	 *            the API to use, can be API_JSON or API_XML.
 	 * @throws UnsupportedAPIException
 	 */
-	abstract void setApi(int api) throws UnsupportedAPIException;
+	public abstract void setApi(int api) throws UnsupportedAPIException;
 
 	/**
 	 * get the selected API
 	 *
 	 * @return the API which is using, can be API_JSON or API_XML.
 	 */
-	abstract int getApi();
+	public abstract int getApi();
 
 	/**
 	 * get the site's URL
 	 *
 	 * @return the site's URL
 	 */
-	abstract public String getSiteUrl();
+	public abstract String getSiteUrl();
 
 	/**
 	 * set the site's URL
@@ -52,7 +52,7 @@ public interface ISiteAPI
 	 * @param siteUrl
 	 *            the URL to set
 	 */
-	abstract public void setSiteUrl(String siteUrl);
+	public abstract void setSiteUrl(String siteUrl);
 
 	/**
 	 * get the posts, just like when you're browsing the post list page.
@@ -65,7 +65,7 @@ public interface ISiteAPI
 	 *            posts per page to retrieve at once.
 	 * @return the posts fetched, null if failed.
 	 */
-	abstract List < Post > fetchPostsIndex(int page, String tags, int limit);
+	public abstract List < Post > fetchPostsIndex(int page, String tags, int limit);
 
 	/**
 	 * get the tags, just like when you're browsing the tag list page
@@ -78,13 +78,13 @@ public interface ISiteAPI
 	 *            tags shown per page
 	 * @return the tags fetched, null if failed.
 	 */
-	abstract List < Tag > fetchTagsIndex(int page, String name, int limit);
+	public abstract List < Tag > fetchTagsIndex(int page, String name, int limit);
 
 	/**
 	 * cancels the operation in action, it should cancel the operation as soon
 	 * as possible.
 	 */
-	abstract void cancel();
+	public abstract void cancel();
 
 	public static class Factory
 	{
@@ -125,7 +125,7 @@ public interface ISiteAPI
 	 *
 	 * @author palatis
 	 */
-	public class UnsupportedAPIException
+	public static class UnsupportedAPIException
 		extends Exception
 	{
 		private static final long	serialVersionUID	= 1L;
