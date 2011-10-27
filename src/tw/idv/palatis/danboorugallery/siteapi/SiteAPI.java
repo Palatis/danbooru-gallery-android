@@ -2,20 +2,25 @@ package tw.idv.palatis.danboorugallery.siteapi;
 
 import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import tw.idv.palatis.danboorugallery.defines.D;
+import tw.idv.palatis.danboorugallery.model.Host;
 import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.model.Tag;
+import android.content.SharedPreferences;
 
 public abstract class SiteAPI
 {
 	public static final int	API_JSON	= 0x01;
 	public static final int	API_XML		= 0x02;
 	public static final int	API_RSS		= 0x04;
-	public static final int	API_HTML	= 0x08; // maybe i'll just never implement one of this...
+	public static final int	API_HTML	= 0x08;	// maybe i'll just never implement one of this...
 
 	private String			mSiteUrl;
 	private int				mApi;
-	private boolean			mIsCanceled = false;
+	private boolean			mIsCanceled	= false;
 
 	/**
 	 * get the supported (implemented) API for a site.
@@ -149,38 +154,78 @@ public abstract class SiteAPI
 		return mIsCanceled;
 	}
 
-	public static class Factory
+	private static SiteAPI	instance	= null;
+
+	public static SiteAPI getInstance()
 	{
-		/**
-		 * construct the correct API object from url and API
-		 *
-		 * @param url
-		 *            URL of the host
-		 * @param api
-		 *            API to use, either API_JSON or API_XML
-		 * @return the *API object
-		 */
-		public static SiteAPI createFromString(String url, String api)
+		return instance;
+	}
+
+	/**
+	 * read API from SharedPreferences.
+	 *
+	 * @param preferences
+	 * @return {@literal true} if the current instance of API is changed, {@literal false} otherwise.
+	 */
+	public static boolean readPreference(SharedPreferences preferences)
+	{
+		try
 		{
-			try
+			List < Host > hosts = D.HostsFromJSONArray( new JSONArray( preferences.getString( "json_hosts", "" ) ) );
+			SiteAPI api = _createFromHost( hosts.get( preferences.getInt( "selected_host", 0 ) ) );
+			if (instance == null)
 			{
-				if (api.equals( "Danbooru - JSON" ))
-					return new DanbooruAPI( url, API_JSON );
-				if (api.equals( "Danbooru - XML" ))
-					return new DanbooruAPI( url, API_XML );
-				if (api.equals( "Gelbooru - XML" ))
-					return new GelbooruAPI( url, API_XML );
-				if (api.equals( "Shimmie2 - XML" ))
-					return new ShimmieAPI( url, API_XML );
-				if (api.equals( "Shimmie2 - RSS" ))
-					return new ShimmieAPI( url, API_RSS );
+				instance = api;
+				return true;
 			}
-			catch (UnsupportedAPIException ex)
-			{
-				D.Log.wtf( ex );
-			}
-			return null;
+
+			boolean same = true;
+			same &= instance.getClass() == api.getClass();
+			same &= instance.getSiteUrl().equals( api.getSiteUrl() );
+			same &= instance.getApi() == api.getApi();
+
+			if ( !same)
+				instance = api;
+
+			return same;
 		}
+		catch (JSONException ex)
+		{
+			D.Log.wtf( ex );
+		}
+		return false;
+	}
+
+	/**
+	 * construct the correct API object from Host
+	 *
+	 * @param host
+	 *            the host
+	 * @return the *API object
+	 */
+	private static SiteAPI _createFromHost(Host host)
+	{
+		if (host == null)
+			return null;
+
+		try
+		{
+			if (host.api.equals( "Danbooru - JSON" ))
+				return new DanbooruAPI( host.url, API_JSON );
+			if (host.api.equals( "Danbooru - XML" ))
+				return new DanbooruAPI( host.url, API_XML );
+			if (host.api.equals( "Gelbooru - XML" ))
+				return new GelbooruAPI( host.url, API_XML );
+			if (host.api.equals( "Shimmie2 - XML" ))
+				return new ShimmieAPI( host.url, API_XML );
+			if (host.api.equals( "Shimmie2 - RSS" ))
+				return new ShimmieAPI( host.url, API_RSS );
+		}
+		catch (UnsupportedAPIException ex)
+		{
+			D.Log.wtf( ex );
+		}
+		return null;
 	}
 
 	/**

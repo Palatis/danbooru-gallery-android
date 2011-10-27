@@ -5,13 +5,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 import tw.idv.palatis.danboorugallery.defines.D;
-import tw.idv.palatis.danboorugallery.model.Host;
 import tw.idv.palatis.danboorugallery.model.Tag;
-import tw.idv.palatis.danboorugallery.siteapi.DanbooruAPI;
 import tw.idv.palatis.danboorugallery.siteapi.SiteAPI;
 import android.app.SearchManager;
 import android.content.ContentProvider;
@@ -68,13 +63,11 @@ public class TagProvider
 	}
 
 	SharedPreferences	preferences	= null;
-	SiteAPI			site_api	= null;
 
 	@Override
 	public boolean onCreate()
 	{
 		preferences = getContext().getSharedPreferences( D.SHAREDPREFERENCES_NAME, Context.MODE_PRIVATE );
-		site_api = new DanbooruAPI();
 		return true;
 	}
 
@@ -176,24 +169,9 @@ public class TagProvider
 		query = query.toLowerCase();
 		D.Log.i( "TagProvider::getSuggestions(): query = %s", query );
 
-		// get prefered host
-		int selected_host = preferences.getInt( "selected_host", 0 );
-		List < Host > hosts = null;
-		if (preferences.contains( "json_hosts" ))
-			try
-			{
-				hosts = D.HostsFromJSONArray( new JSONArray( preferences.getString( "json_hosts", "" ) ) );
-			}
-			catch (JSONException ex)
-			{
-				D.Log.wtf( ex );
-			}
-		Host host = null;
-		if (hosts != null)
-			host = hosts.get( selected_host );
-
-		site_api = SiteAPI.Factory.createFromString( host.url, host.api );
-		List < Tag > tags = site_api.fetchTagsIndex( 1, query, 300 );
+		if (SiteAPI.getInstance() == null)
+			SiteAPI.readPreference(preferences);
+		List < Tag > tags = SiteAPI.getInstance().fetchTagsIndex( 1, query, 300 );
 
 		List < ResultSet > results = new ArrayList < ResultSet >( tags.size() );
 		if (tags.size() > 0)

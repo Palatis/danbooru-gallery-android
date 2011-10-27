@@ -32,7 +32,6 @@ public class LazyPostFetcher
 {
 	private AsyncPostFetcher	fetcher		= null;
 	private URLEnclosure		enclosure	= null;
-	private SiteAPI			site_api	= null;
 	boolean						reached_end	= false;
 
 	public LazyPostFetcher()
@@ -43,24 +42,6 @@ public class LazyPostFetcher
 	public LazyPostFetcher(URLEnclosure e)
 	{
 		enclosure = e;
-	}
-
-	public boolean setSiteAPI(SiteAPI sapi)
-	{
-		if (site_api == null)
-		{
-			site_api = sapi;
-			return false;
-		}
-
-		boolean result = true;
-		result &= site_api.getClass().getName().equals( sapi.getClass().getName() );
-		result &= site_api.getSiteUrl().equals( sapi.getSiteUrl() );
-		result &= site_api.getApi() == sapi.getApi();
-		site_api = sapi;
-		if ( !result)
-			reached_end = false;
-		return !result;
 	}
 
 	public int getPage()
@@ -183,10 +164,12 @@ public class LazyPostFetcher
 					if (isCancelled())
 						break;
 
-					if (fetcher.site_api == null)
+
+					SiteAPI site_api = SiteAPI.getInstance();
+					if (site_api == null)
 						break;
 
-					List < Post > posts = fetcher.site_api.fetchPostsIndex( enclosure.page, enclosure.tags, enclosure.limit );
+					List < Post > posts = site_api.fetchPostsIndex( enclosure.page, enclosure.tags, enclosure.limit );
 					if (posts == null)
 						continue;
 					List < Post > filtered = new ArrayList < Post >( posts.size() );

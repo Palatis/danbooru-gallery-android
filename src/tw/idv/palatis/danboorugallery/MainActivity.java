@@ -265,31 +265,17 @@ public class MainActivity
 	{
 		adapter.setAggressive( preferences.getBoolean( "aggressive_prefetch", false ) );
 
-		if (preferences.contains( "json_hosts" ))
-			try
-			{
-				hosts = D.HostsFromJSONArray( new JSONArray( preferences.getString( "json_hosts", "" ) ) );
-			}
-			catch (JSONException ex)
-			{
-				D.Log.wtf( ex );
-			}
-		else
-			hosts = new ArrayList < Host >();
-
-		Host host = hosts.get( preferences.getInt( "selected_host", 0 ) );
-		String url = "http://konachan.com/";
-		String api = "Danbooru - JSON";
-		if (host != null)
+		try
 		{
-			url = host.url;
-			api = host.api;
+			hosts = D.HostsFromJSONArray( new JSONArray( preferences.getString( "json_hosts", "" ) ) );
+		}
+		catch (JSONException e)
+		{
+			hosts = new ArrayList < Host >();
 		}
 
-		D.Log.d( "using api: %s", api );
-
 		boolean reset = false;
-		reset |= fetcher.setSiteAPI( SiteAPI.Factory.createFromString( url, api ) );
+		reset |= !SiteAPI.readPreference( preferences );
 		reset |= fetcher.setRating( preferences.getString( "rating", "s" ) );
 		reset |= fetcher.setPageLimit( preferences.getInt( "page_limit", 16 ) );
 
