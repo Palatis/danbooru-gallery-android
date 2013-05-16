@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+	xmlns:android="http://schemas.android.com/apk/res/android" >
+
+	<item
+		android:id="@+id/view_menu_longclick_info"
+		android:title="@string/view_image_menu_info" />
+	<item
+		android:id="@+id/view_menu_longclick_tags"
+		android:title="@string/view_image_menu_tags" />
+	<item
+		android:id="@+id/view_menu_longclick_download"
+		android:title="@string/view_image_menu_download" />
+	<item
+		android:id="@+id/view_menu_longclick_back"
+		android:title="@string/view_image_longclick_back" />
+	<item
+		android:id="@+id/view_menu_longclick_cancel"
+		android:title="@android:string/cancel" />
+
+</menu>

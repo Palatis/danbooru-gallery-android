@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+** This file is part of Danbooru Gallery
+**
+** Copyright 2011
+**   - Victor Tseng <palatis@gmail.com>
+**
+** Danbooru Gallery is free software: you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** Danbooru Gallery is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License
+** along with Danbooru Gallery.  If not, see <http://www.gnu.org/licenses/>.
+**/
+-->
+<manifest
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	package="tw.idv.palatis.danboorugallery"
+	android:versionName="v0.1.3-26-gd2aa559"
+	android:versionCode="1" >
+
+	<uses-sdk android:minSdkVersion="10" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+	<application
+		android:icon="@drawable/icon"
+		android:label="@string/app_name" >
+
+		<activity
+			android:name="tw.idv.palatis.danboorugallery.MainActivity"
+			android:launchMode="singleTop"
+			android:label="@string/app_name"
+			android:theme="@android:style/Theme.NoTitleBar" >
+
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+
+			<intent-filter>
+				<action android:name="android.intent.action.SEARCH" />
+			</intent-filter>
+
+			<meta-data
+				android:name="android.app.searchable"
+				android:resource="@xml/searchable" />
+
+		</activity>
+
+		<activity
+			android:label="@string/app_name"
+			android:name="tw.idv.palatis.danboorugallery.ViewImageActivity"
+			android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+
+		<activity
+			android:label="@string/app_name"
+			android:name="tw.idv.palatis.danboorugallery.ViewImageInfoActivity"
+			android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+
+		<activity
+			android:label="@string/app_name_preferences"
+			android:name="tw.idv.palatis.danboorugallery.DanbooruGalleryPreferenceActivity"
+			android:screenOrientation="portrait" />
+
+		<provider
+			android:name=".TagProvider"
+			android:authorities="tw.idv.palatis.danboorugallery.TagProvider" />
+
+		<meta-data
+			android:name="android.app.default_searchable"
+			android:value=".MainActivity" />
+
+	</application>
+</manifest>

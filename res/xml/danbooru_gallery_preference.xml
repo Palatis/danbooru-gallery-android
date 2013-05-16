@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+** This file is part of Danbooru Gallery
+**
+** Copyright 2011
+**   - Victor Tseng <palatis@gmail.com>
+**
+** Danbooru Gallery is free software: you can redistribute it and/or modify
+** it under the terms of the GNU General Public License as published by
+** the Free Software Foundation, either version 3 of the License, or
+** (at your option) any later version.
+**
+** Danbooru Gallery is distributed in the hope that it will be useful,
+** but WITHOUT ANY WARRANTY; without even the implied warranty of
+** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+** GNU General Public License for more details.
+**
+** You should have received a copy of the GNU General Public License
+** along with Danbooru Gallery.  If not, see <http://www.gnu.org/licenses/>.
+**/
+-->
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android"
+>
+	<PreferenceCategory
+		android:key="preferences_category_hosts"
+		android:title="@string/preferences_category_hosts"
+	>
+		<ListPreference
+			android:key="preferences_hosts_select"
+			android:title="@string/preferences_hosts_select" />
+		<PreferenceScreen
+			android:title="@string/preferences_hosts_manage"
+			android:key="preferences_host_manage"
+			android:summary="@string/preferences_hosts_manage_description"
+		>
+			<PreferenceCategory
+				android:title="@string/preferences_hosts_manage_category_new"
+				android:key="preferences_hosts_manage_category_new"
+			>
+				<Preference
+					android:summary="@string/preferences_hosts_manage_new_description"
+					android:title="@string/preferences_hosts_manage_new"
+					android:key="preferences_hosts_manage_new" />
+			</PreferenceCategory>
+			<PreferenceCategory
+				android:key="preferences_hosts_manage_category_manage"
+				android:title="@string/preferences_hosts_manage_category_manage" />
+		</PreferenceScreen>
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:key="preferences_category_options"
+		android:title="@string/preferences_category_options"
+	>
+		<ListPreference
+			android:summary="@string/preferences_options_page_limit_description"
+			android:key="preferences_options_page_limit"
+			android:title="@string/preferences_options_page_limit"
+			android:entries="@array/preferences_options_page_limit"
+			android:entryValues="@array/preferences_options_page_limit_values"
+			android:defaultValue="16" />
+		<ListPreference
+			android:summary="@string/preferences_options_rating_description"
+			android:title="@string/preferences_options_rating"
+			android:key="preferences_options_rating"
+			android:entries="@array/preferences_options_ratings"
+			android:entryValues="@array/preferences_options_ratings_values"
+			android:defaultValue="s" />
+		<CheckBoxPreference
+			android:title="@string/preferences_options_aggressive_prefetch"
+			android:key="preferences_options_aggressive_prefetch"
+			android:summary="@string/preferences_options_aggressive_prefetch_description"
+		></CheckBoxPreference>
+		<CheckBoxPreference android:title="@string/preferences_options_high_quality_image" android:key="preferences_options_high_quality_image" android:summary="@string/preferences_options_high_quality_image_description"></CheckBoxPreference>
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:key="preferences_category_about"
+		android:title="@string/preferences_category_about"
+	>
+		<Preference
+			android:selectable="false"
+			android:key="preferences_about_version"
+			android:enabled="false"
+			android:title="@string/preferences_about_version"
+			android:order="0"
+			android:summary="@string/preferences_about_version_description"
+		></Preference>
+		<Preference
+			android:summary="@string/preferences_about_author"
+			android:title="@string/preferences_about_copyright"
+			android:key="preferences_about_copyright"
+			android:enabled="false"
+			android:selectable="false"
+			android:order="1" />
+		<Preference
+			android:summary="@string/preferences_about_translator_author"
+			android:title="@string/preferences_about_translator"
+			android:key="preferences_about_translator"
+			android:enabled="false"
+			android:selectable="false"
+			android:order="2" />
+		<Preference
+			android:summary="@string/preferences_about_license_description"
+			android:title="@string/preferences_about_license"
+			android:key="preferences_about_license"
+			android:order="3" />
+	</PreferenceCategory>
+</PreferenceScreen>
