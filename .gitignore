@@ -27,8 +27,10 @@ proguard.cfg
 #OSX
 .DS_Store
 
-#Gradle output
+#Gradle
 build/
+gradle/
+.gradle
 
-# backup directory
-bak
+#APK
+*.apk

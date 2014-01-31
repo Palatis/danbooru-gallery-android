@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!-- Danbooru Gallery Android - an danbooru-style imageboard browser -->
+<!--     Copyright (C) 2014  Victor Tseng -->
+<!-- -->
+<!--     This program is free software: you can redistribute it and/or modify -->
+<!--     it under the terms of the GNU General Public License as published by -->
+<!--     the Free Software Foundation, either version 3 of the License, or -->
+<!--     (at your option) any later version. -->
+<!-- -->
+<!--     This program is distributed in the hope that it will be useful, -->
+<!--     but WITHOUT ANY WARRANTY; without even the implied warranty of -->
+<!--     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the -->
+<!--     GNU General Public License for more details. -->
+<!-- -->
+<!--     You should have received a copy of the GNU General Public License -->
+<!--     along with this program. If not, see <http://www.gnu.org/licenses/> -->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<resources>
+    <string name="dialog_new_host_name">Booru Name:</string>
+    <string name="dialog_new_host_url">URL:</string>
+    <string name="dialog_new_host_login">Login:</string>
+    <string name="dialog_new_host_password">Password:</string>
+    <string name="dialog_new_host_siteapi">API: %1$s</string>
+    <string name="dialog_new_host_page_limit_strict">Page limit (strict):</string>
+    <string name="dialog_new_host_page_limit_relaxed">Page limit (relaxed):</string>
+    <!--<string name="dialog_new_host_save">Save</string>-->
+    <string name="dialog_delete_host_title">Delete this booru?</string>
+    <string name="dialog_delete_host_message">Name: %1$s (%4$s)\nHost: %2$s\nLogin: %3$s</string>
+    <string name="error_host_name_is_empty">Cannot create host with empty name.</string>
+</resources>

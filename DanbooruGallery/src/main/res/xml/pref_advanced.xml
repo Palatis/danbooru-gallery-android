@@ -1,0 +1,15 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:key="pref_async_image_loader_indicator"
+        android:title="@string/pref_title_async_image_loader_indicator"
+        android:summaryOn="@string/pref_description_image_loader_indicator_true"
+        android:summaryOff="@string/pref_description_image_loader_indicator_false"
+        android:defaultValue="false" />
+
+    <Preference
+        android:key="pref_clear_cache"
+        android:title="@string/pref_title_clear_cache"
+        android:summary="@string/pref_description_clear_cache_calculating" />
+
+</PreferenceScreen>
