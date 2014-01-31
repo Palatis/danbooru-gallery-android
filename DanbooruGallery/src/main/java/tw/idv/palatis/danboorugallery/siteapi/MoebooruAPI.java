@@ -204,7 +204,7 @@ public class MoebooruAPI
         if (!file_url_preview.startsWith("http"))
             file_url_preview = host.url + file_url_preview;
 
-        Date date = new Date(json.getInt(MoebooruPost.KEY_POST_CREATED_AT) * 1000);
+        Date date = new Date(json.getLong(MoebooruPost.KEY_POST_CREATED_AT) * 1000);
         return new MoebooruPost(
             host,
             json.getInt(MoebooruPost.KEY_POST_ID),
