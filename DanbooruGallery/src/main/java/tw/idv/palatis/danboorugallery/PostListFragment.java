@@ -529,28 +529,36 @@ public class PostListFragment
             @Override
             public void onChanged()
             {
-                Loader<Cursor> loader;
-
-                loader = getLoaderManager().getLoader(R.id.loader_post_ids);
-                if (loader == null)
-                    getLoaderManager().restartLoader(R.id.loader_post_ids, null, PostListFragment.this);
-                else
+                try
                 {
-                    loader.cancelLoad();
-                    loader.startLoading();
-                }
-
-                loader = getLoaderManager().getLoader(R.id.loader_search_tags);
-                if (loader == null)
-                    getLoaderManager().restartLoader(R.id.loader_search_tags, null, PostListFragment.this);
-                else
-                {
-                    if (loader.isStarted())
+                    Loader<Cursor> loader = getLoaderManager().getLoader(R.id.loader_post_ids);
+                    if (loader != null)
                     {
-                        loader.cancelLoad();
+                        if (loader.isStarted())
+                            loader.cancelLoad();
                         loader.startLoading();
                     }
                 }
+                catch (IllegalStateException ex)
+                {
+                    getLoaderManager().restartLoader(R.id.loader_post_ids, null, PostListFragment.this);
+                }
+
+                try
+                {
+                    Loader<Cursor> loader = getLoaderManager().getLoader(R.id.loader_search_tags);
+                    if (loader != null)
+                    {
+                        if (loader.isStarted())
+                            loader.cancelLoad();
+                        loader.startLoading();
+                    }
+                }
+                catch (IllegalStateException ex)
+                {
+                    getLoaderManager().restartLoader(R.id.loader_search_tags, null, PostListFragment.this);
+                }
+
                 super.onChanged();
             }
 
