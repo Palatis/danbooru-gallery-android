@@ -31,7 +31,9 @@ import android.os.CancellationSignal;
 import android.support.v4.view.ViewPager;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import tw.idv.palatis.danboorugallery.android.content.CustomTaskLoader;
@@ -59,9 +61,10 @@ public class PostDetailActivity
 
     private UiHider mUiHider;
     private ViewPager mViewPager;
-    private FrameLayout mControlsView;
+    private LinearLayout mControlsView;
     private PostDetailPagerAdapter mPagerAdapter;
     private TextView mInfoText;
+    private ImageButton mPlayPauseButton;
     private ViewPager.OnPageChangeListener mOnPageChangeListener =
         new ViewPager.OnPageChangeListener()
         {
@@ -91,6 +94,21 @@ public class PostDetailActivity
             {
             }
         };
+
+    private static final int AUTOPLAY_DELAY_MILLIS = 3000;
+
+    private Runnable mNextPageRunnable = new Runnable() {
+        @Override
+        public void run()
+        {
+            int next = mViewPager.getCurrentItem() + 1;
+            if (next >= mViewPager.getAdapter().getCount())
+                next = 0;
+            mViewPager.getAdapter().instantiateItem(mViewPager, next);
+            mViewPager.setCurrentItem(next, next != 0);
+            mViewPager.postDelayed(this, AUTOPLAY_DELAY_MILLIS);
+        }
+    };
 
     private DataSetObserver mPostsObserver = new DataSetObserver()
     {
@@ -160,6 +178,21 @@ public class PostDetailActivity
         mPagerAdapter.swapCursor(null);
     }
 
+    private boolean mIsAutoplaying = false;
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+
+        if (mIsAutoplaying)
+        {
+            mViewPager.removeCallbacks(mNextPageRunnable);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            mPlayPauseButton.setImageResource(android.R.drawable.ic_media_play);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -168,8 +201,31 @@ public class PostDetailActivity
         setupActionBar();
 
         mViewPager = (ViewPager) findViewById(R.id.post_detail_pager);
-        mControlsView = (FrameLayout) findViewById(R.id.post_detail_content_controls);
+        mControlsView = (LinearLayout) findViewById(R.id.post_detail_content_controls);
         mInfoText = (TextView) findViewById(R.id.post_detail_info);
+        mPlayPauseButton = (ImageButton) findViewById(R.id.post_detail_button_autoplay);
+
+        mPlayPauseButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                if (mIsAutoplaying = !mIsAutoplaying)
+                {
+                    mPlayPauseButton.setImageResource(android.R.drawable.ic_media_pause);
+                    mViewPager.postDelayed(mNextPageRunnable, AUTOPLAY_DELAY_MILLIS);
+                    mUiHider.hide();
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                }
+                else
+                {
+                    mPlayPauseButton.setImageResource(android.R.drawable.ic_media_play);
+                    mViewPager.removeCallbacks(mNextPageRunnable);
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                }
+            }
+        });
+        mPlayPauseButton.setImageResource(android.R.drawable.ic_media_play);
 
         PostsTable.registerDataSetObserver(mPostsObserver);
 

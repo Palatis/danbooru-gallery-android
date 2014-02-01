@@ -31,8 +31,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/post_detail_content_controls"
+        android:orientation="vertical"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -45,6 +46,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-    </FrameLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageButton
+                android:id="@+id/post_detail_button_autoplay"
+                android:layout_centerHorizontal="true"
+                android:padding="8dp"
+                android:src="@android:drawable/ic_media_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/post_detail_button_autoplay" />
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>
