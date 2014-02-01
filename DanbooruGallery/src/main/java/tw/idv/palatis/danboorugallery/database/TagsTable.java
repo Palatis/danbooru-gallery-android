@@ -18,9 +18,13 @@
 
 package tw.idv.palatis.danboorugallery.database;
 
+import android.content.ContentValues;
 import android.database.DataSetObservable;
 import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDoneException;
+import android.database.sqlite.SQLiteStatement;
+import android.text.TextUtils;
 
 import tw.idv.palatis.danboorugallery.model.Tag;
 
@@ -32,9 +36,67 @@ public class TagsTable
     private static SQLiteDatabase sDatabase;
     private static DataSetObservable sDataSetObservable = new DataSetObservable();
 
+    private static SQLiteStatement sIncreaseTagSearchCountStatement;
+    private static SQLiteStatement sGetTagSearchCountStatement;
+
     public static void init(SQLiteDatabase database)
     {
         sDatabase = database;
+        sIncreaseTagSearchCountStatement = sDatabase.compileStatement(
+            "UPDATE OR IGNORE " + Tag.MAIN_TABLE_NAME + " " +
+            "SET " + Tag.KEY_TAG_SEARCH_COUNT + " = " + Tag.KEY_TAG_SEARCH_COUNT + " + 1 " +
+            "WHERE " + Tag.KEY_TAG_HASHCODE + " == ?;"
+        );
+        sGetTagSearchCountStatement = sDatabase.compileStatement(
+            "SELECT " + Tag.KEY_TAG_SEARCH_COUNT + " " +
+            "FROM " + Tag.MAIN_TABLE_NAME + " " +
+            "WHERE " + Tag.KEY_TAG_HASHCODE + " == ? " +
+            "LIMIT 1;"
+        );
+    }
+
+    public static int increaseTagsSearchCount(String[] tags)
+    {
+        int n = 0;
+        sDatabase.beginTransactionNonExclusive();
+        try
+        {
+            for (String tag : tags)
+            {
+                if (TextUtils.isEmpty(tag))
+                    continue;
+
+                // try insert, ignore on fail (tag already exists)
+                ContentValues values = new ContentValues(2);
+                values.put(Tag.KEY_TAG_HASHCODE, tag.hashCode());
+                values.put(Tag.KEY_TAG_NAME, tag);
+                sDatabase.insertWithOnConflict(Tag.MAIN_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+
+                // increase the search_count by 1
+                sIncreaseTagSearchCountStatement.clearBindings();
+                sIncreaseTagSearchCountStatement.bindLong(1, tag.hashCode());
+                n += sIncreaseTagSearchCountStatement.executeUpdateDelete();
+            }
+            sDatabase.setTransactionSuccessful();
+        }
+        finally
+        {
+            sDatabase.endTransaction();
+        }
+        return n;
+    }
+
+    public static int getTagSearchCount(Tag tag)
+    {
+        try
+        {
+            sGetTagSearchCountStatement.clearBindings();
+            sGetTagSearchCountStatement.bindLong(1, tag.name.hashCode());
+            return (int) sGetTagSearchCountStatement.simpleQueryForLong();
+        }
+        catch (SQLiteDoneException ignored) { }
+
+        return 0; // return 0 when tag doesn't exists in the database.
     }
 
     public static void registerDataSetObserver(DataSetObserver observer)

@@ -46,7 +46,7 @@ public class DanbooruGalleryDatabase
         PostTagsView.init(db);
     }
 
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "DanbooruGalleryDatabase.db";
 
     // Persistent
@@ -82,7 +82,8 @@ public class DanbooruGalleryDatabase
         "CREATE TABLE IF NOT EXISTS " + Tag.MAIN_TABLE_NAME + " (" +
             Tag.KEY_TAG_DATABASE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
             Tag.KEY_TAG_HASHCODE + " INTEGER UNIQUE NOT NULL," +
-            Tag.KEY_TAG_NAME + " TEXT NOT NULL" +
+            Tag.KEY_TAG_NAME + " TEXT NOT NULL," +
+            Tag.KEY_TAG_SEARCH_COUNT + " INTEGER NOT NULL" +
         ");";
     private static final String SQL_CREATE_TABLE_POST_TAGS_LINK =
         "CREATE TABLE IF NOT EXISTS " + PostTagsLinkTable.TABLE_NAME + " (" +
@@ -101,6 +102,12 @@ public class DanbooruGalleryDatabase
             PostTagsLinkTable.MAIN_TABLE_NAME + "." + PostTagsLinkTable.KEY_POST_DATABASE_ID + " == " + Post.MAIN_TABLE_NAME + "." + Post.KEY_POST_DATABASE_ID + " AND " +
             PostTagsLinkTable.MAIN_TABLE_NAME + "." + PostTagsLinkTable.KEY_TAG_HASHCODE + " == " + Tag.MAIN_TABLE_NAME + "." + Tag.KEY_TAG_HASHCODE +
         ";";
+    private static final String SQL_CREATE_INDEX_TAGS_HASHCODE =
+        "CREATE INDEX IF NOT EXISTS " +
+            Tag.MAIN_TABLE_NAME + "__" + Tag.KEY_TAG_HASHCODE + " " +
+        "ON " + Tag.TABLE_NAME + " (" +
+            Tag.KEY_TAG_HASHCODE +
+        ");";
     private static final String SQL_CREATE_INDEX_POSTS_CREATED_AT =
         "CREATE INDEX IF NOT EXISTS " +
             Post.MAIN_TABLE_NAME + "__" + Post.KEY_POST_CREATED_AT + " " +
@@ -163,6 +170,8 @@ public class DanbooruGalleryDatabase
             db.execSQL(SQL_CREATE_TABLE_POST_TAGS_LINK);
             Log.v(TAG, "Creating: " + SQL_CREATE_VIEW_POST_TAGS);
             db.execSQL(SQL_CREATE_VIEW_POST_TAGS);
+            Log.v(TAG, "Creating: " + SQL_CREATE_INDEX_TAGS_HASHCODE);
+            db.execSQL(SQL_CREATE_INDEX_TAGS_HASHCODE);
             Log.v(TAG, "Creating: " + SQL_CREATE_INDEX_POSTS_CREATED_AT);
             db.execSQL(SQL_CREATE_INDEX_POSTS_CREATED_AT);
             db.setTransactionSuccessful();
@@ -173,11 +182,17 @@ public class DanbooruGalleryDatabase
         }
     }
 
+    private static final String SQL_UPGRADE_TO_V4 =
+        "ALTER TABLE " + Tag.MAIN_TABLE_NAME + " " +
+        "ADD COLUMN " + Tag.KEY_TAG_SEARCH_COUNT + " INTEGER NOT NULL DEFAULT 0;";
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
         Log.v(TAG, String.format("Upgrading from version %d to %d.", oldVersion, newVersion));
         onCreate(db);
+        if (oldVersion < 4)
+            db.execSQL(SQL_UPGRADE_TO_V4);
     }
 
     @Override

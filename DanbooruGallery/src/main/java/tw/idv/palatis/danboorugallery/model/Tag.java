@@ -40,6 +40,7 @@ public class Tag
 //    public static final String KEY_TAG_IS_LOCKED = "is_locked";     // "is_locked":false,
     public static final String KEY_TAG_NAME = "name";               // "name":"touhou",
     public static final String KEY_TAG_POST_COUNT = "post_count";   // "post_count":376077,
+    public static final String KEY_TAG_SEARCH_COUNT = "search_count";
 //    public static final String KEY_TAG_CREATED_AT = "created_at";   // "created":"2013-02-27T22:33:43-05:00",
 //    public static final String KEY_TAG_UPDATED_AT = "updated_at";   // "updated":"2014-01-22T01:12:34-05:00"
 
@@ -48,6 +49,7 @@ public class Tag
 //    public boolean is_locked;
     public String name;
     public int post_count;
+    public int search_count;
 //    public Date created;
 //    public Date updated;
     public List<Host> hosts = new ArrayList<>();
