@@ -469,7 +469,8 @@ public class TileBitmapDrawable extends Drawable {
                 }
 
                 synchronized(sBitmapCacheLock) {
-                    sBitmapCache.put(tile.getKey(), bitmap);
+                    try { sBitmapCache.put(tile.getKey(), bitmap); }
+                    catch (NullPointerException ignored) { }
                 }
             }
         }
