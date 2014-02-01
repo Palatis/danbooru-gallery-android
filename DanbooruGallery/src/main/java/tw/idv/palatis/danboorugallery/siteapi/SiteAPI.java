@@ -80,12 +80,13 @@ public abstract class SiteAPI
 
     /**
      * fetch a bunch of posts
+     *
      * @param host         the host
      * @param startFrom    the number of post to skip
      * @param tags         filtered tags
      * @return             a list of posts
      */
-    public abstract List<Post> fetchPosts(Host host, int startFrom, String tags) throws SiteAPIException;
+    public abstract List<Post> fetchPosts(Host host, int startFrom, String[] tags) throws SiteAPIException;
 
     /**
      * search for tags

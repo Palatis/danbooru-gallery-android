@@ -97,7 +97,7 @@ public class DanbooruLegacyAPI
     private static final int _BUFFER_SIZE = 8192;
 
     @Override
-    public List<Post> fetchPosts(Host host, int startFrom, String tags)
+    public List<Post> fetchPosts(Host host, int startFrom, String[] tags)
         throws SiteAPIException
     {
         HttpURLConnection connection = null;
@@ -106,7 +106,7 @@ public class DanbooruLegacyAPI
             int limit = host.getPageLimit(DanbooruGallerySettings.getBandwidthUsageType());
             int page = startFrom / limit + 1;
 
-            String url = String.format(URL_POSTS_FORMAT, host.url, page, URLEncoder.encode(tags, "UTF-8"), limit);
+            String url = String.format(URL_POSTS_FORMAT, host.url, page, URLEncoder.encode(TextUtils.join(" ", tags), "UTF-8"), limit);
             Log.v(TAG, String.format("URL: %s", url));
             connection = SiteAPI.openConnection(new URL(url));
             if (!host.getLogin().isEmpty())

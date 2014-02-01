@@ -129,7 +129,7 @@ public class SiteSession
 
         lock = sFilterTagsLock.readLock();
         lock.lock();
-        String filterTags = sFilterTags;
+        String[] filterTags = TextUtils.split(sFilterTags, " ");
         lock.unlock();
 
         PostsTable.rebuildTempTable(hosts, filterTags);
@@ -341,7 +341,7 @@ public class SiteSession
 
                 lock = sFilterTagsLock.readLock();
                 lock.lock();
-                String filterTags = sFilterTags;
+                String[] filterTags = TextUtils.split(sFilterTags, " ");
                 lock.unlock();
 
                 PostsTable.rebuildTempTable(hosts, filterTags);
@@ -450,7 +450,7 @@ public class SiteSession
 
             lock = sFilterTagsLock.readLock();
             lock.lock();
-            String filterTags = sFilterTags;
+            String[] filterTags = TextUtils.split(sFilterTags, " ");
             lock.unlock();
 
             for (Host host : hosts)

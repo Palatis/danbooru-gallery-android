@@ -23,7 +23,6 @@ import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
-import android.text.TextUtils;
 import android.util.SparseIntArray;
 
 import java.util.ArrayList;
@@ -72,7 +71,7 @@ public class PostsTable
     public static void backupRestored()
     {
         deleteAllPosts();
-        rebuildTempTable(new ArrayList<Host>(), "");
+        rebuildTempTable(new ArrayList<Host>(), new String[0]);
     }
 
     // posts related
@@ -278,9 +277,8 @@ public class PostsTable
         sDataSetObservable.notifyInvalidated();
     }
 
-    public static void rebuildTempTable(List<Host> hosts, /* String selection, String[] selectionArgs, */ String strtags)
+    public static void rebuildTempTable(List<Host> hosts, /* String selection, String[] selectionArgs, */ String[] tags)
     {
-        String[] tags = TextUtils.split(strtags.trim(), " ");
         List<String> args = new ArrayList<>();
         StringBuilder builder = new StringBuilder();
 

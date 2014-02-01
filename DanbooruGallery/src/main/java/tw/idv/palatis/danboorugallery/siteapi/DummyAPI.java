@@ -63,7 +63,7 @@ class DummyAPI
     }
 
     @Override
-    public List<Post> fetchPosts(Host host, int startFrom, String tags)
+    public List<Post> fetchPosts(Host host, int startFrom, String[] tags)
     {
         return Collections.emptyList();
     }
