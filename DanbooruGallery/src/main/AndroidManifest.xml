@@ -27,9 +27,13 @@
     <application
         android:name="tw.idv.palatis.danboorugallery.DanbooruGalleryApplication"
         android:allowBackup="true"
+        android:backupAgent="tw.idv.palatis.danboorugallery.DanbooruGalleryBackupHelper"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true">
+        <meta-data
+            android:name="com.google.android.backup.api_key"
+            android:value="AEdPqrEAAAAIPLTPIDI9T9x3D8YkWWl1mJWvUiw1vrA6pqqI8Q" />
         <activity
             android:name=".PostListActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
