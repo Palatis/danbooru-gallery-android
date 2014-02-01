@@ -25,4 +25,11 @@
         android:summaryOff="@string/pref_description_strict_bandwidth_usage_false"
         android:defaultValue="true" />
 
+    <CheckBoxPreference
+        android:key="pref_aggressive_prefetch_preview"
+        android:title="@string/pref_title_aggressive_prefetch_preview"
+        android:summaryOn="@string/pref_description_aggressive_prefetch_preview_true"
+        android:summaryOff="@string/pref_description_aggressive_prefetch_preview_false"
+        android:defaultValue="false" />
+
 </PreferenceScreen>

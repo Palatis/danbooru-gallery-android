@@ -48,6 +48,10 @@
     <string name="pref_description_strict_bandwidth_usage_true">Enforced bandwidth limit, won\'t push that hard.</string>
     <string name="pref_description_strict_bandwidth_usage_false">Relaxed bandwidth usage, try hard to stay in sync with upstream.</string>
 
+    <string name="pref_title_aggressive_prefetch_preview">Aggressively prefetch preview image</string>
+    <string name="pref_description_aggressive_prefetch_preview_true">Prefetch preview images</string>
+    <string name="pref_description_aggressive_prefetch_preview_false">Don\'t prefetch preview images</string>
+
     <string name="pref_header_advanced">Advanced</string>
 
     <string name="pref_title_async_image_loader_indicator">Async image loader indicator</string>
