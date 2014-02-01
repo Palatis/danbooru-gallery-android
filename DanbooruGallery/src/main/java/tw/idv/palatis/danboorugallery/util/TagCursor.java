@@ -91,11 +91,13 @@ public class TagCursor
             case 0: // Tag.KEY_TAG_DATABASE_ID
                 if (mPos <= Short.MAX_VALUE)
                     return (short)mPos;
+                break;
             case 1: // Tag.KEY_TAG_ID
             {
                 int id = mTags.get(mPos).id;
                 if (id <= Short.MAX_VALUE)
                     return (short)id;
+                break;
             }
             // case 2: // Tag.KEY_TAG_NAME
             case 3: // Tag.KEY_TAG_POST_COUNT
@@ -103,12 +105,14 @@ public class TagCursor
                 int post_count = mTags.get(mPos).post_count;
                 if (post_count <= Short.MAX_VALUE)
                     return (short)post_count;
+                break;
             }
             case 4: // Tag.KEY_TAG_SEARCH_COUNT
             {
                 int search_count = mTags.get(mPos).search_count;
                 if (search_count <= Short.MAX_VALUE)
                     return (short)search_count;
+                break;
             }
         }
         throw new IllegalArgumentException("Cannot convert column " + index + " to short.");
