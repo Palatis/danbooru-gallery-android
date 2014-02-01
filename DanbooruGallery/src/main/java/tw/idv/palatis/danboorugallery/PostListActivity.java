@@ -251,8 +251,10 @@ public class PostListActivity
             @Override
             public void bindView(View view, Context context, Cursor cursor)
             {
-                int host_id = cursor.getInt(HostsTable.INDEX_HOST_DATABASE_ID);
-                Host host = SiteSession.getHostById(host_id);
+                Host host = SiteSession.getHostById(cursor.getInt(HostsTable.INDEX_HOST_DATABASE_ID));
+                if (host == null)
+                    return;
+
                 ViewHolder holder = (ViewHolder)view.getTag(R.id.view_tag_view_holder);
 
                 holder.host_id = host.id;
