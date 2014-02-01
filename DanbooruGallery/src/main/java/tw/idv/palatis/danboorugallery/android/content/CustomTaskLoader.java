@@ -123,10 +123,10 @@ public abstract class CustomTaskLoader<T>
     @Override
     protected void onStartLoading()
     {
-        if (mResult != null)
-            deliverResult(mResult);
         if (takeContentChanged() || mResult == null)
             forceLoad();
+        else
+            deliverResult(mResult);
     }
 
     /**
