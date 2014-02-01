@@ -65,7 +65,9 @@
     <string name="api_danboorulegacy_post_description">From: %1$s (%3$s)\n# %4$d (%13$d) [%9$s]\nSize: %5$d x %6$d\nBy: %10$d\nCreated: %7$s\nMD5: %11$s\nFormat: %12$s</string>
 
     <!-- 1. SiteAPI.getName() -->
+    <string name="dialog_error_siteapi_noapi">Unknown Error</string>
     <string name="dialog_error_siteapi">Error from %1$s</string>
+    <string name="dialog_error_cause">Cause:</string>
     <string name="dialog_error_url">URL:</string>
     <string name="dialog_error_message">Message:</string>
     <string name="dialog_error_help">Why am I seeing this message?\nhttp://code.google.com/p/danbooru-gallery-android/wiki/FrequentlyAskedQuestions</string>

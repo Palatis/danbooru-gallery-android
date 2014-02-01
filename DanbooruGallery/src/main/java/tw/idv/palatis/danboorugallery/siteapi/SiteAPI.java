@@ -423,32 +423,47 @@ public abstract class SiteAPI
     public static class SiteAPIException
         extends IOException
     {
+        protected final int mResponseCode;
+        protected final String mResponseMessage;
+        protected final SiteAPI mSiteAPI;
+        protected final String mUrl;
+        protected final String mBody;
+
         public SiteAPIException()
         {
+            this("");
         }
 
         public SiteAPIException(String message)
         {
-            super(message);
+            this(message, null);
+        }
+
+        public SiteAPIException(Throwable cause)
+        {
+            this("", cause);
         }
 
         public SiteAPIException(String message, Throwable cause)
         {
             super(message, cause);
-        }
 
-        public SiteAPIException(Throwable cause)
-        {
-            super(cause);
+            mSiteAPI = null;
+            mResponseCode = -1;
+            mResponseMessage = mUrl = mBody = "";
         }
 
         public SiteAPIException(SiteAPI api, HttpURLConnection connection, Throwable cause)
         {
             super(cause);
             mSiteAPI = api;
+            int responseCode = -1;
+            String responseMessage = "", url = "", body = "";
             if (connection != null)
             {
-                mUrl = connection.getURL().toString();
+                url = connection.getURL().toString();
+                try { responseCode = connection.getResponseCode(); } catch (IOException ignore) { }
+                try { responseMessage = connection.getResponseMessage(); } catch (IOException ignore) { }
                 try
                 {
                     Reader input = new BufferedReader(new InputStreamReader(connection.getErrorStream(), "UTF-8"));
@@ -457,20 +472,40 @@ public abstract class SiteAPI
                     for (int count = input.read(buffer);count > 0;count = input.read(buffer))
                         output.write(buffer, 0, count);
 
-                    mBody = output.toString();
+                    body = output.toString();
                 }
-                catch (IOException ignored) { }
+                catch (NullPointerException | IOException ignored) { }
             }
+            mUrl = url;
+            mBody = body;
+            mResponseCode = responseCode;
+            mResponseMessage = responseMessage;
         }
-
-        protected SiteAPI mSiteAPI;
-        protected String mUrl;
-        protected String mBody;
 
         @Override
         public String getMessage()
         {
-            return mSiteAPI.getName() + " [" + mUrl + "]: " + mBody;
+            if (mSiteAPI == null)
+                return super.getMessage();
+            return mSiteAPI.getName() + " [" + mUrl + "]: " + mResponseCode + " " + mResponseMessage + ": " + mBody;
+        }
+
+        @Override
+        public String getLocalizedMessage()
+        {
+            if (mSiteAPI == null)
+                return super.getLocalizedMessage();
+            return mSiteAPI.getName() + " [" + mUrl + "]: " + mResponseCode + " " + mResponseMessage + ": " + mBody;
+        }
+
+        public int getResponseCode()
+        {
+            return mResponseCode;
+        }
+
+        public String getResponseMessage()
+        {
+            return mResponseMessage;
         }
 
         public SiteAPI getSiteAPI()

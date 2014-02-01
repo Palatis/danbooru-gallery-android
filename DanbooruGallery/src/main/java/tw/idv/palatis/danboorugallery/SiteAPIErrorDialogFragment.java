@@ -37,6 +37,7 @@ public class SiteAPIErrorDialogFragment
     public static final String TAG = "SiteAPIErrorDialogFragment";
 
     public static final String KEY_TITLE = "title";
+    public static final String KEY_CAUSE = "cause";
     public static final String KEY_URL = "url";
     public static final String KEY_MESSAGE = "message";
 
@@ -52,7 +53,8 @@ public class SiteAPIErrorDialogFragment
         mSiteAPIException = exception;
     }
 
-    private String mTitle;
+    private String mTitle = "";
+    private TextView mCauseText;
     private TextView mUrlText;
     private TextView mMessageText;
 
@@ -61,19 +63,25 @@ public class SiteAPIErrorDialogFragment
     {
         View view = inflater.inflate(R.layout.fragment_dialog_error_siteapi, container);
 
+        mCauseText = (TextView) view.findViewById(R.id.text_cause);
         mUrlText = (TextView) view.findViewById(R.id.text_url);
-        mMessageText = (TextView) view.findViewById(R.id.text_messgae);
+        mMessageText = (TextView) view.findViewById(R.id.text_message);
 
         if (savedInstanceState != null)
         {
             getDialog().setTitle(savedInstanceState.getString(KEY_TITLE));
+            mCauseText.setText(savedInstanceState.getString(KEY_CAUSE));
             mUrlText.setText(savedInstanceState.getString(KEY_URL));
             mMessageText.setText(savedInstanceState.getString(KEY_MESSAGE));
         }
         else if (mSiteAPIException != null)
         {
-            mTitle = getResources().getString(R.string.dialog_error_siteapi, mSiteAPIException.getSiteAPI().getName());
+            if (mSiteAPIException.getSiteAPI() != null)
+                mTitle = getResources().getString(R.string.dialog_error_siteapi, mSiteAPIException.getSiteAPI().getName());
+            else
+                mTitle = getResources().getString(R.string.dialog_error_siteapi_noapi);
             getDialog().setTitle(mTitle);
+            mCauseText.setText(mSiteAPIException.getCause().getClass().getSimpleName());
             mUrlText.setText(mSiteAPIException.getUrl());
             mMessageText.setText(mSiteAPIException.getBody());
         }
@@ -99,13 +107,18 @@ public class SiteAPIErrorDialogFragment
         if (mSiteAPIException == null)
         {
             outState.putString(KEY_TITLE, mTitle);
+            outState.putString(KEY_CAUSE, mCauseText.getText().toString());
             outState.putString(KEY_URL, mUrlText.getText().toString());
             outState.putString(KEY_MESSAGE, mMessageText.getText().toString());
         }
         else
         {
-            outState.putString(KEY_TITLE, getResources().getString(
-                R.string.dialog_error_siteapi, mSiteAPIException.getSiteAPI().getName()));
+            if (mSiteAPIException.getSiteAPI() != null)
+                outState.putString(KEY_TITLE, getResources().getString(
+                    R.string.dialog_error_siteapi, mSiteAPIException.getSiteAPI().getName()));
+            else
+                outState.putString(KEY_TITLE, getResources().getString(R.string.dialog_error_siteapi_noapi));
+            outState.putString(KEY_CAUSE, mSiteAPIException.getCause().getClass().getSimpleName());
             outState.putString(KEY_URL, mSiteAPIException.getUrl());
             outState.putString(KEY_MESSAGE, mSiteAPIException.getBody());
         }

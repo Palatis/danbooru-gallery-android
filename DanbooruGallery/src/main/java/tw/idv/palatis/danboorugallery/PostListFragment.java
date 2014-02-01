@@ -295,8 +295,13 @@ public class PostListFragment
         @Override
         public void onError(SiteAPI.SiteAPIException error)
         {
-            DialogFragment dialog = new SiteAPIErrorDialogFragment(error);
-            dialog.show(getFragmentManager(), "SiteAPIErrorDialog");
+            try
+            {
+                DialogFragment dialog = new SiteAPIErrorDialogFragment(error);
+                dialog.show(getFragmentManager(), "SiteAPIErrorDialog");
+            }
+            // cannot show dialog if the app is not in foreground.
+            catch (IllegalStateException ignored) { }
         }
     };
 

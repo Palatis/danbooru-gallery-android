@@ -33,6 +33,27 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <!-- cause -->
+            <TextView
+                android:textAppearance="?android:textAppearanceMedium"
+                android:text="@string/dialog_error_cause"
+                android:gravity="center_vertical"
+                android:paddingRight="?android:listPreferredItemPaddingRight"
+                android:paddingLeft="?android:listPreferredItemPaddingLeft"
+                android:minHeight="?android:listPreferredItemHeightSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/text_cause"
+                android:paddingRight="?android:listPreferredItemPaddingRight"
+                android:paddingLeft="?android:listPreferredItemPaddingLeft"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textIsSelectable="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <!-- url -->
             <TextView
                 android:textAppearance="?android:textAppearanceMedium"
                 android:text="@string/dialog_error_url"
@@ -52,6 +73,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
+            <!-- message -->
             <TextView
                 android:textAppearance="?android:textAppearanceMedium"
                 android:text="@string/dialog_error_message"
@@ -63,7 +85,7 @@
                 android:layout_height="wrap_content" />
 
             <TextView
-                android:id="@+id/text_messgae"
+                android:id="@+id/text_message"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:gravity="center_vertical"
                 android:paddingRight="?android:listPreferredItemPaddingRight"
@@ -72,6 +94,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
+            <!-- help -->
             <TextView
                 android:autoLink="web"
                 android:text="@string/dialog_error_help"
