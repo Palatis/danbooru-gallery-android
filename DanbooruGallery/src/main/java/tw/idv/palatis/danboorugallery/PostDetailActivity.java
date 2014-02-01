@@ -102,7 +102,10 @@ public class PostDetailActivity
             int next = mViewPager.getCurrentItem() + 1;
             if (next >= mViewPager.getAdapter().getCount())
                 next = 0;
-            mViewPager.getAdapter().instantiateItem(mViewPager, next);
+            int nextnext = next + 1;
+            if (nextnext >= mViewPager.getAdapter().getCount())
+                nextnext = 0;
+            mViewPager.getAdapter().instantiateItem(mViewPager, nextnext);
             mViewPager.setCurrentItem(next, next != 0);
             mViewPager.postDelayed(this, DanbooruGallerySettings.getAutoplayDelay());
         }
