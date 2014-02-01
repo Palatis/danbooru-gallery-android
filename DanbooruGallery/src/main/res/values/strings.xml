@@ -41,9 +41,9 @@
     <string name="error_nomedia_create_failed">Cannot create .nomedia file, cache directory might populate your gallery badly.</string>
 
     <string name="tags_search_hint">Search for tags...</string>
-    <!-- 1: id, 2: name, 3: post_count, 4: hosts -->
+    <!-- 1: id, 2: name, 3: post_count, 4: search_count, 5: hosts -->
     <string name="tags_search_item_title">%2$s (%3$d)</string>
-    <string name="tags_search_item_summary">Exists in: %4$s</string>
+    <string name="tags_search_item_summary">Exists in: %5$s\nSearched %4$d times.</string>
     <string name="tags_search_item_host_separator">, </string>
     <string name="menu_post_list_filters">Filters</string>
     <string name="pref_title_filter_rating_questionable">Questionable</string>

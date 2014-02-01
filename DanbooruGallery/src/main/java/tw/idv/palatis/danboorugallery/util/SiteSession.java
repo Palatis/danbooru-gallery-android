@@ -37,6 +37,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import tw.idv.palatis.danboorugallery.DanbooruGallerySettings;
 import tw.idv.palatis.danboorugallery.database.HostsTable;
 import tw.idv.palatis.danboorugallery.database.PostsTable;
+import tw.idv.palatis.danboorugallery.database.TagsTable;
 import tw.idv.palatis.danboorugallery.model.Host;
 import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.model.Tag;
@@ -303,6 +304,9 @@ public class SiteSession
         for (int i = allTags.size() - 1;i >= 0;--i)
             tags.add(allTags.valueAt(i));
 
+        for (Tag tag : tags)
+            tag.search_count = TagsTable.getTagSearchCount(tag);
+
         // TODO: support different comparators
         Collections.sort(tags, new Comparator<Tag>()
         {
@@ -355,6 +359,7 @@ public class SiteSession
         lock.lock();
         sFilterTags = tags;
         lock.unlock();
+        TagsTable.increaseTagsSearchCount(TextUtils.split(sFilterTags, " "));
         sRebuildTempPostsTableExecutor.execute(sRebuildTempPostsTableRunnable);
     }
 

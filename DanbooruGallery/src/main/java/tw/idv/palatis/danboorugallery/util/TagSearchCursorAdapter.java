@@ -85,7 +85,7 @@ public class TagSearchCursorAdapter
         sb.delete(sb.length() - sHostSeparator.length(), sb.length());
         String hosts = sb.toString();
 
-        holder.title.setText(String.format(sItemTitle, tag.id, tag.name, tag.post_count, hosts));
-        holder.summary.setText(String.format(sItemSummary, tag.id, tag.name, tag.post_count, hosts));
+        holder.title.setText(String.format(sItemTitle, tag.id, tag.name, tag.post_count, tag.search_count, hosts));
+        holder.summary.setText(String.format(sItemSummary, tag.id, tag.name, tag.post_count, tag.search_count, hosts));
     }
 }

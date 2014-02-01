@@ -33,7 +33,9 @@ public class TagCursor
     private static final String[] sColumns = new String[] {
         Tag.KEY_TAG_DATABASE_ID,
         Tag.KEY_TAG_ID,
-        Tag.KEY_TAG_NAME, Tag.KEY_TAG_POST_COUNT,
+        Tag.KEY_TAG_NAME,
+        Tag.KEY_TAG_POST_COUNT,
+        Tag.KEY_TAG_SEARCH_COUNT,
     };
 
     private List<Tag> mTags = Collections.emptyList();
@@ -75,6 +77,8 @@ public class TagCursor
                 return mTags.get(mPos).name;
             case 3: // Tag.KEY_TAG_POST_COUNT
                 return Integer.toString(mTags.get(mPos).post_count);
+            case 4: // Tag.KEY_TAG_SEARCH_COUNT
+                return Integer.toString(mTags.get(mPos).search_count);
         }
         throw new IllegalArgumentException("Column " + index + " is not a String.");
     }
@@ -100,6 +104,12 @@ public class TagCursor
                 if (post_count <= Short.MAX_VALUE)
                     return (short)post_count;
             }
+            case 4: // Tag.KEY_TAG_SEARCH_COUNT
+            {
+                int search_count = mTags.get(mPos).search_count;
+                if (search_count <= Short.MAX_VALUE)
+                    return (short)search_count;
+            }
         }
         throw new IllegalArgumentException("Cannot convert column " + index + " to short.");
     }
@@ -116,6 +126,8 @@ public class TagCursor
             // case 2: // Tag.KEY_TAG_NAME
             case 3: // Tag.KEY_TAG_POST_COUNT
                 return mTags.get(mPos).post_count;
+            case 4: // Tag.KEY_TAG_SEARCH_COUNT
+                return mTags.get(mPos).search_count;
         }
         throw new IllegalArgumentException("Cannot get column " + index + " is an integer type.");
     }
@@ -132,6 +144,8 @@ public class TagCursor
             // case 2: // Tag.KEY_TAG_NAME
             case 3: // Tag.KEY_TAG_POST_COUNT
                 return mTags.get(mPos).post_count;
+            case 4: // Tag.KEY_TAG_SEARCH_COUNT
+                return mTags.get(mPos).search_count;
         }
         throw new IllegalArgumentException("Cannot get column " + index + " is a long type.");
     }
