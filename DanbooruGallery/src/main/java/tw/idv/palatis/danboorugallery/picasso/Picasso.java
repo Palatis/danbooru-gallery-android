@@ -52,6 +52,7 @@ public class Picasso
 
     private static Downloader sDownloader = null;
     private static Cache sMemCache = null;
+    private static com.squareup.picasso.Picasso sInstancePrefetch = null;
     private static com.squareup.picasso.Picasso sInstancePreview = null;
     private static com.squareup.picasso.Picasso sInstance = null;
 
@@ -61,7 +62,10 @@ public class Picasso
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
             {
-                sInstance.setDebugging(DanbooruGallerySettings.getShowAsyncImageLoaderIndicator());
+                boolean debugging = DanbooruGallerySettings.getShowAsyncImageLoaderIndicator();
+                sInstancePrefetch.setDebugging(debugging);
+                sInstancePreview.setDebugging(debugging);
+                sInstance.setDebugging(debugging);
             }
         };
 
@@ -73,6 +77,13 @@ public class Picasso
         File cache = _createDefaultCacheDir(context);
         sDownloader = new OkHttpRefererDownloader(cache, calculateDiskCacheSize(cache));
         sMemCache = new LruCache(_calculateMemoryCacheSize(context));
+
+        sInstancePrefetch = new com.squareup.picasso.Picasso.Builder(context)
+            .memoryCache(sMemCache)
+            .downloader(sDownloader)
+            .executor(Executors.newSingleThreadExecutor())
+            .debugging(DanbooruGallerySettings.getShowAsyncImageLoaderIndicator())
+            .build();
 
         sInstancePreview = new com.squareup.picasso.Picasso.Builder(context)
             .memoryCache(sMemCache)
@@ -99,6 +110,12 @@ public class Picasso
     public static com.squareup.picasso.Picasso withPreview()
     {
         return sInstancePreview;
+    }
+
+
+    public static com.squareup.picasso.Picasso withPrefetch()
+    {
+        return sInstancePrefetch;
     }
 
     public static Downloader getDownloader()
