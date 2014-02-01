@@ -73,7 +73,6 @@ public class SiteSession
                             {
                                 rebuildHosts();
                                 rebuildTempTable();
-                                fetchPosts(0, null);
                             }
                         }.start();
                     }
@@ -107,7 +106,6 @@ public class SiteSession
                                 public void run()
                                 {
                                     rebuildTempTable();
-                                    fetchPosts(0, null);
                                 }
                             }.start();
                         }
@@ -118,7 +116,6 @@ public class SiteSession
                 rebuildFilterQuery();
                 rebuildHosts();
                 rebuildTempTable();
-                fetchPosts(0, null);
             }
         }.start();
     }

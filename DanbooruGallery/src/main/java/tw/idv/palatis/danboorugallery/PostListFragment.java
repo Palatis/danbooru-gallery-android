@@ -528,6 +528,7 @@ public class PostListFragment
             {
                 getLoaderManager().restartLoader(R.id.loader_post_ids, null, PostListFragment.this);
                 getLoaderManager().restartLoader(R.id.loader_search_tags, null, PostListFragment.this);
+                SiteSession.fetchPosts(0, mPostLoadingCallback);
                 super.onChanged();
             }
 
@@ -561,6 +562,7 @@ public class PostListFragment
         PostsTable.registerDataSetObserver(mPostsObserver);
 
         getLoaderManager().initLoader(R.id.loader_post_ids, null, this);
+        SiteSession.fetchPosts(0, mPostLoadingCallback);
 
         return rootView;
     }
