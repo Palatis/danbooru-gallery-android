@@ -41,6 +41,7 @@ import tw.idv.palatis.danboorugallery.database.TagsTable;
 import tw.idv.palatis.danboorugallery.model.Host;
 import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.model.Tag;
+import tw.idv.palatis.danboorugallery.picasso.Picasso;
 import tw.idv.palatis.danboorugallery.siteapi.SiteAPI;
 
 /**
@@ -482,6 +483,12 @@ public class SiteSession
                     PostsTable.rebuildTempTable(hosts, filterTags);
 
                     mProgress += posts.size();
+
+                    if (DanbooruGallerySettings.getAggressivePrefetchPreview())
+                        for (Post post : posts)
+                            Picasso.withPrefetch()
+                                .load(post.file_url_preview)
+                                .fetch();
 
                     sHandler.post(mProgressUpdateRunnable);
                 }
