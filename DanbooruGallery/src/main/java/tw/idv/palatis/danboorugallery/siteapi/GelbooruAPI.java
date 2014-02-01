@@ -213,7 +213,11 @@ public class GelbooruAPI
             int len = nodes.getLength();
             List<Tag> tags = new ArrayList<>(len);
             for (int j = 0; j < len; ++j)
-                tags.add(parseXMLElementToTag((Element) nodes.item(j)));
+            {
+                Tag tag = parseXMLElementToTag((Element) nodes.item(j));
+                if (tag != null)
+                    tags.add(tag);
+            }
 
             return tags;
         }
@@ -237,11 +241,25 @@ public class GelbooruAPI
         if (item == null)
             return null;
 
-        return new GelbooruTag(
-            Integer.parseInt(item.getAttribute(GelbooruTag.KEY_TAG_ID)),
-            item.getAttribute(GelbooruTag.KEY_TAG_NAME),
-            Integer.parseInt(item.getAttribute(GelbooruTag.KEY_TAG_POST_COUNT))
-        );
+        int post_count = 0;
+        try
+        {
+            post_count = Integer.parseInt(item.getAttribute(GelbooruTag.KEY_TAG_POST_COUNT));
+        }
+        catch (NumberFormatException ignored) { }
+
+        try
+        {
+            return new GelbooruTag(
+                Integer.parseInt(item.getAttribute(GelbooruTag.KEY_TAG_ID)),
+                item.getAttribute(GelbooruTag.KEY_TAG_NAME),
+                post_count
+            );
+        }
+        catch (NumberFormatException ex)
+        {
+            return null;
+        }
     }
 
     @Override
