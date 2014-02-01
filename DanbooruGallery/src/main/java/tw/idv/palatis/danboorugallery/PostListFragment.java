@@ -441,14 +441,7 @@ public class PostListFragment
             public boolean onQueryTextChange(String query)
             {
                 SiteSession.setTagSearchPattern(query);
-                Loader<Cursor> loader = getLoaderManager().getLoader(R.id.loader_search_tags);
-                if (loader != null)
-                {
-                    loader.cancelLoad();
-                    loader.startLoading();
-                }
-                else
-                    getLoaderManager().initLoader(R.id.loader_search_tags, null, PostListFragment.this);
+                getLoaderManager().restartLoader(R.id.loader_search_tags, null, PostListFragment.this);
                 return false;
             }
         });
