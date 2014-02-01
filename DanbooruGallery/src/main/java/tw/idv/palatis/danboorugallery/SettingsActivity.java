@@ -200,6 +200,7 @@ public class SettingsActivity
         bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_SHOW_POST_ID), true);
         bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_SHOW_IMAGE_RESOLUTION), true);
         bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_STRICT_BANDWIDTH_USAGE), true);
+        bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_AGGRESSIVE_PREFETCH_PREVIEW), false);
         bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_ASYNC_IMAGE_LOADER_INDICATOR), false);
 
         Preference preference;
@@ -569,6 +570,7 @@ public class SettingsActivity
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_STRICT_BANDWIDTH_USAGE), true);
+            bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_AGGRESSIVE_PREFETCH_PREVIEW), false);
         }
     }
 

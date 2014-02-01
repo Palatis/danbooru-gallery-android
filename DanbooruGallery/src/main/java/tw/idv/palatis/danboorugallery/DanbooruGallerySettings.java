@@ -40,6 +40,7 @@ public class DanbooruGallerySettings
     public static final String KEY_PREF_SHOW_POST_ID = "pref_show_post_id";
     public static final String KEY_PREF_SHOW_IMAGE_RESOLUTION = "pref_show_image_resolution";
     public static final String KEY_PREF_STRICT_BANDWIDTH_USAGE = "pref_strict_bandwidth_usage";
+    public static final String KEY_PREF_AGGRESSIVE_PREFETCH_PREVIEW = "pref_aggressive_prefetch_preview";
     public static final String KEY_PREF_ASYNC_IMAGE_LOADER_INDICATOR = "pref_async_image_loader_indicator";
     public static final String KEY_PREF_CLEAR_CACHE = "pref_clear_cache";
     public static final String KEY_PREF_COPYRIGHT = "pref_copyright";
@@ -101,6 +102,11 @@ public class DanbooruGallerySettings
         return sSharedPreferences.getBoolean(KEY_PREF_STRICT_BANDWIDTH_USAGE, true)
             ? SiteAPI.PAGE_LIMIT_TYPE_STRICT
             : SiteAPI.PAGE_LIMIT_TYPE_RELAXED;
+    }
+
+    public static boolean getAggressivePrefetchPreview()
+    {
+        return sSharedPreferences.getBoolean(KEY_PREF_AGGRESSIVE_PREFETCH_PREVIEW, false);
     }
 
     public static int getFilterImageWidth()
