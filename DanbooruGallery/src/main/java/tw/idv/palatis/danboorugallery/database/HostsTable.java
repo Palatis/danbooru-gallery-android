@@ -60,6 +60,11 @@ public class HostsTable
         sDataSetObservable.unregisterObserver(observer);
     }
 
+    public static void backupRestored()
+    {
+        sDataSetObservable.notifyChanged();
+    }
+
     public static final int INDEX_HOST_DATABASE_ID = 0;
     public static final int INDEX_HOST_ENABLED = 1;
     public static final int INDEX_HOST_NAME = 2;

@@ -19,10 +19,17 @@
 package tw.idv.palatis.danboorugallery;
 
 import android.app.backup.BackupAgentHelper;
+import android.app.backup.BackupDataInput;
 import android.app.backup.FileBackupHelper;
 import android.app.backup.SharedPreferencesBackupHelper;
+import android.os.ParcelFileDescriptor;
+
+import java.io.IOException;
 
 import tw.idv.palatis.danboorugallery.database.DanbooruGalleryDatabase;
+import tw.idv.palatis.danboorugallery.database.HostsTable;
+import tw.idv.palatis.danboorugallery.database.PostTagsLinkTable;
+import tw.idv.palatis.danboorugallery.database.PostsTable;
 
 /**
  * Created by 其威 on 2014/2/1.
@@ -42,5 +49,16 @@ public class DanbooruGalleryBackupHelper
 
         addHelper(KEY_SHARED_PREFS, new SharedPreferencesBackupHelper(this, KEY_DEFAULT_SHARED_PREFS));
         addHelper(KEY_DATABASE, new FileBackupHelper(this, KEY_DATABASE_FILE));
+    }
+
+    @Override
+    public void onRestore(BackupDataInput data, int appVersionCode, ParcelFileDescriptor newState)
+        throws IOException
+    {
+        super.onRestore(data, appVersionCode, newState);
+
+        HostsTable.backupRestored();
+        PostsTable.backupRestored();
+        PostTagsLinkTable.backupRestored();
     }
 }

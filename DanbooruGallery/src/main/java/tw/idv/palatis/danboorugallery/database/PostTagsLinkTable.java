@@ -36,6 +36,11 @@ public class PostTagsLinkTable
         sDatabase = database;
     }
 
+    public static void backupRestored()
+    {
+        deleteAllPostTagsLink();
+    }
+
     public static int deletePostTagsLinkWithPostIds(String[] ids)
     {
         if (ids.length == 0)

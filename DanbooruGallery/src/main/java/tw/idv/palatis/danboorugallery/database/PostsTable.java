@@ -69,6 +69,12 @@ public class PostsTable
         sDataSetObservable.unregisterObserver(observer);
     }
 
+    public static void backupRestored()
+    {
+        deleteAllPosts();
+        rebuildTempTable(new ArrayList<Host>(), "");
+    }
+
     // posts related
     public static final int INDEX_POST_DATABASE_ID = 0;
     public static final int INDEX_POST_HOST_ID = 1;
