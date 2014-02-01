@@ -39,6 +39,7 @@ public class DanbooruGallerySettings
     public static final String KEY_PREF_STICKY_GRID_HEADER = "pref_sticky_grid_header";
     public static final String KEY_PREF_SHOW_POST_ID = "pref_show_post_id";
     public static final String KEY_PREF_SHOW_IMAGE_RESOLUTION = "pref_show_image_resolution";
+    public static final String KEY_PREF_AUTOPLAY_DELAY = "pref_autoplay_delay";
     public static final String KEY_PREF_STRICT_BANDWIDTH_USAGE = "pref_strict_bandwidth_usage";
     public static final String KEY_PREF_AGGRESSIVE_PREFETCH_PREVIEW = "pref_aggressive_prefetch_preview";
     public static final String KEY_PREF_ASYNC_IMAGE_LOADER_INDICATOR = "pref_async_image_loader_indicator";
@@ -107,6 +108,11 @@ public class DanbooruGallerySettings
     public static boolean getAggressivePrefetchPreview()
     {
         return sSharedPreferences.getBoolean(KEY_PREF_AGGRESSIVE_PREFETCH_PREVIEW, false);
+    }
+
+    public static int getAutoplayDelay()
+    {
+        return sSharedPreferences.getInt(KEY_PREF_AUTOPLAY_DELAY, 5000);
     }
 
     public static int getFilterImageWidth()

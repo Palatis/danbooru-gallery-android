@@ -42,6 +42,30 @@
     <string name="pref_description_show_image_resolution_true">Display the dimension of the image at the bottom of the thumbnail.</string>
     <string name="pref_description_show_image_resolution_false">Don\'t display the dimension of the image at the bottom of the thumbnail.</string>
 
+    <string name="pref_title_autoplay_delay">Autoplay delay</string>
+    <string-array name="pref_autoplay_delay_titles">
+        <item>3 seconds</item>
+        <item>5 seconds</item>
+        <item>8 seconds</item>
+        <item>10 seconds</item>
+        <item>15 seconds</item>
+        <item>30 seconds</item>
+        <item>1 minute</item>
+        <item>2 minutes</item>
+        <item>5 minutes</item>
+    </string-array>
+    <string-array name="pref_autoplay_delay_values">
+        <item>3000</item>
+        <item>5000</item>
+        <item>8000</item>
+        <item>10000</item>
+        <item>15000</item>
+        <item>30000</item>
+        <item>60000</item>
+        <item>120000</item>
+        <item>300000</item>
+    </string-array>
+
     <string name="pref_header_network_policy">Network Policy</string>
 
     <string name="pref_title_strict_bandwidth_usage">Strict bandwidth usage</string>

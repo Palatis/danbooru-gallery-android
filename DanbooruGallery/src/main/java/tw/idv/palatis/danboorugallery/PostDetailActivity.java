@@ -95,8 +95,6 @@ public class PostDetailActivity
             }
         };
 
-    private static final int AUTOPLAY_DELAY_MILLIS = 3000;
-
     private Runnable mNextPageRunnable = new Runnable() {
         @Override
         public void run()
@@ -106,7 +104,7 @@ public class PostDetailActivity
                 next = 0;
             mViewPager.getAdapter().instantiateItem(mViewPager, next);
             mViewPager.setCurrentItem(next, next != 0);
-            mViewPager.postDelayed(this, AUTOPLAY_DELAY_MILLIS);
+            mViewPager.postDelayed(this, DanbooruGallerySettings.getAutoplayDelay());
         }
     };
 
@@ -213,7 +211,7 @@ public class PostDetailActivity
                 if (mIsAutoplaying = !mIsAutoplaying)
                 {
                     mPlayPauseButton.setImageResource(android.R.drawable.ic_media_pause);
-                    mViewPager.postDelayed(mNextPageRunnable, AUTOPLAY_DELAY_MILLIS);
+                    mViewPager.postDelayed(mNextPageRunnable, DanbooruGallerySettings.getAutoplayDelay());
                     mUiHider.hide();
                     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 }

@@ -199,6 +199,7 @@ public class SettingsActivity
         bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_STICKY_GRID_HEADER), true);
         bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_SHOW_POST_ID), true);
         bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_SHOW_IMAGE_RESOLUTION), true);
+        bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_AUTOPLAY_DELAY), 5000);
         bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_STRICT_BANDWIDTH_USAGE), true);
         bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_AGGRESSIVE_PREFETCH_PREVIEW), false);
         bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_ASYNC_IMAGE_LOADER_INDICATOR), false);
@@ -548,6 +549,7 @@ public class SettingsActivity
             bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_STICKY_GRID_HEADER), true);
             bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_SHOW_POST_ID), true);
             bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_SHOW_IMAGE_RESOLUTION), true);
+            bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_AUTOPLAY_DELAY), 5000);
         }
     }
 

@@ -57,4 +57,13 @@
         android:summaryOff="@string/pref_description_show_image_resolution_false"
         android:defaultValue="true" />
 
+    <tw.idv.palatis.danboorugallery.preference.IntListPreference
+        android:key="pref_autoplay_delay"
+        android:title="@string/pref_title_autoplay_delay"
+        android:defaultValue="5000"
+        android:entries="@array/pref_autoplay_delay_titles"
+        android:entryValues="@array/pref_autoplay_delay_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
 </PreferenceScreen>
