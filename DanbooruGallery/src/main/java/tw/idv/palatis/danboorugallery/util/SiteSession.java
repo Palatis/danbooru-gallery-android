@@ -248,7 +248,7 @@ public class SiteSession
 
     // runs on a worker thread
     private static List<Tag> sEmptyTags = new ArrayList<>();
-    synchronized public static Cursor searchTags(CancellationSignal signal)
+    public static Cursor searchTags(CancellationSignal signal)
     {
         String[] patterns = TextUtils.split(sTagSearchPattern, " ");
         String pattern;
