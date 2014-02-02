@@ -283,6 +283,7 @@ public class PostDetailActivity
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
+        mUiHider.show();
         mUiHider.delayedHide(AUTO_HIDE_DELAY_MILLIS);
     }
 
