@@ -338,6 +338,10 @@ public class PostListFragment
     {
         Cursor cursor = mPostListAdapter.getCursor();
         cursor.moveToPosition(position);
+        if (cursor.isBeforeFirst())
+            cursor.moveToFirst();
+        if (cursor.isAfterLast())
+            cursor.moveToLast();
         long target_created_at = cursor.getLong(PostListAdapter.INDEX_POST_CREATED_AT);
 
         // find the closest cursor to target position
