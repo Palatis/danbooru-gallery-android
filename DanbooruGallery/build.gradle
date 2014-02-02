@@ -47,4 +47,5 @@ dependencies {
     compile 'com.squareup.picasso:picasso:+'
     compile 'com.squareup.okhttp:okhttp:+'
     compile 'com.tonicartos:stickygridheaders:+'
+//    compile 'pl.droidsonroids.gif:android-gif-drawable:1.0.5'
 }

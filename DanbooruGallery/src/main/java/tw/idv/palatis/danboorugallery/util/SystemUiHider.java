@@ -46,8 +46,8 @@ public class SystemUiHider
     {
         super(autoHideMillis, callback);
         mAncharView = view;
-        mShowFlags = View.SYSTEM_UI_FLAG_VISIBLE;
-        mHideFlags = View.SYSTEM_UI_FLAG_LOW_PROFILE;
+        mShowFlags = View.SYSTEM_UI_FLAG_VISIBLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+        mHideFlags = View.SYSTEM_UI_FLAG_LOW_PROFILE | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
     }
 
     @Override
