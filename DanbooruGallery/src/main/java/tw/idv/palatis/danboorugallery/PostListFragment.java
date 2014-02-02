@@ -256,7 +256,11 @@ public class PostListFragment
         @Override
         public void onProgressUpdate(int progress)
         {
-            getLoaderManager().restartLoader(R.id.loader_post_ids, null, PostListFragment.this);
+            try
+            {
+                getLoaderManager().restartLoader(R.id.loader_post_ids, null, PostListFragment.this);
+            }
+            catch (IllegalStateException ignored) { }
         }
 
         @Override
