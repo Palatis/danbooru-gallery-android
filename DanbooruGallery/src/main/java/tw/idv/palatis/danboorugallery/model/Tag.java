@@ -33,53 +33,22 @@ public class Tag
     public static final String KEY_TAG_DATABASE_ID = "_id";
     public static final String KEY_TAG_HASHCODE = "hashcode";
 
-    // "related_tags":"touhou 300 1girl 193 solo 180 hat 125 short_hair 117 long_hair 88 red_eyes 85 blush 80 multiple_girls 75 highres 74 ribbon 62 bow 61 wings 60 smile 59 blonde_hair 57 2girls 56 breasts 48 dress 47 translated 47 bad_id 47 blue_eyes 46 open_mouth 45 hair_bow 44 animal_ears 42 blue_hair 39",
-    // "related_tags_updated_at":"2014-01-22T01:12:34-05:00",
     public static final String KEY_TAG_ID = "id";                   // "id":29,
-//    public static final String KEY_TAG_CATEGORY = "category";       // "category":3,
-//    public static final String KEY_TAG_IS_LOCKED = "is_locked";     // "is_locked":false,
     public static final String KEY_TAG_NAME = "name";               // "name":"touhou",
     public static final String KEY_TAG_POST_COUNT = "post_count";   // "post_count":376077,
     public static final String KEY_TAG_SEARCH_COUNT = "search_count";
-//    public static final String KEY_TAG_CREATED_AT = "created_at";   // "created":"2013-02-27T22:33:43-05:00",
-//    public static final String KEY_TAG_UPDATED_AT = "updated_at";   // "updated":"2014-01-22T01:12:34-05:00"
 
     public int id;
-//    public int category;
-//    public boolean is_locked;
     public String name;
     public int post_count;
     public int search_count;
-//    public Date created;
-//    public Date updated;
     public List<Host> hosts = new ArrayList<>();
 
-    public Tag(int id,
-//               int category, boolean is_locked,
-               String name, int post_count
-//        , Date created, Date updated
-    )
-    {
-        init(id,
-//            category, is_locked,
-            name, post_count
-//            , created, updated
-        );
-    }
-
-    private void init(int id,
-//                      int category, boolean is_locked,
-                      String name, int post_count
-//        , Date created, Date updated
-    )
+    public Tag(int id, String name, int post_count)
     {
         this.id = id;
-//        this.category = category;
-//        this.is_locked = is_locked;
         this.name = name;
         this.post_count = post_count;
-//        this.created = created;
-//        this.updated = updated;
     }
 
     @Override
