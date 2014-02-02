@@ -17,7 +17,6 @@ package tw.idv.palatis.danboorugallery.picasso;
 
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.squareup.okhttp.HttpResponseCache;
 import com.squareup.okhttp.OkHttpClient;
@@ -95,7 +94,6 @@ public class OkHttpRefererDownloader implements Downloader
         {
             connection.disconnect();
             IOException ex = new ResponseException(responseCode + " " + connection.getResponseMessage());
-            Log.d(TAG, "wtf? " + uri.toString(), ex);
             throw ex;
         }
 
