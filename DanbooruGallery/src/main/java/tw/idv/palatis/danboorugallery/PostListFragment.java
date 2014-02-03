@@ -244,6 +244,11 @@ public class PostListFragment
                 int id = item.getItemId();
                 switch (id)
                 {
+                    case R.id.menu_post_detail_browser:
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse(post.getWebUrl()));
+                        startActivity(intent);
+                        break;
                     case R.id.menu_post_detail_tags:
                         AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
                         adb.setTitle(getResources().getString(R.string.dialog_tags_title, post.post_id));
