@@ -310,22 +310,20 @@ public class PostDetailFragment
             case R.id.menu_post_detail_download:
                 File destination = mPost.host.getAPI().getDownloadFile(mPost.host, mPost);
 
-                if (!destination.getParentFile().exists())
-                    destination.getParentFile().mkdirs();
-
-                Log.d(TAG, destination.getAbsolutePath());
-
-                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(mPost.file_url));
-                request.allowScanningByMediaScanner();
-                request.addRequestHeader("Referer", mPost.getReferer());
-                // HACK: fake user agent
-                request.addRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:26.0) Gecko/20100101 Firefox/26.0");
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                request.setTitle(mPost.host.getAPI().getDownloadTitle(mPost.host, mPost));
-                request.setDescription(mPost.host.getAPI().getDownloadDescription(mPost.host, mPost));
-                request.setDestinationUri(Uri.fromFile(destination));
-                DownloadManager downloader = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
-                downloader.enqueue(request);
+                if (destination.getParentFile().exists() || destination.getParentFile().mkdirs())
+                {
+                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(mPost.file_url));
+                    request.allowScanningByMediaScanner();
+                    request.addRequestHeader("Referer", mPost.getReferer());
+                    // HACK: fake user agent
+                    request.addRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:26.0) Gecko/20100101 Firefox/26.0");
+                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                    request.setTitle(mPost.host.getAPI().getDownloadTitle(mPost.host, mPost));
+                    request.setDescription(mPost.host.getAPI().getDownloadDescription(mPost.host, mPost));
+                    request.setDestinationUri(Uri.fromFile(destination));
+                    DownloadManager downloader = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+                    downloader.enqueue(request);
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);
