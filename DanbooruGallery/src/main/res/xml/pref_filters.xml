@@ -22,7 +22,7 @@
 
     <PreferenceCategory
         android:title="Image Resolution">
-        <tw.idv.palatis.danboorugallery.preference.IntListPreference
+        <tw.idv.palatis.danboorugallery.android.preference.IntListPreference
             android:key="pref_filter_width"
             android:title="@string/pref_title_filter_width"
             android:defaultValue="0"
@@ -30,7 +30,7 @@
             android:entryValues="@array/pref_filter_width_height_values"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null" />
-        <tw.idv.palatis.danboorugallery.preference.IntListPreference
+        <tw.idv.palatis.danboorugallery.android.preference.IntListPreference
             android:key="pref_filter_height"
             android:title="@string/pref_title_filter_height"
             android:defaultValue="0"
