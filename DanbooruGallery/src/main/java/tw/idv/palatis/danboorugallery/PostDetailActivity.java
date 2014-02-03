@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.support.v4.view.ViewPager;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
@@ -235,6 +236,20 @@ public class PostDetailActivity
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.setPageMargin(16); // TODO: i'm lazy to calculate dp here...
 
+        mViewPager.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent)
+            {
+                if (mIsAutoplaying)
+                {
+                    mViewPager.removeCallbacks(mNextPageRunnable);
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    mPlayPauseButton.setImageResource(android.R.drawable.ic_media_play);
+                }
+                return false;
+            }
+        });
+
         mUiHider = new SystemUiHider(getWindow().getDecorView(), AUTO_HIDE_DELAY_MILLIS,
             new UiHider.OnVisibilityChangeListener()
             {
@@ -342,5 +357,11 @@ public class PostDetailActivity
     public void onImageClick()
     {
         mUiHider.toggle();
+        if (mIsAutoplaying)
+        {
+            mViewPager.removeCallbacks(mNextPageRunnable);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            mPlayPauseButton.setImageResource(android.R.drawable.ic_media_play);
+        }
     }
 }
