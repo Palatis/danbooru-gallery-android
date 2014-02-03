@@ -57,7 +57,7 @@ import tw.idv.palatis.danboorugallery.util.UiHider;
 
 public class PostListActivity
     extends Activity
-    implements PostListFragment.Callbacks
+    implements PostListFragment.Callbacks, LoaderManager.LoaderCallbacks<Cursor>
 {
     public static final String TAG = "PostListActivity";
 
@@ -133,7 +133,7 @@ public class PostListActivity
             public void onChanged()
             {
                 super.onChanged();
-                getLoaderManager().restartLoader(R.id.loader_host_ids, null, mCursorLoaderCallbacks);
+                getLoaderManager().restartLoader(R.id.loader_host_ids, null, PostListActivity.this);
             }
 
             @Override
@@ -206,7 +206,7 @@ public class PostListActivity
         hostsList.setOnItemClickListener(new DrawerItemClickListener());
         hostsList.setOnItemLongClickListener(new DrawerItemLongClickListener());
 
-        getLoaderManager().initLoader(R.id.loader_host_ids, null, mCursorLoaderCallbacks);
+        getLoaderManager().initLoader(R.id.loader_host_ids, null, this);
 
         // Set up an instance of SystemUiHider to control the system UI for
         // this activity.
@@ -264,40 +264,37 @@ public class PostListActivity
         }
     }
 
-    private LoaderManager.LoaderCallbacks<Cursor> mCursorLoaderCallbacks =
-        new LoaderManager.LoaderCallbacks<Cursor>()
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle bundle)
+    {
+        return new CustomTaskLoader<Cursor>(getApplicationContext())
         {
             @Override
-            public Loader<Cursor> onCreateLoader(int id, Bundle bundle)
+            public Cursor runTaskInBackground(CancellationSignal signal)
             {
-                return new CustomTaskLoader<Cursor>(getApplicationContext()) {
-                    @Override
-                    public Cursor runTaskInBackground(CancellationSignal signal)
-                    {
-                        return HostsTable.getAllHostsCursor();
-                    }
-
-                    @Override
-                    public void cleanUp(Cursor oldCursor)
-                    {
-                        if (!oldCursor.isClosed())
-                            oldCursor.close();
-                    }
-                };
+                return HostsTable.getAllHostsCursor();
             }
 
             @Override
-            public void onLoadFinished(Loader<Cursor> loader, Cursor cursor)
+            public void cleanUp(Cursor oldCursor)
             {
-                mHostsAdapter.swapCursor(cursor);
-            }
-
-            @Override
-            public void onLoaderReset(Loader<Cursor> loader)
-            {
-                mHostsAdapter.swapCursor(null);
+                if (!oldCursor.isClosed())
+                    oldCursor.close();
             }
         };
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor)
+    {
+        mHostsAdapter.swapCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader)
+    {
+        mHostsAdapter.swapCursor(null);
+    }
 
     private class DrawerItemLongClickListener
             implements ListView.OnItemLongClickListener
