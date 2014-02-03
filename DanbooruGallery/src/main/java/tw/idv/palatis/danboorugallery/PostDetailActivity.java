@@ -45,12 +45,6 @@ import tw.idv.palatis.danboorugallery.util.SiteSession;
 import tw.idv.palatis.danboorugallery.util.SystemUiHider;
 import tw.idv.palatis.danboorugallery.util.UiHider;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- *
- * @see SystemUiHider
- */
 public class PostDetailActivity
     extends Activity
     implements PostDetailFragment.Callbacks, LoaderManager.LoaderCallbacks<Cursor>
