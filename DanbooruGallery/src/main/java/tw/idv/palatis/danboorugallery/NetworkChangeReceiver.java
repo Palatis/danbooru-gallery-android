@@ -22,16 +22,33 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import tw.idv.palatis.danboorugallery.picasso.Picasso;
 
 public class NetworkChangeReceiver
     extends BroadcastReceiver
 {
+    private static boolean sIsConnectedOrConnecting = false;
+
+    public static void init(Context context)
+    {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo info = cm.getActiveNetworkInfo();
+        sIsConnectedOrConnecting = info != null && info.isConnectedOrConnecting();
+    }
+
+    public static boolean isConnectedOrConnecting()
+    {
+        return sIsConnectedOrConnecting;
+    }
+
     @Override
     public void onReceive(final Context context, final Intent intent)
     {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        Picasso.adjustThreadCount(cm.getActiveNetworkInfo());
+        NetworkInfo info = cm.getActiveNetworkInfo();
+        sIsConnectedOrConnecting = info != null && info.isConnectedOrConnecting();
+        Picasso.adjustThreadCount(info);
     }
 }
