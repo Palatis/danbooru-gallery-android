@@ -94,6 +94,9 @@ public class DanbooruLegacyAPI
     private static final String URL_POSTS_FORMAT = "%1$s/post/index.json?page=%2$d&tags=%3$s&limit=%4$d";
     // 1: url, 2: match_pattern
     private static final String URL_TAGS_FORMAT = "%1$s/tag/index.json?name=%2$s&order=count";
+    // 1: url, 2: post_id
+    private static final String URL_POST_WEB = "%1$s/post/show/%2$d";
+
     private static final int _BUFFER_SIZE = 8192;
 
     @Override
@@ -373,6 +376,12 @@ public class DanbooruLegacyAPI
             try { json.put(KEY_POST_UPLOADER_NAME, uploader_name); } catch (JSONException ignored) { }
             try { json.put(KEY_POST_SCORE, score); } catch (JSONException ignored) { }
             return json.toString();
+        }
+
+        @Override
+        public String getWebUrl()
+        {
+            return String.format(URL_POST_WEB, host.url, post_id);
         }
     }
 }

@@ -111,5 +111,11 @@ class DummyAPI
         {
             return "";
         }
+
+        @Override
+        public String getWebUrl()
+        {
+            return "";
+        }
     }
 }

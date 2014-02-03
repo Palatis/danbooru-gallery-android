@@ -111,4 +111,6 @@ public abstract class Post
         values.put(KEY_POST_RATING, rating);
         values.put(KEY_POST_EXTRA_INFO, getExtras());
     }
+
+    public abstract String getWebUrl();
 }

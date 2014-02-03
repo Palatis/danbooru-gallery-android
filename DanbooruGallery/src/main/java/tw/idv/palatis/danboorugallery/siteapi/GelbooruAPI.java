@@ -93,6 +93,8 @@ public class GelbooruAPI
     private static final String URL_POSTS_FORMAT = "%1$s/index.php?page=dapi&s=post&q=index&pid=%2$d&tags=%3$s&limit=%4$d";
     // 1: url, 2: match_pattern
     private static final String URL_TAGS_FORMAT = "%1$s/index.php?page=dapi&s=tag&q=index&order=count&name_pattern=%2$s";
+    // 1: url, 2: post_id
+    private static final String URL_POST_WEB = "%1$s/index.php?page=post&s=view&id=%2$s";
 
     @Override
     public List<Post> fetchPosts(Host host, int startFrom, String[] tags)
@@ -402,6 +404,12 @@ public class GelbooruAPI
             try { json.put(KEY_POST_UPLOADER_ID, uploader_id); } catch (JSONException ignored) { }
             try { json.put(KEY_POST_SCORE, score); } catch (JSONException ignored) { }
             return json.toString();
+        }
+
+        @Override
+        public String getWebUrl()
+        {
+            return String.format(URL_POST_WEB, host.url, post_id);
         }
     }
 }
