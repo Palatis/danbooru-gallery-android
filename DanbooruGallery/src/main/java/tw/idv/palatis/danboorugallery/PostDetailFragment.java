@@ -284,6 +284,11 @@ public class PostDetailFragment
         int id = item.getItemId();
         switch (id)
         {
+            case R.id.menu_post_detail_browser:
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(mPost.getWebUrl()));
+                startActivity(intent);
+                break;
             case R.id.menu_post_detail_tags:
                 AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
                 adb.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_activated_1, android.R.id.text1, mPost.tags),

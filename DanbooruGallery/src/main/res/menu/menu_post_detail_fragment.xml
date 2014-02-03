@@ -19,6 +19,11 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:id="@+id/menu_post_detail_browser"
+        android:title="@string/menu_post_detail_browser"
+        android:icon="@android:drawable/ic_menu_directions"
+        android:showAsAction="ifRoom" />
+    <item
         android:id="@+id/menu_post_detail_tags"
         android:title="@string/menu_post_detail_tags"
         android:icon="@android:drawable/ic_menu_agenda"
