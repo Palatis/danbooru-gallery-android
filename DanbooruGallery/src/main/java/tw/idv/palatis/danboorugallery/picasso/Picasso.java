@@ -38,7 +38,6 @@ import com.squareup.picasso.StatsSnapshot;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import tw.idv.palatis.danboorugallery.DanbooruGallerySettings;
@@ -65,8 +64,6 @@ public class Picasso
     private static ThreadPoolExecutor sExecutorPreview = null;
     private static ThreadPoolExecutor sExecutor = null;
 
-    private static ThreadFactory sThreadFactory = new PicassoThreadFactory();
-
     private static SharedPreferences.OnSharedPreferenceChangeListener sOnSharedPreferenceChangeListener =
         new SharedPreferences.OnSharedPreferenceChangeListener()
         {
@@ -86,9 +83,9 @@ public class Picasso
         sDownloader = new OkHttpRefererDownloader(cache, calculateDiskCacheSize(cache));
         sMemCache = new LruCache(_calculateMemoryCacheSize(context));
 
-        sExecutorPrefetch = (ThreadPoolExecutor) Executors.newFixedThreadPool(1, sThreadFactory);
-        sExecutorPreview = (ThreadPoolExecutor) Executors.newFixedThreadPool(1, sThreadFactory);
-        sExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1, sThreadFactory);
+        sExecutorPrefetch = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+        sExecutorPreview = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+        sExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
 
         sInstancePrefetch = new com.squareup.picasso.Picasso.Builder(context)
             .memoryCache(sMemCache)
@@ -122,8 +119,8 @@ public class Picasso
         if (info == null || !info.isConnectedOrConnecting())
         {
             // sExecutorPrefetch.setMaximumPoolSize(1);
-            sExecutorPreview.setMaximumPoolSize(3);
-            sExecutor.setMaximumPoolSize(1);
+            sExecutorPreview.setCorePoolSize(3);
+            sExecutor.setCorePoolSize(1);
         }
         else
         {
@@ -133,8 +130,8 @@ public class Picasso
                 case ConnectivityManager.TYPE_WIMAX:
                 case ConnectivityManager.TYPE_ETHERNET:
                     // sExecutorPrefetch.setMaximumPoolSize(1);
-                    sExecutorPreview.setMaximumPoolSize(4);
-                    sExecutor.setMaximumPoolSize(2);
+                    sExecutorPreview.setCorePoolSize(4);
+                    sExecutor.setCorePoolSize(2);
                     break;
                 case ConnectivityManager.TYPE_MOBILE:
                     switch (info.getSubtype())
@@ -143,8 +140,8 @@ public class Picasso
                         case TelephonyManager.NETWORK_TYPE_HSPAP:
                         case TelephonyManager.NETWORK_TYPE_EHRPD:
                             // sExecutorPrefetch.setMaximumPoolSize(1);
-                            sExecutorPreview.setMaximumPoolSize(3);
-                            sExecutor.setMaximumPoolSize(2);
+                            sExecutorPreview.setCorePoolSize(3);
+                            sExecutor.setCorePoolSize(2);
                             break;
                         case TelephonyManager.NETWORK_TYPE_UMTS: // 3G
                         case TelephonyManager.NETWORK_TYPE_CDMA:
@@ -152,32 +149,32 @@ public class Picasso
                         case TelephonyManager.NETWORK_TYPE_EVDO_A:
                         case TelephonyManager.NETWORK_TYPE_EVDO_B:
                             // sExecutorPrefetch.setMaximumPoolSize(1);
-                            sExecutorPreview.setMaximumPoolSize(2);
-                            sExecutor.setMaximumPoolSize(1);
+                            sExecutorPreview.setCorePoolSize(2);
+                            sExecutor.setCorePoolSize(1);
                             break;
                         case TelephonyManager.NETWORK_TYPE_GPRS: // 2G
                         case TelephonyManager.NETWORK_TYPE_EDGE:
                             // sExecutorPrefetch.setMaximumPoolSize(1);
-                            sExecutorPreview.setMaximumPoolSize(1);
-                            sExecutor.setMaximumPoolSize(1);
+                            sExecutorPreview.setCorePoolSize(1);
+                            sExecutor.setCorePoolSize(1);
                             break;
                         default:
                             // sExecutorPrefetch.setMaximumPoolSize(1);
-                            sExecutorPreview.setMaximumPoolSize(4);
-                            sExecutor.setMaximumPoolSize(2);
+                            sExecutorPreview.setCorePoolSize(4);
+                            sExecutor.setCorePoolSize(2);
                     }
                     break;
                 default:
                     // sExecutorPrefetch.setMaximumPoolSize(1);
-                    sExecutorPreview.setMaximumPoolSize(4);
-                    sExecutor.setMaximumPoolSize(2);
+                    sExecutorPreview.setCorePoolSize(4);
+                    sExecutor.setCorePoolSize(2);
             }
         }
 
         Log.d(TAG,
-            "Thread count for executors: prefetch = " + sExecutorPrefetch.getMaximumPoolSize() +
-            ", preview = " + sExecutorPreview.getMaximumPoolSize() +
-            ", general = " + sExecutor.getMaximumPoolSize());
+            "Thread count for executors: prefetch = " + sExecutorPrefetch.getCorePoolSize() +
+            ", preview = " + sExecutorPreview.getCorePoolSize() +
+            ", general = " + sExecutor.getCorePoolSize());
     }
 
     public static com.squareup.picasso.Picasso with()
@@ -283,18 +280,6 @@ public class Picasso
     private static class ActivityManagerHoneycomb {
         static int getLargeMemoryClass(ActivityManager activityManager) {
             return activityManager.getLargeMemoryClass();
-        }
-    }
-
-    private static class PicassoThreadFactory
-        implements ThreadFactory
-    {
-        @SuppressWarnings("NullableProblems")
-        public Thread newThread(Runnable r)
-        {
-            Thread thread = new Thread(r);
-            thread.setPriority(Thread.MIN_PRIORITY);
-            return thread;
         }
     }
 }
