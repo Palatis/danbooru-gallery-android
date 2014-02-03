@@ -102,7 +102,7 @@ public class PostDetailFragment
                 {
                     Cursor post_cursor = PostsTable.getPostCursorById(mPostId);
                     post_cursor.moveToFirst();
-                    Cursor tags_cursor = PostTagsView.getTagNamesCursorForPostId(mPostId);
+                    Cursor tags_cursor = PostTagsView.getTagNamesCursorForPostDatabaseId(mPostId);
                     Host host = SiteSession.getHostById(post_cursor.getInt(PostsTable.INDEX_POST_HOST_ID));
                     return Post.fromCursor(host, post_cursor, tags_cursor);
                 }

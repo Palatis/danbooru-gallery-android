@@ -45,13 +45,13 @@ public class PostTagsView
         KEY_TAG_NAME,
     };
 
-    public static Cursor getTagNamesCursorForPostId(int post_id)
+    public static Cursor getTagNamesCursorForPostDatabaseId(int post_db_id)
     {
         return sDatabase.query(
             VIEW_NAME,
             sPostTagsColumnNames,
             KEY_POST_DATABASE_ID + " == ?",
-            new String[] { Integer.toString(post_id) },
+            new String[] { Integer.toString(post_db_id) },
             null, null, null, null
         );
     }
