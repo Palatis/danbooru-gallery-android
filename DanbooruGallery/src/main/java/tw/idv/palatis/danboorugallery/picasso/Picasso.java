@@ -79,34 +79,11 @@ public class Picasso
 
     public static void init(Context context)
     {
-        File cache = _createDefaultCacheDir(context);
-        sDownloader = new OkHttpRefererDownloader(cache, calculateDiskCacheSize(cache));
         sMemCache = new LruCache(_calculateMemoryCacheSize(context));
 
         sExecutorPrefetch = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
         sExecutorPreview = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
         sExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
-
-        sInstancePrefetch = new com.squareup.picasso.Picasso.Builder(context)
-            .memoryCache(sMemCache)
-            .downloader(sDownloader)
-            .executor(sExecutorPrefetch)
-            .debugging(DanbooruGallerySettings.getShowAsyncImageLoaderIndicator())
-            .build();
-
-        sInstancePreview = new com.squareup.picasso.Picasso.Builder(context)
-            .memoryCache(sMemCache)
-            .downloader(sDownloader)
-            .executor(sExecutorPreview)
-            .debugging(DanbooruGallerySettings.getShowAsyncImageLoaderIndicator())
-            .build();
-
-        sInstance = new com.squareup.picasso.Picasso.Builder(context)
-            .memoryCache(sMemCache)
-            .downloader(sDownloader)
-            .executor(sExecutor)
-            .debugging(DanbooruGallerySettings.getShowAsyncImageLoaderIndicator())
-            .build();
 
         DanbooruGallerySettings.registerOnSharedPreferenceChangeListener(sOnSharedPreferenceChangeListener);
     }
@@ -170,27 +147,59 @@ public class Picasso
 
         Log.d(TAG,
             "Thread count for executors: prefetch = " + sExecutorPrefetch.getCorePoolSize() +
-            ", preview = " + sExecutorPreview.getCorePoolSize() +
-            ", general = " + sExecutor.getCorePoolSize());
+                ", preview = " + sExecutorPreview.getCorePoolSize() +
+                ", general = " + sExecutor.getCorePoolSize());
     }
 
-    public static com.squareup.picasso.Picasso with()
+    public static com.squareup.picasso.Picasso with(Context context)
     {
+        if (sInstance == null)
+        {
+            sInstance = new com.squareup.picasso.Picasso.Builder(context)
+                .memoryCache(sMemCache)
+                .downloader(getDownloader(context))
+                .executor(sExecutor)
+                .debugging(DanbooruGallerySettings.getShowAsyncImageLoaderIndicator())
+                .build();
+        }
         return sInstance;
     }
 
-    public static com.squareup.picasso.Picasso withPreview()
+    public static com.squareup.picasso.Picasso withPreview(Context context)
     {
+        if (sInstancePreview == null)
+        {
+            sInstancePreview = new com.squareup.picasso.Picasso.Builder(context)
+                .memoryCache(sMemCache)
+                .downloader(getDownloader(context))
+                .executor(sExecutorPreview)
+                .debugging(DanbooruGallerySettings.getShowAsyncImageLoaderIndicator())
+                .build();
+        }
         return sInstancePreview;
     }
 
-    public static com.squareup.picasso.Picasso withPrefetch()
+    public static com.squareup.picasso.Picasso withPrefetch(Context context)
     {
+        if (sInstancePrefetch == null)
+        {
+            sInstancePrefetch = new com.squareup.picasso.Picasso.Builder(context)
+                .memoryCache(sMemCache)
+                .downloader(getDownloader(context))
+                .executor(sExecutorPrefetch)
+                .debugging(DanbooruGallerySettings.getShowAsyncImageLoaderIndicator())
+                .build();
+        }
         return sInstancePrefetch;
     }
 
-    public static Downloader getDownloader()
+    public static Downloader getDownloader(Context context)
     {
+        if (sDownloader == null)
+        {
+            File cache = _createDefaultCacheDir(context);
+            sDownloader = new OkHttpRefererDownloader(cache, calculateDiskCacheSize(cache));
+        }
         return sDownloader;
     }
 

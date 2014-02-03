@@ -56,7 +56,7 @@ public class DanbooruGalleryApplication
         Picasso.init(this);
         NetworkChangeReceiver.init(this);
         SiteAPI.init(this);
-        SiteSession.init();
+        SiteSession.init(this);
 
         if (!DEBUG)
             Thread.setDefaultUncaughtExceptionHandler(this);

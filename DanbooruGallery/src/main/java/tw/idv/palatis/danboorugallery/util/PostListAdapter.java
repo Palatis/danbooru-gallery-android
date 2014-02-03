@@ -181,7 +181,7 @@ public class PostListAdapter
     {
         ViewHolder holder = (ViewHolder) view.getTag(R.id.view_tag_view_holder);
         holder.progress.setVisibility(View.VISIBLE);
-        Picasso.withPreview()
+        Picasso.withPreview(context)
             .load(cursor.getString(INDEX_POST_PREVIEW_FILE_URL))
             .error(android.R.drawable.ic_delete)
             .into(holder.thumbnail, holder.callback);

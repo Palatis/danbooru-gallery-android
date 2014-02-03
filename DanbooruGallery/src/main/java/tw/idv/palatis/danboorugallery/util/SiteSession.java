@@ -18,6 +18,7 @@
 
 package tw.idv.palatis.danboorugallery.util;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DataSetObserver;
@@ -56,9 +57,11 @@ public class SiteSession
     private static final ReentrantReadWriteLock sHostsLock = new ReentrantReadWriteLock();
     private static final List<Host> sHosts = new ArrayList<>();
     private static SharedPreferences.OnSharedPreferenceChangeListener sOnSharedPreferenceChangeListener;
+    private static Context sContext = null;
 
-    public static void init()
+    public static void init(Context context)
     {
+        sContext = context;
         // populate the hosts the first time.
         new Thread() {
             @Override
@@ -489,7 +492,7 @@ public class SiteSession
 
                     if (DanbooruGallerySettings.getAggressivePrefetchPreview())
                         for (Post post : posts)
-                            Picasso.withPrefetch()
+                            Picasso.withPrefetch(sContext)
                                 .load(post.file_url_preview)
                                 .fetch();
 

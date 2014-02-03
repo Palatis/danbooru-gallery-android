@@ -143,7 +143,7 @@ public class PostDetailFragment
             // to load the image, so this whole part can be "simplified".
 
             // load the preview into the preview imageview
-            Picasso.withPreview()
+            Picasso.withPreview(getActivity().getApplicationContext())
                 .load(mPost.file_url_preview)
                 .noFade()
                 .into(mPreviewImageView);
@@ -152,7 +152,7 @@ public class PostDetailFragment
             final String file_url_with_referer = mPost.file_url + "|" + mPost.getReferer();
 
             // load the actual image to the imageview
-            Picasso.with()
+            Picasso.with(getActivity().getApplicationContext())
                 .load(file_url_with_referer)
                 .noFade()
                 .into(mImageView, new Callback()
@@ -176,7 +176,7 @@ public class PostDetailFragment
                         Log.v(TAG, "Bitmap might be too big to be uploaded to a texture, try the alternative method.");
                         try
                         {
-                            final Downloader.Response response = Picasso.getDownloader().load(Uri.parse(file_url_with_referer), true);
+                            final Downloader.Response response = Picasso.getDownloader(getActivity().getApplicationContext()).load(Uri.parse(file_url_with_referer), true);
 
                             TileBitmapDrawable.attachTileBitmapDrawable(mImageView, response.getInputStream(), null, new TileBitmapDrawable.OnInitializeListener()
                             {
