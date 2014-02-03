@@ -22,8 +22,11 @@ import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Environment;
 import android.os.StatFs;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -84,8 +87,8 @@ public class Picasso
         sMemCache = new LruCache(_calculateMemoryCacheSize(context));
 
         sExecutorPrefetch = (ThreadPoolExecutor) Executors.newFixedThreadPool(1, sThreadFactory);
-        sExecutorPreview = (ThreadPoolExecutor) Executors.newFixedThreadPool(4, sThreadFactory);
-        sExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2, sThreadFactory);
+        sExecutorPreview = (ThreadPoolExecutor) Executors.newFixedThreadPool(1, sThreadFactory);
+        sExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(1, sThreadFactory);
 
         sInstancePrefetch = new com.squareup.picasso.Picasso.Builder(context)
             .memoryCache(sMemCache)
@@ -109,6 +112,72 @@ public class Picasso
             .build();
 
         DanbooruGallerySettings.registerOnSharedPreferenceChangeListener(sOnSharedPreferenceChangeListener);
+
+        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        adjustThreadCount(cm.getActiveNetworkInfo());
+    }
+
+    public static void adjustThreadCount(NetworkInfo info)
+    {
+        if (info == null || !info.isConnectedOrConnecting())
+        {
+            // sExecutorPrefetch.setMaximumPoolSize(1);
+            sExecutorPreview.setMaximumPoolSize(3);
+            sExecutor.setMaximumPoolSize(1);
+        }
+        else
+        {
+            switch (info.getType())
+            {
+                case ConnectivityManager.TYPE_WIFI:
+                case ConnectivityManager.TYPE_WIMAX:
+                case ConnectivityManager.TYPE_ETHERNET:
+                    // sExecutorPrefetch.setMaximumPoolSize(1);
+                    sExecutorPreview.setMaximumPoolSize(4);
+                    sExecutor.setMaximumPoolSize(2);
+                    break;
+                case ConnectivityManager.TYPE_MOBILE:
+                    switch (info.getSubtype())
+                    {
+                        case TelephonyManager.NETWORK_TYPE_LTE: // 4G
+                        case TelephonyManager.NETWORK_TYPE_HSPAP:
+                        case TelephonyManager.NETWORK_TYPE_EHRPD:
+                            // sExecutorPrefetch.setMaximumPoolSize(1);
+                            sExecutorPreview.setMaximumPoolSize(3);
+                            sExecutor.setMaximumPoolSize(2);
+                            break;
+                        case TelephonyManager.NETWORK_TYPE_UMTS: // 3G
+                        case TelephonyManager.NETWORK_TYPE_CDMA:
+                        case TelephonyManager.NETWORK_TYPE_EVDO_0:
+                        case TelephonyManager.NETWORK_TYPE_EVDO_A:
+                        case TelephonyManager.NETWORK_TYPE_EVDO_B:
+                            // sExecutorPrefetch.setMaximumPoolSize(1);
+                            sExecutorPreview.setMaximumPoolSize(2);
+                            sExecutor.setMaximumPoolSize(1);
+                            break;
+                        case TelephonyManager.NETWORK_TYPE_GPRS: // 2G
+                        case TelephonyManager.NETWORK_TYPE_EDGE:
+                            // sExecutorPrefetch.setMaximumPoolSize(1);
+                            sExecutorPreview.setMaximumPoolSize(1);
+                            sExecutor.setMaximumPoolSize(1);
+                            break;
+                        default:
+                            // sExecutorPrefetch.setMaximumPoolSize(1);
+                            sExecutorPreview.setMaximumPoolSize(4);
+                            sExecutor.setMaximumPoolSize(2);
+                    }
+                    break;
+                default:
+                    // sExecutorPrefetch.setMaximumPoolSize(1);
+                    sExecutorPreview.setMaximumPoolSize(4);
+                    sExecutor.setMaximumPoolSize(2);
+            }
+        }
+
+        Log.d(TAG,
+            "Thread count for executors: prefetch = " + sExecutorPrefetch.getMaximumPoolSize() +
+            ", preview = " + sExecutorPreview.getMaximumPoolSize() +
+            ", general = " + sExecutor.getMaximumPoolSize());
     }
 
     public static com.squareup.picasso.Picasso with()

@@ -21,6 +21,9 @@ package tw.idv.palatis.danboorugallery;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+
+import tw.idv.palatis.danboorugallery.picasso.Picasso;
 
 public class NetworkChangeReceiver
     extends BroadcastReceiver
@@ -28,6 +31,7 @@ public class NetworkChangeReceiver
     @Override
     public void onReceive(final Context context, final Intent intent)
     {
-        
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        Picasso.adjustThreadCount(cm.getActiveNetworkInfo());
     }
 }
