@@ -71,7 +71,8 @@ public class PostListActivity
     private boolean mIsDoingSearch = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
 
         // enable progress icon
@@ -80,81 +81,16 @@ public class PostListActivity
 
         setContentView(R.layout.activity_post_list);
 
-        _setupActionBar();
-        _setupDrawer();
-
-        // Set up an instance of SystemUiHider to control the system UI for
-        // this activity.
-        mUiHider = new UiHider(AUTO_HIDE_DELAY_MILLIS, new UiHider.OnVisibilityChangeListener() {
-            @Override
-            public void onVisibilityChange(boolean visible)
-            {
-                if (visible)
-                    getActionBar().show();
-                else
-                    getActionBar().hide();
-            }
-        });
-
-        if (savedInstanceState == null)
-        {
-            mPostListFragment = new PostListFragment();
-            getFragmentManager()
-                .beginTransaction()
-                .replace(R.id.post_list_container, mPostListFragment)
-                .commit();
-        }
-    }
-
-    private void _setupActionBar()
-    {
         // enable ActionBar app icon to behave as action to toggle nav drawer
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
-    }
 
-    private CursorAdapter mHostsAdapter = null;
-
-    @Override
-    protected void onNewIntent(final Intent intent)
-    {
-        super.onNewIntent(intent);
-        if (intent.getAction() != null)
-        {
-            if (intent.getAction().equals(Intent.ACTION_VIEW))
-            {
-                mDrawerLayout.post(new Runnable()
-                {
-                    @Override
-                    public void run()
-                    {
-                        if (mPostListFragment == null)
-                            return;
-
-                        // FIXME: hard coded key
-                        int position = intent.getIntExtra("post_position", -1);
-                        if (position != -1)
-                            mPostListFragment.scrollGridToPosition(position);
-                    }
-                });
-            }
-            else if (intent.getAction().equals(Intent.ACTION_SEARCH))
-            {
-                // FIXME: hard coded key
-                SiteSession.submitFilterTags(intent.getStringExtra("tag"));
-            }
-        }
-    }
-
-    private void _setupDrawer()
-    {
+        // setup drawer
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerLeft = (RelativeLayout) findViewById(R.id.left_drawer);
         mDrawerRight = (RelativeLayout) findViewById(R.id.right_drawer);
         ListView hostsList = (ListView) findViewById(R.id.host_list);
-
         hostsList.setOnItemClickListener(new DrawerItemClickListener());
-
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close)
         {
             @Override
@@ -271,6 +207,61 @@ public class PostListActivity
         hostsList.setOnItemLongClickListener(new DrawerItemLongClickListener());
 
         getLoaderManager().initLoader(R.id.loader_host_ids, null, mCursorLoaderCallbacks);
+
+        // Set up an instance of SystemUiHider to control the system UI for
+        // this activity.
+        mUiHider = new UiHider(AUTO_HIDE_DELAY_MILLIS, new UiHider.OnVisibilityChangeListener() {
+            @Override
+            public void onVisibilityChange(boolean visible)
+            {
+                if (visible)
+                    getActionBar().show();
+                else
+                    getActionBar().hide();
+            }
+        });
+
+        if (savedInstanceState == null)
+        {
+            mPostListFragment = new PostListFragment();
+            getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.post_list_container, mPostListFragment)
+                .commit();
+        }
+    }
+
+    private CursorAdapter mHostsAdapter = null;
+
+    @Override
+    protected void onNewIntent(final Intent intent)
+    {
+        super.onNewIntent(intent);
+        if (intent.getAction() != null)
+        {
+            if (intent.getAction().equals(Intent.ACTION_VIEW))
+            {
+                mDrawerLayout.post(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        if (mPostListFragment == null)
+                            return;
+
+                        // FIXME: hard coded key
+                        int position = intent.getIntExtra("post_position", -1);
+                        if (position != -1)
+                            mPostListFragment.scrollGridToPosition(position);
+                    }
+                });
+            }
+            else if (intent.getAction().equals(Intent.ACTION_SEARCH))
+            {
+                // FIXME: hard coded key
+                SiteSession.submitFilterTags(intent.getStringExtra("tag"));
+            }
+        }
     }
 
     private LoaderManager.LoaderCallbacks<Cursor> mCursorLoaderCallbacks =
