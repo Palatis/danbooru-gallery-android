@@ -35,6 +35,7 @@ import com.squareup.picasso.StatsSnapshot;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import tw.idv.palatis.danboorugallery.DanbooruGallerySettings;
 import tw.idv.palatis.danboorugallery.R;
@@ -56,6 +57,10 @@ public class Picasso
     private static com.squareup.picasso.Picasso sInstancePreview = null;
     private static com.squareup.picasso.Picasso sInstance = null;
 
+    private static ThreadPoolExecutor sExecutorPrefetch = null;
+    private static ThreadPoolExecutor sExecutorPreview = null;
+    private static ThreadPoolExecutor sExecutor = null;
+
     private static SharedPreferences.OnSharedPreferenceChangeListener sOnSharedPreferenceChangeListener =
         new SharedPreferences.OnSharedPreferenceChangeListener()
         {
@@ -71,31 +76,32 @@ public class Picasso
 
     public static void init(Context context)
     {
-        if (sInstance != null)
-            sInstance.shutdown();
-
         File cache = _createDefaultCacheDir(context);
         sDownloader = new OkHttpRefererDownloader(cache, calculateDiskCacheSize(cache));
         sMemCache = new LruCache(_calculateMemoryCacheSize(context));
 
+        sExecutorPrefetch = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
+        sExecutorPreview = (ThreadPoolExecutor) Executors.newFixedThreadPool(4);
+        sExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
+
         sInstancePrefetch = new com.squareup.picasso.Picasso.Builder(context)
             .memoryCache(sMemCache)
             .downloader(sDownloader)
-            .executor(Executors.newSingleThreadExecutor())
+            .executor(sExecutorPrefetch)
             .debugging(DanbooruGallerySettings.getShowAsyncImageLoaderIndicator())
             .build();
 
         sInstancePreview = new com.squareup.picasso.Picasso.Builder(context)
             .memoryCache(sMemCache)
             .downloader(sDownloader)
-            .executor(Executors.newFixedThreadPool(4))
+            .executor(sExecutorPreview)
             .debugging(DanbooruGallerySettings.getShowAsyncImageLoaderIndicator())
             .build();
 
         sInstance = new com.squareup.picasso.Picasso.Builder(context)
             .memoryCache(sMemCache)
             .downloader(sDownloader)
-            .executor(Executors.newFixedThreadPool(2))
+            .executor(sExecutor)
             .debugging(DanbooruGallerySettings.getShowAsyncImageLoaderIndicator())
             .build();
 
@@ -111,7 +117,6 @@ public class Picasso
     {
         return sInstancePreview;
     }
-
 
     public static com.squareup.picasso.Picasso withPrefetch()
     {
