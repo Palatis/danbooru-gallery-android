@@ -215,7 +215,7 @@ public class TouchImageView extends ImageView {
                 final float targetTranslationX = mTranslationX + dx;
                 final float targetTranslationY = mTranslationY + dy;
 
-                float targetScale = clamp(mScale, mMinScale, mMaxScale);
+                float targetScale = MathUtils.clamp(mScale, mMinScale, mMaxScale);
 
                 clearAnimation();
                 final Animation animation = new TouchAnimation(targetScale, targetTranslationX, targetTranslationY);
@@ -229,15 +229,6 @@ public class TouchImageView extends ImageView {
         mTouchGestureDetector = new TouchGestureDetector(context, listener);
 
         super.setScaleType(ScaleType.MATRIX);
-    }
-
-    private static float clamp(float value, float min, float max)
-    {
-        if (value < min)
-            return min;
-        if (value > max)
-            return max;
-        return value;
     }
 
     private float mMinScale;
