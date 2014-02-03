@@ -35,6 +35,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import tw.idv.palatis.danboorugallery.DanbooruGallerySettings;
+import tw.idv.palatis.danboorugallery.NetworkChangeReceiver;
 import tw.idv.palatis.danboorugallery.database.HostsTable;
 import tw.idv.palatis.danboorugallery.database.PostsTable;
 import tw.idv.palatis.danboorugallery.database.TagsTable;
@@ -249,6 +250,9 @@ public class SiteSession
     private static List<Tag> sEmptyTags = new ArrayList<>();
     public static Cursor searchTags(CancellationSignal signal)
     {
+        if (!NetworkChangeReceiver.isConnectedOrConnecting())
+            return new TagCursor(sEmptyTags);
+
         String[] patterns = TextUtils.split(sTagSearchPattern, " ");
         String pattern;
         if (patterns.length > 0)
@@ -273,6 +277,9 @@ public class SiteSession
                 continue;
 
             if (signal.isCanceled())
+                break;
+
+            if (!NetworkChangeReceiver.isConnectedOrConnecting())
                 break;
 
             try
@@ -339,17 +346,7 @@ public class SiteSession
             @Override
             public void run()
             {
-                Lock lock = sHostsLock.readLock();
-                lock.lock();
-                List<Host> hosts = new ArrayList<>(sHosts);
-                lock.unlock();
-
-                lock = sFilterTagsLock.readLock();
-                lock.lock();
-                String[] filterTags = TextUtils.split(sFilterTags, " ");
-                lock.unlock();
-
-                PostsTable.rebuildTempTable(hosts, filterTags);
+                rebuildTempTable();
             }
         };
 
@@ -447,6 +444,9 @@ public class SiteSession
         @Override
         public void run()
         {
+            if (!NetworkChangeReceiver.isConnectedOrConnecting())
+                return;
+
             sHandler.post(mPreExecuteRunnable);
 
             Lock lock = sHostsLock.readLock();
@@ -463,6 +463,9 @@ public class SiteSession
             {
                 if (!host.enabled)
                     continue;
+
+                if (!NetworkChangeReceiver.isConnectedOrConnecting())
+                    break;
 
                 SiteAPI api = host.getAPI();
 
