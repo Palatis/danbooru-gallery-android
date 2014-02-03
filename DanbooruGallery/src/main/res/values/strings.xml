@@ -40,6 +40,8 @@
     <string name="popupmenu_host_item_edit">Edit</string>
     <string name="popupmenu_host_item_delete">Delete</string>
 
+    <string name="dialog_tags_title">#%1$d</string>
+
     <string name="error_nomedia_create_failed">Cannot create .nomedia file, cache directory might populate your gallery badly.</string>
 
     <string name="tags_search_hint">Search for tags...</string>

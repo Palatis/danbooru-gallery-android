@@ -19,11 +19,13 @@
 package tw.idv.palatis.danboorugallery;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.SharedPreferences;
@@ -42,6 +44,7 @@ import android.view.ViewGroup;
 import android.view.ViewPropertyAnimator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.CursorAdapter;
 import android.widget.GridView;
 import android.widget.SearchView;
@@ -50,8 +53,12 @@ import android.widget.TextView;
 import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView;
 
 import tw.idv.palatis.danboorugallery.android.content.CustomTaskLoader;
+import tw.idv.palatis.danboorugallery.android.widget.PopupMenu;
 import tw.idv.palatis.danboorugallery.database.HostsTable;
+import tw.idv.palatis.danboorugallery.database.PostTagsView;
 import tw.idv.palatis.danboorugallery.database.PostsTable;
+import tw.idv.palatis.danboorugallery.model.Host;
+import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.model.Tag;
 import tw.idv.palatis.danboorugallery.picasso.Picasso;
 import tw.idv.palatis.danboorugallery.siteapi.SiteAPI;
@@ -215,6 +222,53 @@ public class PostListFragment
     @Override
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id)
     {
+        final int post_db_id = (int) mPostListAdapter.getItemId(position);
+        Cursor post_cursor = PostsTable.getPostCursorById(post_db_id);
+        Cursor tags_cursor = PostTagsView.getTagNamesCursorForPostDatabaseId(post_db_id);
+        post_cursor.moveToFirst();
+        Host host = SiteSession.getHostById(post_cursor.getInt(PostsTable.INDEX_POST_HOST_ID));
+        final Post post = Post.fromCursor(host, post_cursor, tags_cursor);
+
+        PopupMenu popup = new PopupMenu(getActivity(), view);
+        popup.setForceShowIcon(true);
+        popup.getMenuInflater().inflate(R.menu.menu_post_list_fragment_longclick, popup.getMenu());
+        popup.setOnMenuItemClickListener(new android.widget.PopupMenu.OnMenuItemClickListener()
+        {
+            @Override
+            public boolean onMenuItemClick(MenuItem item)
+            {
+                int id = item.getItemId();
+                switch (id)
+                {
+                    case R.id.menu_post_detail_tags:
+                        AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
+                        adb.setTitle(getResources().getString(R.string.dialog_tags_title, post.post_id));
+                        adb.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_activated_1, android.R.id.text1, post.tags),
+                            new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int position)
+                                {
+                                    SiteSession.submitFilterTags(post.tags[position]);
+                                }
+                            });
+                        adb.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int position) { }
+                        });
+                        adb.create().show();
+                        break;
+                }
+                return true;
+            }
+        });
+        popup.setOnDismissListener(new android.widget.PopupMenu.OnDismissListener()
+        {
+            @Override
+            public void onDismiss(android.widget.PopupMenu popupMenu) { }
+        });
+        popup.show();
         return true;
     }
 
