@@ -62,7 +62,11 @@ import tw.idv.palatis.danboorugallery.util.TagSearchCursorAdapter;
 
 public class PostListFragment
     extends Fragment
-    implements AdapterView.OnItemClickListener, LoaderManager.LoaderCallbacks<Cursor>, AbsListView.OnScrollListener
+    implements
+        LoaderManager.LoaderCallbacks<Cursor>,
+        AbsListView.OnScrollListener,
+        AdapterView.OnItemClickListener,
+        AdapterView.OnItemLongClickListener
 {
     private static final String TAG = "PostListFragment";
 
@@ -206,6 +210,12 @@ public class PostListFragment
                 mOldPostCreatedAt = created_at;
             }
         }
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id)
+    {
+        return true;
     }
 
     /**
@@ -528,6 +538,7 @@ public class PostListFragment
         mGridView.setAdapter(mPostListAdapter);
         mGridView.setOnScrollListener(this);
         mGridView.setOnItemClickListener(this);
+        mGridView.setOnItemLongClickListener(this);
 
         mHostsObserver = new DataSetObserver()
         {
