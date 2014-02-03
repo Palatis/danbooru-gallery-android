@@ -319,7 +319,7 @@ public class TouchImageView extends ImageView {
         mCropScale = getMeasuredHeight() / (float) mDrawableIntrinsicHeight;
         if (mMinScale > mCropScale)
         {
-            float temp = mMinScale;
+            float temp = mCropScale;
             mCropScale = mMinScale;
             mMinScale = temp;
         }
