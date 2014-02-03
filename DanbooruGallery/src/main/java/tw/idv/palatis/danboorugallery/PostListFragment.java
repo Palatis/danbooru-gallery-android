@@ -232,6 +232,8 @@ public class PostListFragment
         post_cursor.moveToFirst();
         Host host = SiteSession.getHostById(post_cursor.getInt(PostsTable.INDEX_POST_HOST_ID));
         final Post post = Post.fromCursor(host, post_cursor, tags_cursor);
+        post_cursor.close();
+        tags_cursor.close();
 
         PopupMenu popup = new PopupMenu(getActivity(), view);
         popup.setForceShowIcon(true);
