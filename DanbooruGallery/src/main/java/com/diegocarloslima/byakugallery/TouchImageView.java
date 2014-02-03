@@ -87,8 +87,12 @@ public class TouchImageView extends ImageView {
             public boolean onDoubleTap(MotionEvent e) {
                 loadMatrixValues();
 
-                // If we have already zoomed in, we should return to our initial scale value (idealScale). Otherwise, scale to full size
-                final float targetScale = mScale > mMinScale ? mMinScale : mMaxScale;
+                // 3 stage scaling
+                float targetScale = mCropScale;
+                if (mScale == mMaxScale)
+                    targetScale = mMinScale;
+                else if (mScale >= mCropScale)
+                    targetScale = mMaxScale;
 
                 // First, we try to keep the focused point in the same position when the animation ends
                 final float desiredTranslationX = e.getX() - (e.getX() - mTranslationX) * (targetScale / mScale);
@@ -232,6 +236,7 @@ public class TouchImageView extends ImageView {
     }
 
     private float mMinScale;
+    private float mCropScale;
     private float mMaxScale;
 
     @Override
@@ -319,7 +324,14 @@ public class TouchImageView extends ImageView {
     }
 
     private void resetToInitialState() {
-        mMinScale = Math.min(getMeasuredWidth() / (float) mDrawableIntrinsicWidth, getMeasuredHeight() / (float) mDrawableIntrinsicHeight);
+        mMinScale = getMeasuredWidth() / (float) mDrawableIntrinsicWidth;
+        mCropScale = getMeasuredHeight() / (float) mDrawableIntrinsicHeight;
+        if (mMinScale > mCropScale)
+        {
+            float temp = mMinScale;
+            mCropScale = mMinScale;
+            mMinScale = temp;
+        }
         mMaxScale = mMinScale * 6.0f;
 
         mMatrix.reset();
