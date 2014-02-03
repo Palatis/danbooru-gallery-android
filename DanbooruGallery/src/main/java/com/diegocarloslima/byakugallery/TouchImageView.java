@@ -25,7 +25,6 @@ import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.animation.Animation;
@@ -403,7 +402,6 @@ public class TouchImageView extends ImageView {
 
     // The scale values must be in [minScale, 1]
     private static float computeScale(float minScale, float maxScale, float currentScale, float delta) {
-        Log.d(TAG, String.format("computeScale: minScale = %f, currentScale = %f, delta = %f", minScale, currentScale, delta));
         if(currentScale * delta < minScale) {
             return minScale / currentScale;
         } else if(currentScale * delta > maxScale) {
