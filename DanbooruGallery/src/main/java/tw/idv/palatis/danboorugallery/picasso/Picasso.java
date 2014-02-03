@@ -109,9 +109,6 @@ public class Picasso
             .build();
 
         DanbooruGallerySettings.registerOnSharedPreferenceChangeListener(sOnSharedPreferenceChangeListener);
-
-        ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        adjustThreadCount(cm.getActiveNetworkInfo());
     }
 
     public static void adjustThreadCount(NetworkInfo info)

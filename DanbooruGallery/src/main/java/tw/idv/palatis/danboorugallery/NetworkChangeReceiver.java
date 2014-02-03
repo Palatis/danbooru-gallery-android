@@ -36,6 +36,7 @@ public class NetworkChangeReceiver
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info = cm.getActiveNetworkInfo();
         sIsConnectedOrConnecting = info != null && info.isConnectedOrConnecting();
+        Picasso.adjustThreadCount(info);
     }
 
     public static boolean isConnectedOrConnecting()
