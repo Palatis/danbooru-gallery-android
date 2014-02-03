@@ -517,6 +517,7 @@ public class PostListFragment
             public boolean onMenuItemActionExpand(MenuItem menuItem)
             {
                 getLoaderManager().initLoader(R.id.loader_search_tags, null, PostListFragment.this);
+                mSearchView.setQuery(SiteSession.getFilterTags(), false);
                 return mCallbacks.onSearchViewExpand();
             }
 
