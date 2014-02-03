@@ -35,6 +35,7 @@ import com.squareup.picasso.StatsSnapshot;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import tw.idv.palatis.danboorugallery.DanbooruGallerySettings;
@@ -61,6 +62,8 @@ public class Picasso
     private static ThreadPoolExecutor sExecutorPreview = null;
     private static ThreadPoolExecutor sExecutor = null;
 
+    private static ThreadFactory sThreadFactory = new PicassoThreadFactory();
+
     private static SharedPreferences.OnSharedPreferenceChangeListener sOnSharedPreferenceChangeListener =
         new SharedPreferences.OnSharedPreferenceChangeListener()
         {
@@ -80,9 +83,9 @@ public class Picasso
         sDownloader = new OkHttpRefererDownloader(cache, calculateDiskCacheSize(cache));
         sMemCache = new LruCache(_calculateMemoryCacheSize(context));
 
-        sExecutorPrefetch = (ThreadPoolExecutor) Executors.newFixedThreadPool(1);
-        sExecutorPreview = (ThreadPoolExecutor) Executors.newFixedThreadPool(4);
-        sExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
+        sExecutorPrefetch = (ThreadPoolExecutor) Executors.newFixedThreadPool(1, sThreadFactory);
+        sExecutorPreview = (ThreadPoolExecutor) Executors.newFixedThreadPool(4, sThreadFactory);
+        sExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2, sThreadFactory);
 
         sInstancePrefetch = new com.squareup.picasso.Picasso.Builder(context)
             .memoryCache(sMemCache)
@@ -211,6 +214,18 @@ public class Picasso
     private static class ActivityManagerHoneycomb {
         static int getLargeMemoryClass(ActivityManager activityManager) {
             return activityManager.getLargeMemoryClass();
+        }
+    }
+
+    private static class PicassoThreadFactory
+        implements ThreadFactory
+    {
+        @SuppressWarnings("NullableProblems")
+        public Thread newThread(Runnable r)
+        {
+            Thread thread = new Thread(r);
+            thread.setPriority(Thread.MIN_PRIORITY);
+            return thread;
         }
     }
 }
