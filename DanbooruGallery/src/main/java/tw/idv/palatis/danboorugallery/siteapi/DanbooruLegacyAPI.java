@@ -201,6 +201,7 @@ public class DanbooruLegacyAPI
         String[] tags;
         if (tags_cursor != null)
         {
+            tags_cursor.moveToPosition(-1);
             tags = new String[tags_cursor.getCount()];
             while (tags_cursor.moveToNext())
                 tags[tags_cursor.getPosition()] = tags_cursor.getString(PostTagsView.INDEX_KEY_POST_TAG_TAG_NAME);
