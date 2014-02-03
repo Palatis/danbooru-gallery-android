@@ -21,6 +21,7 @@ package tw.idv.palatis.danboorugallery;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
+import android.app.DownloadManager;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.app.SearchManager;
@@ -32,6 +33,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.text.TextUtils;
@@ -51,6 +53,8 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.tonicartos.widget.stickygridheaders.StickyGridHeadersGridView;
+
+import java.io.File;
 
 import tw.idv.palatis.danboorugallery.android.content.CustomTaskLoader;
 import tw.idv.palatis.danboorugallery.android.widget.PopupMenu;
@@ -258,6 +262,24 @@ public class PostListFragment
                             public void onClick(DialogInterface dialogInterface, int position) { }
                         });
                         adb.create().show();
+                        break;
+                    case R.id.menu_post_detail_download:
+                        File destination = post.host.getAPI().getDownloadFile(post.host, post);
+
+                        if (destination.getParentFile().exists() || destination.getParentFile().mkdirs())
+                        {
+                            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(post.file_url));
+                            request.allowScanningByMediaScanner();
+                            request.addRequestHeader("Referer", post.getReferer());
+                            // HACK: fake user agent
+                            request.addRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.2; WOW64; rv:26.0) Gecko/20100101 Firefox/26.0");
+                            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                            request.setTitle(post.host.getAPI().getDownloadTitle(post.host, post));
+                            request.setDescription(post.host.getAPI().getDownloadDescription(post.host, post));
+                            request.setDestinationUri(Uri.fromFile(destination));
+                            DownloadManager downloader = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+                            downloader.enqueue(request);
+                        }
                         break;
                 }
                 return true;

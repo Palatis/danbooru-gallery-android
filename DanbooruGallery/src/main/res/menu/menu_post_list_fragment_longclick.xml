@@ -22,4 +22,8 @@
         android:id="@+id/menu_post_detail_tags"
         android:title="@string/menu_post_detail_tags"
         android:icon="@android:drawable/ic_menu_agenda" />
+    <item
+        android:id="@+id/menu_post_detail_download"
+        android:title="@string/menu_post_detail_download"
+        android:icon="@android:drawable/stat_sys_download" />
 </menu>
