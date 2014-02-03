@@ -51,10 +51,10 @@ public class DanbooruGalleryApplication
     public void onCreate()
     {
         super.onCreate();
-        NetworkChangeReceiver.init(this);
         DanbooruGallerySettings.init(this);
         DanbooruGalleryDatabase.init(this);
         Picasso.init(this);
+        NetworkChangeReceiver.init(this);
         SiteAPI.init(this);
         SiteSession.init();
 
