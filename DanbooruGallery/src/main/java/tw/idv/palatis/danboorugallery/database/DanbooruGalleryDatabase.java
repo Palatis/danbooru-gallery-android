@@ -46,7 +46,7 @@ public class DanbooruGalleryDatabase
         PostTagsView.init(db);
     }
 
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 6;
     public static final String DATABASE_NAME = "DanbooruGalleryDatabase.db";
 
     // Persistent
@@ -94,12 +94,12 @@ public class DanbooruGalleryDatabase
     private static final String SQL_CREATE_VIEW_POST_TAGS =
         "CREATE VIEW IF NOT EXISTS " + PostTagsView.VIEW_NAME + " AS " +
         "SELECT " +
-            Post.MAIN_TABLE_NAME + "." + Post.KEY_POST_DATABASE_ID + " AS " + PostTagsView.KEY_POST_DATABASE_ID + "," +
+            PostTagsLinkTable.MAIN_TABLE_NAME + "." + PostTagsLinkTable.KEY_POST_DATABASE_ID + " AS " + PostTagsView.KEY_POST_DATABASE_ID + "," +
             Tag.MAIN_TABLE_NAME + "." + Tag.KEY_TAG_NAME + " AS " + PostTagsView.KEY_TAG_NAME + " " +
         "FROM " +
-            Post.MAIN_TABLE_NAME + "," + Tag.MAIN_TABLE_NAME + "," + PostTagsLinkTable.TABLE_NAME + " " +
+            Tag.MAIN_TABLE_NAME + "," +
+            PostTagsLinkTable.TABLE_NAME + " " +
         "WHERE " +
-            PostTagsLinkTable.MAIN_TABLE_NAME + "." + PostTagsLinkTable.KEY_POST_DATABASE_ID + " == " + Post.MAIN_TABLE_NAME + "." + Post.KEY_POST_DATABASE_ID + " AND " +
             PostTagsLinkTable.MAIN_TABLE_NAME + "." + PostTagsLinkTable.KEY_TAG_HASHCODE + " == " + Tag.MAIN_TABLE_NAME + "." + Tag.KEY_TAG_HASHCODE +
         ";";
     private static final String SQL_CREATE_INDEX_TAGS_HASHCODE =
@@ -107,6 +107,12 @@ public class DanbooruGalleryDatabase
             Tag.MAIN_TABLE_NAME + "__" + Tag.KEY_TAG_HASHCODE + " " +
         "ON " + Tag.TABLE_NAME + " (" +
             Tag.KEY_TAG_HASHCODE +
+        ");";
+    private static final String SQL_CREATE_INDEX_POST_TAGS_LINK_HASHCODE =
+        "CREATE INDEX IF NOT EXISTS " +
+            PostTagsLinkTable.MAIN_TABLE_NAME + "__" + PostTagsLinkTable.KEY_TAG_HASHCODE + " " +
+        "ON " + PostTagsLinkTable.TABLE_NAME + " (" +
+            PostTagsLinkTable.KEY_TAG_HASHCODE +
         ");";
     private static final String SQL_CREATE_INDEX_POSTS_CREATED_AT =
         "CREATE INDEX IF NOT EXISTS " +
@@ -172,6 +178,8 @@ public class DanbooruGalleryDatabase
             db.execSQL(SQL_CREATE_VIEW_POST_TAGS);
             Log.v(TAG, "Creating: " + SQL_CREATE_INDEX_TAGS_HASHCODE);
             db.execSQL(SQL_CREATE_INDEX_TAGS_HASHCODE);
+            Log.v(TAG, "Creating: " + SQL_CREATE_INDEX_POST_TAGS_LINK_HASHCODE);
+            db.execSQL(SQL_CREATE_INDEX_POST_TAGS_LINK_HASHCODE);
             Log.v(TAG, "Creating: " + SQL_CREATE_INDEX_POSTS_CREATED_AT);
             db.execSQL(SQL_CREATE_INDEX_POSTS_CREATED_AT);
             db.setTransactionSuccessful();
@@ -182,17 +190,40 @@ public class DanbooruGalleryDatabase
         }
     }
 
-    private static final String SQL_UPGRADE_TO_V4 =
+    private static final String[] SQL_UPGRADE_TO_V4 = new String[] {
         "ALTER TABLE " + Tag.MAIN_TABLE_NAME + " " +
-        "ADD COLUMN " + Tag.KEY_TAG_SEARCH_COUNT + " INTEGER NOT NULL DEFAULT 0;";
+        "ADD COLUMN " + Tag.KEY_TAG_SEARCH_COUNT + " INTEGER NOT NULL DEFAULT 0;",
+    };
+    private static final String[] SQL_UPGRADE_TO_V5 = new String[] {
+        "DROP VIEW IF EXISTS " + PostTagsView.VIEW_NAME + ";",
+        SQL_CREATE_VIEW_POST_TAGS,
+    };
 
-    @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
     {
         Log.v(TAG, String.format("Upgrading from version %d to %d.", oldVersion, newVersion));
         onCreate(db);
-        if (oldVersion < 4)
-            db.execSQL(SQL_UPGRADE_TO_V4);
+        db.beginTransaction();
+        try
+        {
+            if (oldVersion < 4)
+                for (String sql : SQL_UPGRADE_TO_V4)
+                {
+                    Log.d(TAG, "Upgrading... " + sql);
+                    db.execSQL(sql);
+                }
+            if (oldVersion < 5)
+                for (String sql : SQL_UPGRADE_TO_V5)
+                {
+                    Log.d(TAG, "Upgrading... " + sql);
+                    db.execSQL(sql);
+                }
+            db.setTransactionSuccessful();
+        }
+        finally
+        {
+            db.endTransaction();
+        }
     }
 
     @Override
