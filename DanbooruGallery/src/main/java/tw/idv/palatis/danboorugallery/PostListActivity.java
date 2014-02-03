@@ -57,7 +57,11 @@ import tw.idv.palatis.danboorugallery.util.UiHider;
 
 public class PostListActivity
     extends Activity
-    implements PostListFragment.Callbacks, LoaderManager.LoaderCallbacks<Cursor>
+    implements
+        PostListFragment.Callbacks,
+        LoaderManager.LoaderCallbacks<Cursor>,
+        AdapterView.OnItemClickListener,
+        AdapterView.OnItemLongClickListener
 {
     public static final String TAG = "PostListActivity";
 
@@ -90,7 +94,6 @@ public class PostListActivity
         mDrawerLeft = (RelativeLayout) findViewById(R.id.left_drawer);
         mDrawerRight = (RelativeLayout) findViewById(R.id.right_drawer);
         ListView hostsList = (ListView) findViewById(R.id.host_list);
-        hostsList.setOnItemClickListener(new DrawerItemClickListener());
         mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.drawable.ic_drawer, R.string.drawer_open, R.string.drawer_close)
         {
             @Override
@@ -203,8 +206,8 @@ public class PostListActivity
         DrawerListAdapter adapter = new DrawerListAdapter(this, mHostsAdapter);
         hostsList.setAdapter(adapter);
         hostsList.setChoiceMode(AbsListView.CHOICE_MODE_NONE);
-        hostsList.setOnItemClickListener(new DrawerItemClickListener());
-        hostsList.setOnItemLongClickListener(new DrawerItemLongClickListener());
+        hostsList.setOnItemClickListener(this);
+        hostsList.setOnItemLongClickListener(this);
 
         getLoaderManager().initLoader(R.id.loader_host_ids, null, this);
 
@@ -296,89 +299,81 @@ public class PostListActivity
         mHostsAdapter.swapCursor(null);
     }
 
-    private class DrawerItemLongClickListener
-            implements ListView.OnItemLongClickListener
+    @Override
+    public boolean onItemLongClick(final AdapterView<?> parent, View view, int position, long id)
     {
-        @Override
-        public boolean onItemLongClick(final AdapterView<?> parent, View view, int position, long id)
+        Object item = parent.getAdapter().getItem(position);
+        if (item instanceof Cursor)
         {
-            Object item = parent.getAdapter().getItem(position);
-            if (item instanceof Cursor)
+            final Cursor cursor = (Cursor)item;
+            PopupMenu popup = new PopupMenu(PostListActivity.this, view);
+            popup.inflate(R.menu.popupmenu_host_item);
+            popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener()
             {
-                final Cursor cursor = (Cursor)item;
-                PopupMenu popup = new PopupMenu(PostListActivity.this, view);
-                popup.inflate(R.menu.popupmenu_host_item);
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener()
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem)
                 {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem)
+                    int host_id = cursor.getInt(HostsTable.INDEX_HOST_DATABASE_ID);
+                    final Host host = SiteSession.getHostById(host_id);
+                    int id = menuItem.getItemId();
+                    switch (id)
                     {
-                        int host_id = cursor.getInt(HostsTable.INDEX_HOST_DATABASE_ID);
-                        final Host host = SiteSession.getHostById(host_id);
-                        int id = menuItem.getItemId();
-                        switch (id)
-                        {
-                            case R.id.popupmenu_host_item_edit:
-                                Intent intent = new Intent(PostListActivity.this, NewHostActivity.class);
-                                intent.putExtra(Host.TABLE_NAME + Host.KEY_HOST_DATABASE_ID, host.id);
-                                startActivity(intent);
-                                return true;
-                            case R.id.popupmenu_host_item_delete:
-                                AlertDialog.Builder b = new AlertDialog.Builder(PostListActivity.this);
-                                b.setTitle(R.string.dialog_delete_host_title);
-                                b.setMessage(getResources().getString(
-                                    R.string.dialog_delete_host_message,
-                                    host.name, host.url, host.getLogin(), host.getAPI().getName()));
-                                b.setIcon(android.R.drawable.ic_dialog_alert);
-                                b.setNegativeButton(android.R.string.cancel, null);
-                                b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
+                        case R.id.popupmenu_host_item_edit:
+                            Intent intent = new Intent(PostListActivity.this, NewHostActivity.class);
+                            intent.putExtra(Host.TABLE_NAME + Host.KEY_HOST_DATABASE_ID, host.id);
+                            startActivity(intent);
+                            return true;
+                        case R.id.popupmenu_host_item_delete:
+                            AlertDialog.Builder b = new AlertDialog.Builder(PostListActivity.this);
+                            b.setTitle(R.string.dialog_delete_host_title);
+                            b.setMessage(getResources().getString(
+                                R.string.dialog_delete_host_message,
+                                host.name, host.url, host.getLogin(), host.getAPI().getName()));
+                            b.setIcon(android.R.drawable.ic_dialog_alert);
+                            b.setNegativeButton(android.R.string.cancel, null);
+                            b.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
+                            {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i)
                                 {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i)
-                                    {
-                                        HostsTable.removeHost(host);
-                                    }
-                                });
-                                b.create().show();
-                                return true;
-                        }
-                        return false;
+                                    HostsTable.removeHost(host);
+                                }
+                            });
+                            b.create().show();
+                            return true;
                     }
-                });
-                popup.setForceShowIcon(true);
-                popup.show();
-                return true;
-            }
-            return false;
+                    return false;
+                }
+            });
+            popup.setForceShowIcon(true);
+            popup.show();
+            return true;
         }
+        return false;
     }
 
-    private class DrawerItemClickListener
-        implements ListView.OnItemClickListener
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
     {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id)
+        Object rawitem = parent.getAdapter().getItem(position);
+        if (rawitem.getClass().equals(DrawerListAdapter.DrawerItem.class))
         {
-            Object rawitem = parent.getAdapter().getItem(position);
-            if (rawitem.getClass().equals(DrawerListAdapter.DrawerItem.class))
+            DrawerListAdapter.DrawerItem item = (DrawerListAdapter.DrawerItem)rawitem;
+            switch (item.id)
             {
-                DrawerListAdapter.DrawerItem item = (DrawerListAdapter.DrawerItem)rawitem;
-                switch (item.id)
-                {
-                    case R.id.action_new_host:
-                        startActivity(new Intent(parent.getContext(), NewHostActivity.class));
-                        break;
-                }
-                mDrawerLayout.closeDrawer(mDrawerLeft);
+                case R.id.action_new_host:
+                    startActivity(new Intent(parent.getContext(), NewHostActivity.class));
+                    break;
             }
-            else if (rawitem instanceof Cursor)
-            {
-                Cursor cursor = (Cursor) rawitem;
-                int host_id = cursor.getInt(HostsTable.INDEX_HOST_DATABASE_ID);
-                Host host = SiteSession.getHostById(host_id);
-                host.enabled = !host.enabled;
-                HostsTable.addOrUpdateHost(host);
-            }
+            mDrawerLayout.closeDrawer(mDrawerLeft);
+        }
+        else if (rawitem instanceof Cursor)
+        {
+            Cursor cursor = (Cursor) rawitem;
+            int host_id = cursor.getInt(HostsTable.INDEX_HOST_DATABASE_ID);
+            Host host = SiteSession.getHostById(host_id);
+            host.enabled = !host.enabled;
+            HostsTable.addOrUpdateHost(host);
         }
     }
 
