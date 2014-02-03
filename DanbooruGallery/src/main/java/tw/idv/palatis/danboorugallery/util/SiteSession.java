@@ -483,7 +483,7 @@ public class SiteSession
                         posts = api.fetchPosts(host, position + limit, filterTags);
                         PostsTable.addOrUpdatePosts(host, posts);
                     }
-                    PostsTable.rebuildTempTable(hosts, filterTags);
+                    rebuildTempTable();
 
                     mProgress += posts.size();
 
