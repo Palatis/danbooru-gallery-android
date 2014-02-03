@@ -179,6 +179,7 @@ public class PostsTable
                 values.clear();
                 values.put(Tag.KEY_TAG_HASHCODE, tag.hashCode());
                 values.put(Tag.KEY_TAG_NAME, tag);
+                values.put(Tag.KEY_TAG_SEARCH_COUNT, 0);
                 sDatabase.insertWithOnConflict(Tag.MAIN_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
             }
 
