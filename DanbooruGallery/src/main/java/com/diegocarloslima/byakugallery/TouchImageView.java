@@ -302,14 +302,6 @@ public class TouchImageView extends ImageView {
         }
     }
 
-//    @Override
-//    public void setScaleType(ScaleType scaleType) {
-//        if(scaleType != ScaleType.MATRIX) {
-//            throw new IllegalArgumentException("Unsupported scaleType. Only ScaleType.MATRIX is allowed.");
-//        }
-//        super.setScaleType(scaleType);
-//    }
-
     @Override
     public boolean canScrollHorizontally(int direction) {
         loadMatrixValues();
