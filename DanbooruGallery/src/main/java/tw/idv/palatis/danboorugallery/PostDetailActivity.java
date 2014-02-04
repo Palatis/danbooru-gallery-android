@@ -79,8 +79,12 @@ public class PostDetailActivity
                     Post post = Post.fromCursor(host, post_cursor, null);
                     mInfoText.setText(post.describeContent(PostDetailActivity.this));
 
+                    // FIXME: hard coded page limit
+                    boolean forced =
+                        (position < 10) ||
+                        (position > post_cursor.getCount() - 10);
                     long created_at = post_cursor.getLong(PostsTable.INDEX_POST_CREATED_AT);
-                    SiteSession.fetchPosts(created_at, false, null);
+                    SiteSession.fetchPosts(created_at, forced, null);
                 }
             }
 
