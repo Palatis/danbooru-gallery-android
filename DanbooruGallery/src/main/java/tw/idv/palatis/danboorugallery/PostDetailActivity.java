@@ -49,7 +49,10 @@ import tw.idv.palatis.danboorugallery.util.UiHider;
 
 public class PostDetailActivity
     extends Activity
-    implements PostDetailFragment.Callbacks, LoaderManager.LoaderCallbacks<Cursor>
+    implements
+        PostDetailFragment.Callbacks,
+        LoaderManager.LoaderCallbacks<Cursor>,
+        ViewPager.OnPageChangeListener
 {
     public static final String TAG = "PostDetailActivity";
 
@@ -61,39 +64,36 @@ public class PostDetailActivity
     private PostDetailPagerAdapter mPagerAdapter;
     private TextView mInfoText;
     private ImageButton mPlayPauseButton;
-    private ViewPager.OnPageChangeListener mOnPageChangeListener =
-        new ViewPager.OnPageChangeListener()
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
+    {
+    }
+
+    @Override
+    public void onPageSelected(int position)
+    {
+        mPosition = position;
+        Cursor post_cursor = mPagerAdapter.getCursor(mPosition);
+        if (post_cursor != null && post_cursor.getCount() != 0)
         {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels)
-            {
-            }
+            Host host = SiteSession.getHostById(post_cursor.getInt(PostsTable.INDEX_POST_HOST_ID));
+            Post post = Post.fromCursor(host, post_cursor, null);
+            mInfoText.setText(post.describeContent(this));
 
-            @Override
-            public void onPageSelected(int position)
-            {
-                mPosition = position;
-                Cursor post_cursor = mPagerAdapter.getCursor(mPosition);
-                if (post_cursor != null && post_cursor.getCount() != 0)
-                {
-                    Host host = SiteSession.getHostById(post_cursor.getInt(PostsTable.INDEX_POST_HOST_ID));
-                    Post post = Post.fromCursor(host, post_cursor, null);
-                    mInfoText.setText(post.describeContent(PostDetailActivity.this));
+            // FIXME: hard coded page limit
+            boolean forced =
+                (position < 10) ||
+                    (position > post_cursor.getCount() - 10);
+            long created_at = post_cursor.getLong(PostsTable.INDEX_POST_CREATED_AT);
+            SiteSession.fetchPosts(created_at, forced, null);
+        }
+    }
 
-                    // FIXME: hard coded page limit
-                    boolean forced =
-                        (position < 10) ||
-                        (position > post_cursor.getCount() - 10);
-                    long created_at = post_cursor.getLong(PostsTable.INDEX_POST_CREATED_AT);
-                    SiteSession.fetchPosts(created_at, forced, null);
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state)
-            {
-            }
-        };
+    @Override
+    public void onPageScrollStateChanged(int state)
+    {
+    }
 
     private Runnable mNextPageRunnable = new Runnable() {
         @Override
@@ -237,7 +237,7 @@ public class PostDetailActivity
             mPosition = savedInstanceState.getInt("post_position", -1);
 
         mPagerAdapter = new PostDetailPagerAdapter(getFragmentManager(), null);
-        mViewPager.setOnPageChangeListener(mOnPageChangeListener);
+        mViewPager.setOnPageChangeListener(this);
         mViewPager.setAdapter(mPagerAdapter);
         mViewPager.setPageMargin(16); // TODO: i'm lazy to calculate dp here...
 
@@ -311,7 +311,8 @@ public class PostDetailActivity
             // Show the Up button in the action bar.
             getActionBar().setDisplayHomeAsUpEnabled(true);
             getActionBar().setHomeButtonEnabled(true);
-            getActionBar().addOnMenuVisibilityListener(new ActionBar.OnMenuVisibilityListener() {
+            getActionBar().addOnMenuVisibilityListener(new ActionBar.OnMenuVisibilityListener()
+            {
                 @Override
                 public void onMenuVisibilityChanged(boolean visible)
                 {
@@ -319,8 +320,7 @@ public class PostDetailActivity
                     {
                         mUiHider.setAutoHideDelay(UiHider.AUTO_HIDE_DELAY_DISABLED);
                         mUiHider.show();
-                    }
-                    else
+                    } else
                     {
                         mUiHider.setAutoHideDelay(AUTO_HIDE_DELAY_MILLIS);
                         mUiHider.delayedHide();
