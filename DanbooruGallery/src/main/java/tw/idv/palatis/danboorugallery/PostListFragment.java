@@ -249,12 +249,25 @@ public class PostListFragment
                 int id = item.getItemId();
                 switch (id)
                 {
+                    case R.id.menu_post_detail_share:
+                    {
+                        Intent intent = new Intent(Intent.ACTION_SEND);
+                        intent.setType("text/plain");
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                        intent.putExtra(Intent.EXTRA_SUBJECT, post.getDownloadFilename());
+                        intent.putExtra(Intent.EXTRA_TEXT, post.getWebUrl());
+                        startActivity(intent);
+                        break;
+                    }
                     case R.id.menu_post_detail_browser:
+                    {
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         intent.setData(Uri.parse(post.getWebUrl()));
                         startActivity(intent);
                         break;
+                    }
                     case R.id.menu_post_detail_tags:
+                    {
                         AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
                         adb.setTitle(getResources().getString(R.string.dialog_tags_title, post.post_id));
                         adb.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_activated_1, android.R.id.text1, post.tags),
@@ -273,7 +286,9 @@ public class PostListFragment
                         });
                         adb.create().show();
                         break;
+                    }
                     case R.id.menu_post_detail_download:
+                    {
                         File destination = post.host.getAPI().getDownloadFile(post.host, post);
 
                         if (destination.getParentFile().exists() || destination.getParentFile().mkdirs())
@@ -291,6 +306,7 @@ public class PostListFragment
                             downloader.enqueue(request);
                         }
                         break;
+                    }
                 }
                 return true;
             }
