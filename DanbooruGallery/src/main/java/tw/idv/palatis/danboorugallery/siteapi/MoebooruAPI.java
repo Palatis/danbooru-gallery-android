@@ -175,13 +175,9 @@ public class MoebooruAPI
 
             return posts;
         }
-        catch (IOException ex)
+        catch (IOException | ParseException | JSONException ex)
         {
             throw new SiteAPIException(this, connection, ex);
-        }
-        catch (JSONException | ParseException ex)
-        {
-            throw new SiteAPIException(ex);
         }
         finally
         {
@@ -206,6 +202,11 @@ public class MoebooruAPI
         if (!file_url_preview.startsWith("http"))
             file_url_preview = host.url + file_url_preview;
 
+        int uploader_id = -1;
+        String uploader_name = "";
+        try { uploader_id = json.getInt(MoebooruPost.KEY_POST_UPLOADER_ID); } catch (JSONException ignored) { }
+        try { uploader_name = json.getString(MoebooruPost.KEY_POST_UPLOADER_NAME); } catch (JSONException ignored) { }
+
         Date date = new Date(json.getLong(MoebooruPost.KEY_POST_CREATED_AT) * 1000);
         return new MoebooruPost(
             host,
@@ -220,8 +221,8 @@ public class MoebooruAPI
             file_url_preview,
             TextUtils.split(json.getString(MoebooruPost.KEY_POST_TAG_STRING), " "),
             json.getString(MoebooruPost.KEY_POST_RATING),
-            json.getInt(MoebooruPost.KEY_POST_UPLOADER_ID),
-            json.getString(MoebooruPost.KEY_POST_UPLOADER_NAME),
+            uploader_id,
+            uploader_name,
             json.getString(MoebooruPost.KEY_POST_MD5),
             json.getInt(MoebooruPost.KEY_POST_SCORE)
         );

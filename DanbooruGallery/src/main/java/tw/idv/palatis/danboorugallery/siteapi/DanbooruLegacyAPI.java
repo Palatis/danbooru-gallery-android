@@ -129,13 +129,9 @@ public class DanbooruLegacyAPI
 
             return posts;
         }
-        catch (IOException ex)
+        catch (JSONException | ParseException | IOException ex)
         {
             throw new SiteAPIException(this, connection, ex);
-        }
-        catch (JSONException | ParseException ex)
-        {
-            throw new SiteAPIException(ex);
         }
         finally
         {
@@ -243,6 +239,12 @@ public class DanbooruLegacyAPI
 
         JSONObject json_date = json.getJSONObject(DanbooruLegacyPost.KEY_POST_CREATED_AT);
         Date date = new Date(json_date.getLong("s") * 1000 + json_date.getLong("n") / 1000000);
+
+        int uploader_id = -1;
+        String uploader_name = "";
+        try { uploader_id = json.getInt(DanbooruLegacyPost.KEY_POST_UPLOADER_ID); } catch (JSONException ignored) { }
+        try { uploader_name = json.getString(DanbooruLegacyPost.KEY_POST_UPLOADER_NAME); } catch (JSONException ignored) { }
+
         return new DanbooruLegacyPost(
             host,
             json.getInt(DanbooruLegacyPost.KEY_POST_ID),
@@ -256,8 +258,8 @@ public class DanbooruLegacyAPI
             file_url_preview,
             TextUtils.split(json.getString(DanbooruLegacyPost.KEY_POST_TAG_STRING), " "),
             json.getString(DanbooruLegacyPost.KEY_POST_RATING),
-            json.getInt(DanbooruLegacyPost.KEY_POST_UPLOADER_ID),
-            json.getString(DanbooruLegacyPost.KEY_POST_UPLOADER_NAME),
+            uploader_id,
+            uploader_name,
             json.getString(DanbooruLegacyPost.KEY_POST_MD5),
             json.getInt(DanbooruLegacyPost.KEY_POST_SCORE)
         );

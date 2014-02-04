@@ -223,13 +223,9 @@ public class GelbooruAPI
 
             return tags;
         }
-        catch (IOException ex)
+        catch (ParserConfigurationException | SAXException | IOException ex)
         {
             throw new SiteAPIException(this, connection, ex);
-        }
-        catch (ParserConfigurationException | SAXException ex)
-        {
-            throw new SiteAPIException(ex);
         }
         finally
         {

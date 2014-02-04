@@ -183,13 +183,9 @@ public class DanbooruAPI
 
             return posts;
         }
-        catch (IOException ex)
+        catch (JSONException | ParseException | IOException ex)
         {
             throw new SiteAPIException(this, connection, ex);
-        }
-        catch (JSONException | ParseException ex)
-        {
-            throw new SiteAPIException(ex);
         }
         finally
         {
@@ -213,6 +209,12 @@ public class DanbooruAPI
             file_url_large = host.url + file_url_large;
         if (!file_url_preview.startsWith("http"))
             file_url_preview = host.url + file_url_preview;
+
+        int uploader_id = -1;
+        String uploader_name = "";
+        try { uploader_id = json.getInt(DanbooruPost.KEY_POST_UPLOADER_ID); } catch (JSONException ignored) { }
+        try { uploader_name = json.getString(DanbooruPost.KEY_POST_UPLOADER_NAME); } catch (JSONException ignored) { }
+
         return new DanbooruPost(
             host,
             json.getInt(DanbooruPost.KEY_POST_ID),
@@ -226,8 +228,8 @@ public class DanbooruAPI
             file_url_preview,
             TextUtils.split(json.getString(DanbooruPost.KEY_POST_TAG_STRING), " "),
             json.getString(DanbooruPost.KEY_POST_RATING),
-            json.getInt(DanbooruPost.KEY_POST_UPLOADER_ID),
-            json.getString(DanbooruPost.KEY_POST_UPLOADER_NAME),
+            uploader_id,
+            uploader_name,
             json.getString(DanbooruPost.KEY_POST_MD5),
             json.getString(DanbooruPost.KEY_POST_FILE_EXT),
             json.getInt(DanbooruPost.KEY_POST_SCORE),
