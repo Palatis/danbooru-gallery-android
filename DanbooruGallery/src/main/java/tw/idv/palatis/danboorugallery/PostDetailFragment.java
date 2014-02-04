@@ -149,7 +149,9 @@ public class PostDetailFragment
                 .into(mPreviewImageView);
 
             // FIXME: fake the referer
-            final String file_url_with_referer = mPost.file_url + "|" + mPost.getReferer();
+            final String file_url_with_referer =
+                (DanbooruGallerySettings.getDownloadFullsize() ? mPost.file_url : mPost.file_url_large) +
+                "|" + mPost.getReferer();
 
             // load the actual image to the imageview
             Picasso.with(getActivity().getApplicationContext())
