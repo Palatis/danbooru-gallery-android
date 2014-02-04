@@ -287,12 +287,25 @@ public class PostDetailFragment
         int id = item.getItemId();
         switch (id)
         {
+            case R.id.menu_post_detail_share:
+            {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+                intent.putExtra(Intent.EXTRA_SUBJECT, mPost.getDownloadFilename());
+                intent.putExtra(Intent.EXTRA_TEXT, mPost.getWebUrl());
+                startActivity(intent);
+                break;
+            }
             case R.id.menu_post_detail_browser:
+            {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(mPost.getWebUrl()));
                 startActivity(intent);
                 break;
+            }
             case R.id.menu_post_detail_tags:
+            {
                 AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
                 adb.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_activated_1, android.R.id.text1, mPost.tags),
                     new DialogInterface.OnClickListener()
@@ -315,7 +328,9 @@ public class PostDetailFragment
                 });
                 adb.create().show();
                 return true;
+            }
             case R.id.menu_post_detail_download:
+            {
                 File destination = mPost.host.getAPI().getDownloadFile(mPost.host, mPost);
 
                 if (destination.getParentFile().exists() || destination.getParentFile().mkdirs())
@@ -333,6 +348,7 @@ public class PostDetailFragment
                     downloader.enqueue(request);
                 }
                 break;
+            }
         }
         return super.onOptionsItemSelected(item);
     }
