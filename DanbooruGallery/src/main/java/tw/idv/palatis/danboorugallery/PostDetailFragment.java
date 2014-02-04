@@ -176,22 +176,25 @@ public class PostDetailFragment
                         Log.v(TAG, "Bitmap might be too big to be uploaded to a texture, try the alternative method.");
                         try
                         {
-                            final Downloader.Response response = Picasso.getDownloader(getActivity().getApplicationContext()).load(Uri.parse(file_url_with_referer), true);
-
-                            TileBitmapDrawable.attachTileBitmapDrawable(mImageView, response.getInputStream(), null, new TileBitmapDrawable.OnInitializeListener()
+                            if (getActivity() != null && getActivity().getApplicationContext() != null)
                             {
-                                @Override
-                                public void onStartInitialization() { }
+                                final Downloader.Response response = Picasso.getDownloader(getActivity().getApplicationContext()).load(Uri.parse(file_url_with_referer), true);
 
-                                @Override
-                                public void onEndInitialization()
+                                TileBitmapDrawable.attachTileBitmapDrawable(mImageView, response.getInputStream(), null, new TileBitmapDrawable.OnInitializeListener()
                                 {
-                                    mProgressBar.setVisibility(View.GONE);
-                                    mPreviewImageView.setVisibility(View.GONE);
-                                    // release the drawable as we don't want it anymore.
-                                    mPreviewImageView.setImageDrawable(null);
-                                }
-                            });
+                                    @Override
+                                    public void onStartInitialization() { }
+
+                                    @Override
+                                    public void onEndInitialization()
+                                    {
+                                        mProgressBar.setVisibility(View.GONE);
+                                        mPreviewImageView.setVisibility(View.GONE);
+                                        // release the drawable as we don't want it anymore.
+                                        mPreviewImageView.setImageDrawable(null);
+                                    }
+                                });
+                            }
                         }
                         catch (IOException ex)
                         {
