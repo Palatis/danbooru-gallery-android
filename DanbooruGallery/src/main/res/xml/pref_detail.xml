@@ -18,6 +18,13 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <CheckBoxPreference
+        android:key="pref_download_fullsize"
+        android:title="@string/pref_title_download_fullsize"
+        android:summaryOn="@string/pref_description_download_fullsize_true"
+        android:summaryOff="@string/pref_description_download_fullsize_false"
+        android:defaultValue="false" />
+
     <tw.idv.palatis.danboorugallery.android.preference.IntListPreference
         android:key="pref_autoplay_delay"
         android:title="@string/pref_title_autoplay_delay"

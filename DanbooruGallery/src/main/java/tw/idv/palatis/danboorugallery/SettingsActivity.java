@@ -205,6 +205,7 @@ public class SettingsActivity
         bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_STICKY_GRID_HEADER), true);
         bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_SHOW_POST_ID), true);
         bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_SHOW_IMAGE_RESOLUTION), true);
+        bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_DOWNLOAD_FULLSIZE), false);
         bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_AUTOPLAY_DELAY), 5000);
         bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_STRICT_BANDWIDTH_USAGE), true);
         bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_AGGRESSIVE_PREFETCH_PREVIEW), false);
@@ -572,6 +573,7 @@ public class SettingsActivity
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
+            bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_DOWNLOAD_FULLSIZE), false);
             bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_AUTOPLAY_DELAY), 5000);
         }
     }
