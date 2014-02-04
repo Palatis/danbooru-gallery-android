@@ -256,14 +256,14 @@ public class PostListFragment
                         intent.putExtra(Intent.EXTRA_SUBJECT, post.getDownloadFilename());
                         intent.putExtra(Intent.EXTRA_TEXT, post.getWebUrl());
                         startActivity(intent);
-                        break;
+                        return true;
                     }
                     case R.id.menu_post_detail_browser:
                     {
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         intent.setData(Uri.parse(post.getWebUrl()));
                         startActivity(intent);
-                        break;
+                        return true;
                     }
                     case R.id.menu_post_detail_tags:
                     {
@@ -284,7 +284,7 @@ public class PostListFragment
                             public void onClick(DialogInterface dialogInterface, int position) { }
                         });
                         adb.create().show();
-                        break;
+                        return true;
                     }
                     case R.id.menu_post_detail_download:
                     {
@@ -304,10 +304,10 @@ public class PostListFragment
                             DownloadManager downloader = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
                             downloader.enqueue(request);
                         }
-                        break;
+                        return true;
                     }
                 }
-                return true;
+                return false;
             }
         });
         popup.setOnDismissListener(new android.widget.PopupMenu.OnDismissListener()
@@ -611,7 +611,7 @@ public class PostListFragment
         switch (id)
         {
             case R.id.menu_post_list_search:
-                break;
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
