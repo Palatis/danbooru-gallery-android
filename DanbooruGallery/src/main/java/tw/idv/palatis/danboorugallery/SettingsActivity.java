@@ -799,8 +799,8 @@ public class SettingsActivity
         @Override
         public void run()
         {
-            mem_size = Picasso.getSnapshot().size / 1024.0 / 1024.0;
-            mem_size_max = Picasso.getSnapshot().maxSize / 1024.0 / 1024.0;
+            mem_size = Picasso.getMemCache().size() / 1024.0 / 1024.0;
+            mem_size_max = Picasso.getMemCache().maxSize() / 1024.0 / 1024.0;
             post_count = PostsTable.getPostCount();
             mHandler.post(mUpdateRunnable);
 

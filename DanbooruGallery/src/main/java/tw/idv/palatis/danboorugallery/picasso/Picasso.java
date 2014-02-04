@@ -33,7 +33,6 @@ import android.widget.Toast;
 import com.squareup.picasso.Cache;
 import com.squareup.picasso.Downloader;
 import com.squareup.picasso.LruCache;
-import com.squareup.picasso.StatsSnapshot;
 
 import java.io.File;
 import java.io.IOException;
@@ -71,9 +70,12 @@ public class Picasso
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
             {
                 boolean debugging = DanbooruGallerySettings.getShowAsyncImageLoaderIndicator();
-                sInstancePrefetch.setDebugging(debugging);
-                sInstancePreview.setDebugging(debugging);
-                sInstance.setDebugging(debugging);
+                if (sInstancePrefetch != null)
+                    sInstancePrefetch.setDebugging(debugging);
+                if (sInstancePreview != null)
+                    sInstancePreview.setDebugging(debugging);
+                if (sInstance != null)
+                    sInstance.setDebugging(debugging);
             }
         };
 
@@ -203,14 +205,9 @@ public class Picasso
         return sDownloader;
     }
 
-    public static StatsSnapshot getSnapshot()
+    public static Cache getMemCache()
     {
-        return sInstance.getSnapshot();
-    }
-
-    public static StatsSnapshot getPreviewSnapshot()
-    {
-        return sInstancePreview.getSnapshot();
+        return sMemCache;
     }
 
     public static long calculateDiskCacheSize(File dir)
