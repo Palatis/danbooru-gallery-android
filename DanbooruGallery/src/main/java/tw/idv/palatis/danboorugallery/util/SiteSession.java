@@ -445,14 +445,16 @@ public class SiteSession
             }
         };
 
+        private boolean mForced;
         private long mPostCreatedAt;
         private int mProgress = 0;
         private SiteAPI.SiteAPIException mErrorThrowable;
         private LoadingCallback mCallback;
 
-        public FetchPostRunnable(long post_created_at, LoadingCallback callback)
+        public FetchPostRunnable(long post_created_at, boolean forced, LoadingCallback callback)
         {
             mPostCreatedAt = post_created_at;
+            mForced = forced;
             if (callback == null)
                 mCallback = sDummyLoadingCallback;
             else
@@ -494,7 +496,7 @@ public class SiteSession
                 {
                     int position = PostsTable.getPostPosition(host, mPostCreatedAt);
                     int page = position / host.getPageLimit(DanbooruGallerySettings.getBandwidthUsageType());
-                    if (status.page == page)
+                    if (!mForced && status.page == page)
                         continue;
 
                     status.page = page;
@@ -503,7 +505,7 @@ public class SiteSession
                     // fetch the next page to avoid stall
                     int updated = PostsTable.addOrUpdatePosts(host, posts);
                     int limit = host.getPageLimit(DanbooruGallerySettings.getBandwidthUsageType());
-                    if (updated == limit)
+                    if (mForced && updated == limit)
                     {
                         posts = api.fetchPosts(host, position + limit, filterTags);
                         PostsTable.addOrUpdatePosts(host, posts);
@@ -534,9 +536,9 @@ public class SiteSession
     private static Handler sHandler = new Handler();
 
     // must be called from the UI thread
-    public static void fetchPosts(long post_created_at, LoadingCallback callback)
+    public static void fetchPosts(long post_created_at, boolean forced, LoadingCallback callback)
     {
-        sFetchPostExecutor.execute(new FetchPostRunnable(post_created_at, callback));
+        sFetchPostExecutor.execute(new FetchPostRunnable(post_created_at, forced, callback));
     }
 
     public static interface LoadingCallback

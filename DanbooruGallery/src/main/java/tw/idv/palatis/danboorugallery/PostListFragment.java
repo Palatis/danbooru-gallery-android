@@ -217,7 +217,7 @@ public class PostListFragment
             long created_at = cursor.getLong(PostListAdapter.INDEX_POST_CREATED_AT);
             if (mOldPostCreatedAt != created_at)
             {
-                SiteSession.fetchPosts(created_at, mPostLoadingCallback);
+                SiteSession.fetchPosts(created_at, false, mPostLoadingCallback);
                 mOldPostCreatedAt = created_at;
             }
         }
@@ -631,7 +631,7 @@ public class PostListFragment
             {
                 getLoaderManager().restartLoader(R.id.loader_post_ids, null, PostListFragment.this);
                 getLoaderManager().restartLoader(R.id.loader_search_tags, null, PostListFragment.this);
-                SiteSession.fetchPosts(0, mPostLoadingCallback);
+                SiteSession.fetchPosts(0, true, mPostLoadingCallback);
                 super.onChanged();
             }
 
@@ -665,7 +665,7 @@ public class PostListFragment
         PostsTable.registerDataSetObserver(mPostsObserver);
 
         getLoaderManager().initLoader(R.id.loader_post_ids, null, this);
-        SiteSession.fetchPosts(0, mPostLoadingCallback);
+        SiteSession.fetchPosts(0, true, mPostLoadingCallback);
 
         return rootView;
     }

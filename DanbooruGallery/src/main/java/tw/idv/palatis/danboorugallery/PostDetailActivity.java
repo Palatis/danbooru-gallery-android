@@ -80,7 +80,7 @@ public class PostDetailActivity
                     mInfoText.setText(post.describeContent(PostDetailActivity.this));
 
                     long created_at = post_cursor.getLong(PostsTable.INDEX_POST_CREATED_AT);
-                    SiteSession.fetchPosts(created_at, null);
+                    SiteSession.fetchPosts(created_at, false, null);
                 }
             }
 
