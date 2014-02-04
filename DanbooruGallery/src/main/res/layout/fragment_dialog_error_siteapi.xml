@@ -25,6 +25,8 @@
     <ScrollView
         android:id="@+id/content_scroll_view"
         android:orientation="vertical"
+        android:layout_marginStart="@dimen/preference_item_padding_side"
+        android:layout_marginEnd="@dimen/preference_item_padding_side"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -35,12 +37,10 @@
 
             <!-- cause -->
             <TextView
-                android:textAppearance="?android:textAppearanceMedium"
+                style="?android:attr/listSeparatorTextViewStyle"
                 android:text="@string/dialog_error_cause"
-                android:gravity="center_vertical"
-                android:paddingRight="?android:listPreferredItemPaddingRight"
-                android:paddingLeft="?android:listPreferredItemPaddingLeft"
-                android:minHeight="?android:listPreferredItemHeightSmall"
+                android:paddingStart="?android:listPreferredItemPaddingRight"
+                android:paddingEnd="?android:listPreferredItemPaddingLeft"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -55,12 +55,10 @@
 
             <!-- url -->
             <TextView
-                android:textAppearance="?android:textAppearanceMedium"
+                style="?android:attr/listSeparatorTextViewStyle"
                 android:text="@string/dialog_error_url"
-                android:gravity="center_vertical"
-                android:paddingRight="?android:listPreferredItemPaddingRight"
-                android:paddingLeft="?android:listPreferredItemPaddingLeft"
-                android:minHeight="?android:listPreferredItemHeightSmall"
+                android:paddingStart="?android:listPreferredItemPaddingRight"
+                android:paddingEnd="?android:listPreferredItemPaddingLeft"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -75,12 +73,10 @@
 
             <!-- message -->
             <TextView
-                android:textAppearance="?android:textAppearanceMedium"
+                style="?android:attr/listSeparatorTextViewStyle"
                 android:text="@string/dialog_error_message"
-                android:gravity="center_vertical"
-                android:paddingRight="?android:listPreferredItemPaddingRight"
-                android:paddingLeft="?android:listPreferredItemPaddingLeft"
-                android:minHeight="?android:listPreferredItemHeightSmall"
+                android:paddingStart="?android:listPreferredItemPaddingRight"
+                android:paddingEnd="?android:listPreferredItemPaddingLeft"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -98,8 +94,6 @@
             <TextView
                 android:autoLink="web"
                 android:text="@string/dialog_error_help"
-                android:paddingRight="?android:listPreferredItemPaddingRight"
-                android:paddingLeft="?android:listPreferredItemPaddingLeft"
                 android:textIsSelectable="true"
                 android:gravity="center_horizontal"
                 android:layout_width="match_parent"
