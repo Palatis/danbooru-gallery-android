@@ -19,6 +19,7 @@
 package tw.idv.palatis.danboorugallery;
 
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Intent;
@@ -305,17 +306,33 @@ public class PostDetailActivity
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private void setupActionBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+        {
             // Show the Up button in the action bar.
             getActionBar().setDisplayHomeAsUpEnabled(true);
             getActionBar().setHomeButtonEnabled(true);
+            getActionBar().addOnMenuVisibilityListener(new ActionBar.OnMenuVisibilityListener() {
+                @Override
+                public void onMenuVisibilityChanged(boolean visible)
+                {
+                    if (visible)
+                    {
+                        mUiHider.setAutoHideDelay(UiHider.AUTO_HIDE_DELAY_DISABLED);
+                        mUiHider.show();
+                    }
+                    else
+                    {
+                        mUiHider.setAutoHideDelay(AUTO_HIDE_DELAY_MILLIS);
+                        mUiHider.delayedHide();
+                    }
+                }
+            });
         }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        mUiHider.delayedHide(); // delay hide during user interaction
         int id = item.getItemId();
         if (id == android.R.id.home)
         {
