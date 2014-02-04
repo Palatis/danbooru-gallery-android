@@ -54,8 +54,20 @@ public class SiteSession
 {
     private static final String TAG = "SiteSession";
 
+    private static class HostStatus
+    {
+        public Host host;
+        public int page;
+
+        public HostStatus(Host host)
+        {
+            this.host = host;
+            this.page = 0;
+        }
+    }
+
     private static final ReentrantReadWriteLock sHostsLock = new ReentrantReadWriteLock();
-    private static final List<Host> sHosts = new ArrayList<>();
+    private static final List<HostStatus> sHosts = new ArrayList<>();
     private static SharedPreferences.OnSharedPreferenceChangeListener sOnSharedPreferenceChangeListener;
     private static Context sContext = null;
 
@@ -130,7 +142,9 @@ public class SiteSession
     {
         Lock lock = sHostsLock.readLock();
         lock.lock();
-        List<Host> hosts = new ArrayList<>(sHosts);
+        List<Host> hosts = new ArrayList<>(sHosts.size());
+        for (HostStatus status : sHosts)
+            hosts.add(status.host);
         lock.unlock();
 
         lock = sFilterTagsLock.readLock();
@@ -148,7 +162,7 @@ public class SiteSession
         sHosts.clear();
         Cursor cursor = HostsTable.getAllHostsCursor();
         while (cursor.moveToNext())
-            sHosts.add(Host.getFromCursor(cursor));
+            sHosts.add(new HostStatus(Host.getFromCursor(cursor)));
         lock.unlock();
     }
 
@@ -268,14 +282,16 @@ public class SiteSession
 
         Lock lock = sHostsLock.readLock();
         lock.lock();
-        List<Host> hosts = new ArrayList<>(sHosts);
+        List<HostStatus> hosts = new ArrayList<>(sHosts);
         lock.unlock();
         if (signal.isCanceled())
             return new TagCursor(sEmptyTags);
 
         SparseArray<Tag> allTags = new SparseArray<>();
-        for (Host host : hosts)
+        for (HostStatus status : hosts)
         {
+            Host host = status.host;
+
             if (!host.enabled)
                 continue;
 
@@ -379,11 +395,11 @@ public class SiteSession
     {
         Lock lock = sHostsLock.readLock();
         lock.lock();
-        for (Host host : sHosts)
-            if (host.id == id)
+        for (HostStatus status : sHosts)
+            if (status.host.id == id)
             {
                 lock.unlock();
-                return host;
+                return status.host;
             }
         lock.unlock();
         return null;
@@ -454,7 +470,7 @@ public class SiteSession
 
             Lock lock = sHostsLock.readLock();
             lock.lock();
-            List<Host> hosts = new ArrayList<>(sHosts);
+            List<HostStatus> hosts = new ArrayList<>(sHosts);
             lock.unlock();
 
             lock = sFilterTagsLock.readLock();
@@ -462,8 +478,10 @@ public class SiteSession
             String[] filterTags = TextUtils.split(sFilterTags, " ");
             lock.unlock();
 
-            for (Host host : hosts)
+            for (HostStatus status : hosts)
             {
+                Host host = status.host;
+
                 if (!host.enabled)
                     continue;
 
@@ -475,7 +493,11 @@ public class SiteSession
                 try
                 {
                     int position = PostsTable.getPostPosition(host, mPostCreatedAt);
+                    int page = position / host.getPageLimit(DanbooruGallerySettings.getBandwidthUsageType());
+                    if (status.page == page)
+                        continue;
 
+                    status.page = page;
                     List<Post> posts = api.fetchPosts(host, position, filterTags);
 
                     // fetch the next page to avoid stall
