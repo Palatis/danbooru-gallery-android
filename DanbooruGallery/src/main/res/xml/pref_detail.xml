@@ -16,27 +16,15 @@
 <!--     along with this program. If not, see <http://www.gnu.org/licenses/> -->
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- These settings headers are only used on tablets. -->
-    <header
-        android:fragment="tw.idv.palatis.danboorugallery.SettingsActivity$ScreenLayoutPreferenceFragment"
-        android:title="@string/pref_header_screen_layout" />
+    <tw.idv.palatis.danboorugallery.android.preference.IntListPreference
+        android:key="pref_autoplay_delay"
+        android:title="@string/pref_title_autoplay_delay"
+        android:defaultValue="5000"
+        android:entries="@array/pref_autoplay_delay_titles"
+        android:entryValues="@array/pref_autoplay_delay_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
 
-    <header
-        android:fragment="tw.idv.palatis.danboorugallery.SettingsActivity$DetailViewPreferenceFragment"
-        android:title="@string/pref_header_detail_view" />
-
-    <header
-        android:fragment="tw.idv.palatis.danboorugallery.SettingsActivity$NetworkPolicyPreferenceFragment"
-        android:title="@string/pref_header_network_policy" />
-
-    <header
-        android:fragment="tw.idv.palatis.danboorugallery.SettingsActivity$AdvancedPreferenceFragment"
-        android:title="@string/pref_header_advanced" />
-
-    <header
-        android:fragment="tw.idv.palatis.danboorugallery.SettingsActivity$AboutPreferenceFragment"
-        android:title="@string/pref_header_about" />
-
-</preference-headers>
+</PreferenceScreen>

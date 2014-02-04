@@ -173,6 +173,12 @@ public class SettingsActivity
         // Add 'screen layout' preferences
         addPreferencesFromResource(R.xml.pref_screen_layout);
 
+        // Add 'detail view' preference, and a corresponding header.
+        fakeHeader = new PreferenceCategory(this);
+        fakeHeader.setTitle(R.string.pref_header_detail_view);
+        getPreferenceScreen().addPreference(fakeHeader);
+        addPreferencesFromResource(R.xml.pref_detail);
+
         // Add 'network policy' preferences, and a corresponding header.
         fakeHeader = new PreferenceCategory(this);
         fakeHeader.setTitle(R.string.pref_header_network_policy);
@@ -549,6 +555,23 @@ public class SettingsActivity
             bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_STICKY_GRID_HEADER), true);
             bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_SHOW_POST_ID), true);
             bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_SHOW_IMAGE_RESOLUTION), true);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class DetailViewPreferenceFragment
+        extends PreferenceFragment
+    {
+        @Override
+        public void onCreate(Bundle savedInstanceState)
+        {
+            super.onCreate(savedInstanceState);
+            addPreferencesFromResource(R.xml.pref_screen_layout);
+
+            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
+            // to their values. When their values change, their summaries are
+            // updated to reflect the new value, per the Android Design
+            // guidelines.
             bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_AUTOPLAY_DELAY), 5000);
         }
     }
