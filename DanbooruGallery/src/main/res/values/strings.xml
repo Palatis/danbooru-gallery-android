@@ -76,5 +76,6 @@
     <string name="dialog_error_message">Message:</string>
     <string name="dialog_error_help">Why am I seeing this message?\nhttp://code.google.com/p/danbooru-gallery-android/wiki/FrequentlyAskedQuestions</string>
     <string name="menu_post_detail_browser">View in browser...</string>
+    <string name="menu_post_detail_share">Share...</string>
 
 </resources>
