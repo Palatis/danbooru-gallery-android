@@ -235,7 +235,7 @@ public abstract class SiteAPI
         );
     }
 
-    public int getPageLimit(int type)
+    public int getDefaultPageLimit(int type)
     {
         switch (type)
         {
@@ -245,7 +245,7 @@ public abstract class SiteAPI
         throw new IllegalArgumentException("Unknown page limit type for " + type + ".");
     }
 
-    public int[] getPageLimits(int type)
+    public int[] getDefaultPageLimits(int type)
     {
         switch (type)
         {
@@ -268,7 +268,7 @@ public abstract class SiteAPI
 
         public PageLimitAdapter(SiteAPI api, int type)
         {
-            mPageLimits = api.getPageLimits(type);
+            mPageLimits = api.getDefaultPageLimits(type);
         }
 
         @Override
