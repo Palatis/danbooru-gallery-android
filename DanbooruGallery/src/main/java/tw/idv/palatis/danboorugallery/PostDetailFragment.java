@@ -295,14 +295,14 @@ public class PostDetailFragment
                 intent.putExtra(Intent.EXTRA_SUBJECT, mPost.getDownloadFilename());
                 intent.putExtra(Intent.EXTRA_TEXT, mPost.getWebUrl());
                 startActivity(intent);
-                break;
+                return true;
             }
             case R.id.menu_post_detail_browser:
             {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(mPost.getWebUrl()));
                 startActivity(intent);
-                break;
+                return true;
             }
             case R.id.menu_post_detail_tags:
             {
@@ -347,7 +347,7 @@ public class PostDetailFragment
                     DownloadManager downloader = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
                     downloader.enqueue(request);
                 }
-                break;
+                return true;
             }
         }
         return super.onOptionsItemSelected(item);
