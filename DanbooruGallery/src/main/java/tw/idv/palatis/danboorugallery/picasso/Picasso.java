@@ -94,9 +94,12 @@ public class Picasso
     {
         if (info == null || !info.isConnectedOrConnecting())
         {
+            // sExecutorPrefetch.setCorePoolSize(1);
             // sExecutorPrefetch.setMaximumPoolSize(1);
             sExecutorPreview.setCorePoolSize(3);
+            sExecutorPreview.setMaximumPoolSize(3);
             sExecutor.setCorePoolSize(1);
+            sExecutor.setMaximumPoolSize(1);
         }
         else
         {
@@ -105,9 +108,12 @@ public class Picasso
                 case ConnectivityManager.TYPE_WIFI:
                 case ConnectivityManager.TYPE_WIMAX:
                 case ConnectivityManager.TYPE_ETHERNET:
+                    // sExecutorPrefetch.setCorePoolSize(1);
                     // sExecutorPrefetch.setMaximumPoolSize(1);
                     sExecutorPreview.setCorePoolSize(4);
+                    sExecutorPreview.setMaximumPoolSize(4);
                     sExecutor.setCorePoolSize(2);
+                    sExecutor.setMaximumPoolSize(2);
                     break;
                 case ConnectivityManager.TYPE_MOBILE:
                     switch (info.getSubtype())
@@ -115,35 +121,50 @@ public class Picasso
                         case TelephonyManager.NETWORK_TYPE_LTE: // 4G
                         case TelephonyManager.NETWORK_TYPE_HSPAP:
                         case TelephonyManager.NETWORK_TYPE_EHRPD:
+                            // sExecutorPrefetch.setCorePoolSize(1);
                             // sExecutorPrefetch.setMaximumPoolSize(1);
                             sExecutorPreview.setCorePoolSize(3);
+                            sExecutorPreview.setMaximumPoolSize(3);
                             sExecutor.setCorePoolSize(2);
+                            sExecutor.setMaximumPoolSize(2);
                             break;
                         case TelephonyManager.NETWORK_TYPE_UMTS: // 3G
                         case TelephonyManager.NETWORK_TYPE_CDMA:
                         case TelephonyManager.NETWORK_TYPE_EVDO_0:
                         case TelephonyManager.NETWORK_TYPE_EVDO_A:
                         case TelephonyManager.NETWORK_TYPE_EVDO_B:
+                            // sExecutorPrefetch.setCorePoolSize(1);
                             // sExecutorPrefetch.setMaximumPoolSize(1);
                             sExecutorPreview.setCorePoolSize(2);
+                            sExecutorPreview.setMaximumPoolSize(2);
                             sExecutor.setCorePoolSize(1);
+                            sExecutor.setMaximumPoolSize(1);
                             break;
                         case TelephonyManager.NETWORK_TYPE_GPRS: // 2G
                         case TelephonyManager.NETWORK_TYPE_EDGE:
+                            // sExecutorPrefetch.setCorePoolSize(1);
                             // sExecutorPrefetch.setMaximumPoolSize(1);
                             sExecutorPreview.setCorePoolSize(1);
+                            sExecutorPreview.setMaximumPoolSize(1);
                             sExecutor.setCorePoolSize(1);
+                            sExecutor.setMaximumPoolSize(1);
                             break;
                         default:
+                            // sExecutorPrefetch.setCorePoolSize(1);
                             // sExecutorPrefetch.setMaximumPoolSize(1);
                             sExecutorPreview.setCorePoolSize(4);
+                            sExecutorPreview.setMaximumPoolSize(4);
                             sExecutor.setCorePoolSize(2);
+                            sExecutor.setMaximumPoolSize(2);
                     }
                     break;
                 default:
+                    // sExecutorPrefetch.setCorePoolSize(1);
                     // sExecutorPrefetch.setMaximumPoolSize(1);
                     sExecutorPreview.setCorePoolSize(4);
+                    sExecutorPreview.setMaximumPoolSize(4);
                     sExecutor.setCorePoolSize(2);
+                    sExecutor.setMaximumPoolSize(2);
             }
         }
 
@@ -151,6 +172,10 @@ public class Picasso
             "Thread count for executors: prefetch = " + sExecutorPrefetch.getCorePoolSize() +
                 ", preview = " + sExecutorPreview.getCorePoolSize() +
                 ", general = " + sExecutor.getCorePoolSize());
+        Log.d(TAG,
+            "Maximum thread count for executors: prefetch = " + sExecutorPrefetch.getMaximumPoolSize() +
+                ", preview = " + sExecutorPreview.getMaximumPoolSize() +
+                ", general = " + sExecutor.getMaximumPoolSize());
     }
 
     public static com.squareup.picasso.Picasso with(Context context)
