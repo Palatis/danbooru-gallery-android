@@ -310,11 +310,6 @@ public class PostListFragment
                 return false;
             }
         });
-        popup.setOnDismissListener(new android.widget.PopupMenu.OnDismissListener()
-        {
-            @Override
-            public void onDismiss(android.widget.PopupMenu popupMenu) { }
-        });
         popup.show();
         return true;
     }
