@@ -23,10 +23,4 @@
           android:icon="@android:drawable/ic_menu_search"
           android:showAsAction="collapseActionView|always"
           android:actionViewClass="tw.idv.palatis.danboorugallery.android.widget.NoClearSearchView" />
-    <item
-        android:id="@+id/menu_post_list_debug"
-        android:title="@string/menu_post_list_debug"
-        android:icon="@android:drawable/ic_menu_manage"
-        android:visible="false"
-        android:showAsAction="never" />
 </menu>

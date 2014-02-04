@@ -64,7 +64,6 @@ import tw.idv.palatis.danboorugallery.database.PostsTable;
 import tw.idv.palatis.danboorugallery.model.Host;
 import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.model.Tag;
-import tw.idv.palatis.danboorugallery.picasso.Picasso;
 import tw.idv.palatis.danboorugallery.siteapi.SiteAPI;
 import tw.idv.palatis.danboorugallery.util.PostListAdapter;
 import tw.idv.palatis.danboorugallery.util.SiteSession;
@@ -612,10 +611,6 @@ public class PostListFragment
         switch (id)
         {
             case R.id.menu_post_list_search:
-                break;
-            case R.id.menu_post_list_debug:
-                Picasso.getSnapshot().dump();
-                Picasso.getPreviewSnapshot().dump();
                 break;
         }
         return super.onOptionsItemSelected(item);

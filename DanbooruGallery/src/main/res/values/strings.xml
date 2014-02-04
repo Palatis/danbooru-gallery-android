@@ -32,10 +32,10 @@
     <string name="post_detail_button_autoplay">Play/Pause</string>
 
     <string name="menu_post_list_settings">Settings</string>
-    <string name="menu_post_list_debug">Debug</string>
+    <string name="menu_post_detail_browser">View in browser...</string>
+    <string name="menu_post_detail_share">Share...</string>
     <string name="menu_post_detail_download">Download</string>
     <string name="menu_post_detail_tags">Tags</string>
-    <string name="menu_post_detail_info">Information</string>
 
     <string name="popupmenu_host_item_edit">Edit</string>
     <string name="popupmenu_host_item_delete">Delete</string>
@@ -75,7 +75,5 @@
     <string name="dialog_error_url">URL:</string>
     <string name="dialog_error_message">Message:</string>
     <string name="dialog_error_help">Why am I seeing this message?\nhttp://code.google.com/p/danbooru-gallery-android/wiki/FrequentlyAskedQuestions</string>
-    <string name="menu_post_detail_browser">View in browser...</string>
-    <string name="menu_post_detail_share">Share...</string>
 
 </resources>
