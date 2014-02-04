@@ -215,9 +215,12 @@ public class PostListFragment
         if (cursor != null && cursor.getCount() != 0)
         {
             long created_at = cursor.getLong(PostListAdapter.INDEX_POST_CREATED_AT);
+            boolean forced =
+                firstVisibleItem < visibleItemCount || // first page
+                firstVisibleItem + visibleItemCount > totalItemCount - visibleItemCount; // last page
             if (mOldPostCreatedAt != created_at)
             {
-                SiteSession.fetchPosts(created_at, false, mPostLoadingCallback);
+                SiteSession.fetchPosts(created_at, forced, mPostLoadingCallback);
                 mOldPostCreatedAt = created_at;
             }
         }
