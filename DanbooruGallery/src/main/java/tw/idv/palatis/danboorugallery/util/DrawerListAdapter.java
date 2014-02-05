@@ -38,16 +38,12 @@ import tw.idv.palatis.danboorugallery.R;
 public class DrawerListAdapter
     implements WrapperListAdapter
 {
-    private final Context mContext;
     private final LayoutInflater mInflater;
-    private final Resources mResources;
     private List<DrawerItem> mDrawerItems = new ArrayList<>();
 
     public DrawerListAdapter(Context context, ListAdapter adapter)
     {
-        mContext = context;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mResources = context.getResources();
 
         // new hosts
         mDrawerItems.add(new DrawerItem(
