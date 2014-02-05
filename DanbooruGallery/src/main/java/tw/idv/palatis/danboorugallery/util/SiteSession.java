@@ -517,7 +517,7 @@ public class SiteSession
 
                 try
                 {
-                    int position = PostsTable.getPostPosition(host, mPostCreatedAt);
+                    int position = mPostCreatedAt == -1 ? 0 : PostsTable.getPostPosition(host, mPostCreatedAt);
                     int page = position / host.getPageLimit(DanbooruGallerySettings.getBandwidthUsageType());
                     if (!mForced && status.page == page)
                         continue;
