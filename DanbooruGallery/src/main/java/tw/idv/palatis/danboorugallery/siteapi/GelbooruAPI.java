@@ -55,9 +55,6 @@ import tw.idv.palatis.danboorugallery.model.Host;
 import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.model.Tag;
 
-/**
- * Created by 其威 on 2014/1/27.
- */
 public class GelbooruAPI
     extends SiteAPI
 {
@@ -305,7 +302,6 @@ public class GelbooruAPI
     {
         public static final String KEY_POST_ID = "id";                                      // id="2144150"
         public static final String KEY_POST_CREATED_AT = "created_at";                      // created_at="Sun Jan 26 18:49:08 -0600 2014"
-        public static final String KEY_POST_FILE_SIZE = "file_size";
         public static final String KEY_POST_IMAGE_WIDTH = "width";                          // width="1189"
         public static final String KEY_POST_IMAGE_HEIGHT = "height";                        // height="1189"
         public static final String KEY_POST_FILE_URL = "file_url";                          // file_url="http://simg.gelbooru.com/images/1933/4824fc49e3997ba72456f5c35523c03d.jpg"
@@ -363,7 +359,7 @@ public class GelbooruAPI
                 try { uploader_id = json.getInt(KEY_POST_UPLOADER_ID); } catch (JSONException ignored) { }
                 try { score = json.getInt(KEY_POST_SCORE); } catch (JSONException ignored) { }
             }
-            catch (JSONException ex) { }
+            catch (JSONException ignored) { }
         }
 
         @Override

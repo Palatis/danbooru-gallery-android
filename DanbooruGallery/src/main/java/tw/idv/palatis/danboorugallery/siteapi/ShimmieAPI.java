@@ -242,7 +242,6 @@ public class ShimmieAPI
         public static final String KEY_POST_UPLOADER_NAME = "author";           // author="Shish"
         public static final String KEY_POST_SCORE = "score";                    // score="0"
 
-        public static final String KEY_POST_RATING = "rating";                  // rating="u"
         public static final String KEY_POST_FILE_EXT = "file_ext";
 
         public String uploader_name;
