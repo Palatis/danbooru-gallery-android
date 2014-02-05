@@ -208,31 +208,54 @@ public class SiteSession
             args.add(Integer.toString(Math.abs(height)));
         }
 
-        if (sb.length() != 0)
-            sb.append("AND ");
-
-        sb.append(Post.KEY_POST_RATING).append(" IN ( ");
-
-        if (s)
+        // when all rating ticked, nothing to be done.
+        // only build query when one or two rating filters are ticked
+        if (s || q || e)
         {
-            sb.append("?,");
+            if (sb.length() != 0)
+                sb.append("AND ");
+
+            // if only one filter ticked, use the ticked one.
+            if (s && !q && !e)
+            {
+                sb.append(Post.KEY_POST_RATING).append(" == ?");
+                args.add("s");
+            }
+            else if (!s && q && !e)
+            {
+                sb.append(Post.KEY_POST_RATING).append(" == ?");
+                args.add("q");
+            }
+            else if (!s && !q && e)
+            {
+                sb.append(Post.KEY_POST_RATING).append(" == ?");
+                args.add("e");
+            }
+            // if two filters ticked, use the unticked one.
+            else if (!s && q && e)
+            {
+                sb.append(Post.KEY_POST_RATING).append(" != ?");
+                args.add("s");
+            }
+            else if (s && !q && e)
+            {
+                sb.append(Post.KEY_POST_RATING).append(" != ?");
+                args.add("q");
+            }
+            else if (s && q && !e)
+            {
+                sb.append(Post.KEY_POST_RATING).append(" != ?");
+                args.add("e");
+            }
+        }
+        // if all are unticked, use the "NOT IN" statement
+        else // if (!s && !q && !e)
+        {
+            sb.append(Post.KEY_POST_RATING).append(" NOT IN (?,?,?)");
             args.add("s");
-        }
-
-        if (q)
-        {
-            sb.append("?,");
             args.add("q");
-        }
-
-        if (e)
-        {
-            sb.append("?,");
             args.add("e");
         }
-
-        sb.setLength(sb.length() - 1);
-        sb.append(")");
 
         Lock lock = sSelectionsLock.writeLock();
         lock.lock();
