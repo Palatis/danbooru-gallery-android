@@ -147,11 +147,17 @@ public class SettingsActivity
         if (!isSimplePreferences(this))
             return;
 
+        // Add a empty preference screen so we can insert headers...
+        addPreferencesFromResource(R.xml.pref_empty);
+
         // In the simplified UI, fragments are not used at all and we instead
         // use the older PreferenceActivity APIs.
         PreferenceCategory fakeHeader;
 
-        // Add 'screen layout' preferences
+        // Add 'screen layout' preferences, and a corresponding header.
+        fakeHeader = new PreferenceCategory(this);
+        fakeHeader.setTitle(R.string.pref_header_screen_layout);
+        getPreferenceScreen().addPreference(fakeHeader);
         addPreferencesFromResource(R.xml.pref_screen_layout);
 
         // Add 'detail view' preference, and a corresponding header.
