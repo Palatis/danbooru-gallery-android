@@ -53,6 +53,20 @@ public class TagSearchCursorAdapter
             sItemSummary = context.getResources().getString(R.string.tags_search_item_summary);
     }
 
+    @Override
+    public boolean areAllItemsEnabled()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled(int position)
+    {
+        TagCursor cursor = (TagCursor) getCursor();
+        cursor.moveToPosition(position);
+        return cursor.getTag().id != -1;
+    }
+
     private static class ViewHolder
     {
         public TextView title;
