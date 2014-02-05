@@ -28,10 +28,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import tw.idv.palatis.danboorugallery.siteapi.SiteAPIException;
-
-/**
- * Created by 其威 on 2014/1/30.
- */
 public class SiteAPIErrorDialogFragment
     extends DialogFragment
 {
