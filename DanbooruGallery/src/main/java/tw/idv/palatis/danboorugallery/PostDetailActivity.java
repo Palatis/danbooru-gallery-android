@@ -82,9 +82,7 @@ public class PostDetailActivity
             mInfoText.setText(post.describeContent(this));
 
             // FIXME: hard coded page limit
-            boolean forced =
-                (position < 10) ||
-                    (position > post_cursor.getCount() - 10);
+            boolean forced = (position < 10) || (position > post_cursor.getCount() - 10);
             long created_at = post_cursor.getLong(PostsTable.INDEX_POST_CREATED_AT);
             SiteSession.fetchPosts(created_at, forced, null);
         }
