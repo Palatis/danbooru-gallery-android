@@ -16,8 +16,10 @@
 
 package tw.idv.palatis.danboorugallery.android.content;
 
+import android.annotation.TargetApi;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
+import android.os.Build;
 import android.os.CancellationSignal;
 import android.os.OperationCanceledException;
 
@@ -49,13 +51,17 @@ public abstract class CustomTaskLoader<T>
     public abstract void cleanUp(T oldResult);
 
     /* Runs on a worker thread */
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public T loadInBackground() {
-        synchronized (this)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
         {
-            if (isLoadInBackgroundCanceled())
-                throw new OperationCanceledException();
-            mCancellationSignal = new CancellationSignal();
+            synchronized (this)
+            {
+                if (isLoadInBackgroundCanceled())
+                    throw new OperationCanceledException();
+                mCancellationSignal = new CancellationSignal();
+            }
         }
 
         try
@@ -64,22 +70,29 @@ public abstract class CustomTaskLoader<T>
         }
         finally
         {
-            synchronized (this)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
             {
-                mCancellationSignal = null;
+                synchronized (this)
+                {
+                    mCancellationSignal = null;
+                }
             }
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void cancelLoadInBackground()
     {
-        super.cancelLoadInBackground();
-
-        synchronized (this)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
         {
-            if (mCancellationSignal != null)
-                mCancellationSignal.cancel();
+            super.cancelLoadInBackground();
+
+            synchronized (this)
+            {
+                if (mCancellationSignal != null)
+                    mCancellationSignal.cancel();
+            }
         }
     }
 
