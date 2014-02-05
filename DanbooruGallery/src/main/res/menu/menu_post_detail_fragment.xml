@@ -22,6 +22,7 @@
         android:id="@+id/menu_post_detail_share"
         android:title="@string/menu_post_detail_share"
         android:icon="@android:drawable/ic_menu_share"
+        android:actionProviderClass="android.widget.ShareActionProvider"
         android:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_post_detail_browser"

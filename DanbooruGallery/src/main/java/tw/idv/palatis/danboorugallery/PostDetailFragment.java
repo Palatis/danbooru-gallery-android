@@ -42,6 +42,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.ShareActionProvider;
 
 import com.diegocarloslima.byakugallery.TileBitmapDrawable;
 import com.diegocarloslima.byakugallery.TouchImageView;
@@ -275,11 +276,23 @@ public class PostDetailFragment
         setHasOptionsMenu(true);
     }
 
+    private ShareActionProvider mShareActionProvider = null;
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
     {
         if (mPost != null)
+        {
             inflater.inflate(R.menu.menu_post_detail_fragment, menu);
+
+            mShareActionProvider = (ShareActionProvider) menu.findItem(R.id.menu_post_detail_share).getActionProvider();
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            intent.putExtra(Intent.EXTRA_SUBJECT, mPost.getDownloadFilename());
+            intent.putExtra(Intent.EXTRA_TEXT, mPost.getWebUrl());
+            mShareActionProvider.setShareIntent(intent);
+        }
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -289,16 +302,7 @@ public class PostDetailFragment
         int id = item.getItemId();
         switch (id)
         {
-            case R.id.menu_post_detail_share:
-            {
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/plain");
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-                intent.putExtra(Intent.EXTRA_SUBJECT, mPost.getDownloadFilename());
-                intent.putExtra(Intent.EXTRA_TEXT, mPost.getWebUrl());
-                startActivity(intent);
-                return true;
-            }
+            // case R.id.menu_post_detail_share: // handled by ShareActionProvider
             case R.id.menu_post_detail_browser:
             {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
