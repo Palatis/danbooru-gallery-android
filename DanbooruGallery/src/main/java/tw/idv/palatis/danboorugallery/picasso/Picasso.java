@@ -243,7 +243,7 @@ public class Picasso
         {
             // Target 5% of the total space.
             StatFs statFs = new StatFs(dir.getAbsolutePath());
-            size = statFs.getTotalBytes() / 20;
+            size = statFs.getBlockCountLong() * statFs.getBlockSizeLong() / 20;
         }
         catch (IllegalArgumentException ignored) { }
 
