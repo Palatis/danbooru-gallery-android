@@ -133,6 +133,7 @@ public abstract class SiteAPI
         DanbooruLegacyAPI.init();
         MoebooruAPI.init();
         GelbooruAPI.init();
+        ShimmieAPI.init();
     }
 
     public static void registerSiteAPI(SiteAPI api)

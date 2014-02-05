@@ -67,6 +67,12 @@
     <string name="api_gelbooru_post_description">From: %1$s (%3$s)\n# %4$d (%13$d) [%9$s]\nSize: %5$d x %6$d\nBy: %10$d\nCreated: %7$s\nMD5: %11$s\nFormat: %12$s</string>
     <string name="api_moebooru_post_description">From: %1$s (%3$s)\n# %4$d (%13$d) [%9$s]\nSize: %5$d x %6$d\nBy: %10$d\nCreated: %7$s\nMD5: %11$s\nFormat: %12$s</string>
     <string name="api_danboorulegacy_post_description">From: %1$s (%3$s)\n# %4$d (%13$d) [%9$s]\nSize: %5$d x %6$d\nBy: %10$d\nCreated: %7$s\nMD5: %11$s\nFormat: %12$s</string>
+    <!--  1. host.name, 2. host.url,     3. host.getAPI().getName(), -->
+    <!--  4. post_id,   5. image_width,  6. image_height,   7. created_at,  8. updated_at,-->
+    <!--  9. rating,                    10. uploader_name, 11. md5,        12. file_ext-->
+    <!-- 13. score -->
+    <string name="api_shimmie_post_description">From: %1$s (%3$s)\n# %4$d (%13$d) [%9$s]\nSize: %5$d x %6$d\nBy: %10$s\nCreated: %7$s\nMD5: %11$s\nFormat: %12$s</string>
+
 
     <!-- 1. SiteAPI.getName() -->
     <string name="dialog_error_siteapi">Error from %1$s</string>
