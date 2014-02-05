@@ -28,9 +28,6 @@ package com.diegocarloslima.byakugallery;
 // (2) The duration is different.
 // (3) The deceleration curve is different.
 public class FlingScroller {
-    @SuppressWarnings("unused")
-    private static final String TAG = "FlingController";
-
     // The fling duration (in milliseconds) when velocity is 1 pixel/second
     private static final float FLING_DURATION_PARAM = 50f;
     private static final int DECELERATED_FACTOR = 4;
