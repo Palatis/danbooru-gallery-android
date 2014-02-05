@@ -37,12 +37,10 @@ import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -104,17 +102,19 @@ public class DanbooruAPI
 
     @Override
     public List<Tag> searchTags(Host host, String pattern)
+        throws SiteAPIException
     {
         if (pattern.length() == 0)
             pattern = "*";
         else if (!pattern.contains("*"))
             pattern = "*" + pattern + "*";
 
+        HttpURLConnection connection = null;
         try
         {
             String url = String.format(URL_TAGS_FORMAT, host.url, URLEncoder.encode(pattern, "UTF-8"));
             Log.v(TAG, String.format("URL: %s", url));
-            HttpURLConnection connection = SiteAPI.openConnection(new URL(url));
+            connection = SiteAPI.openConnection(new URL(url));
             if (!host.getLogin().isEmpty())
                 connection.setRequestProperty("Authorization", "Basic " + host.getSecret());
             Reader input = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
@@ -132,19 +132,19 @@ public class DanbooruAPI
 
             return tags;
         }
-        catch (UnknownHostException ex)
-        {
-            Log.wtf(TAG, "Connection problem?", ex);
-        }
         catch (IOException | JSONException ex)
         {
-            Log.wtf(TAG, "errg!?", ex);
+            throw new SiteAPIException(this, connection, ex);
         }
-
-        return Collections.emptyList();
+        finally
+        {
+            if (connection != null)
+                connection.disconnect();
+        }
     }
 
-    public Tag parseJSONObjectToTag(JSONObject json) throws JSONException
+    public Tag parseJSONObjectToTag(JSONObject json)
+        throws JSONException
     {
         return new Tag(
             json.getInt(DanbooruTag.KEY_TAG_ID),

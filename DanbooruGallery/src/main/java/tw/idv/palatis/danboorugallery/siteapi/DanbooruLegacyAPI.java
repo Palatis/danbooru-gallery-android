@@ -37,10 +37,8 @@ import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -142,17 +140,19 @@ public class DanbooruLegacyAPI
 
     @Override
     public List<Tag> searchTags(Host host, String pattern)
+        throws SiteAPIException
     {
         if (pattern.length() == 0)
             pattern = "*";
         else if (!pattern.contains("*"))
             pattern = "*" + pattern + "*";
 
+        HttpURLConnection connection = null;
         try
         {
             String url = String.format(URL_TAGS_FORMAT, host.url, URLEncoder.encode(pattern, "UTF-8"));
             Log.v(TAG, String.format("URL: %s", url));
-            HttpURLConnection connection = SiteAPI.openConnection(new URL(url));
+            connection = SiteAPI.openConnection(new URL(url));
             if (!host.getLogin().isEmpty())
                 connection.setRequestProperty("Authorization", "Basic " + host.getSecret());
             Reader input = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
@@ -170,16 +170,15 @@ public class DanbooruLegacyAPI
 
             return tags;
         }
-        catch (UnknownHostException ex)
+        catch (JSONException | IOException ex)
         {
-            Log.v(TAG, "Connection problem?", ex);
+            throw new SiteAPIException(this, connection, ex);
         }
-        catch (IOException | JSONException ex)
+        finally
         {
-            ex.printStackTrace();
+            if (connection != null)
+                connection.disconnect();
         }
-
-        return Collections.emptyList();
     }
 
     public Tag parseJSONObjectToTag(JSONObject json) throws JSONException
