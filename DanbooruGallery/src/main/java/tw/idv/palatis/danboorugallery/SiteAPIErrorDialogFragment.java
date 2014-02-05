@@ -27,7 +27,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import tw.idv.palatis.danboorugallery.siteapi.SiteAPI;
+import tw.idv.palatis.danboorugallery.siteapi.SiteAPIException;
 
 /**
  * Created by 其威 on 2014/1/30.
@@ -42,14 +42,14 @@ public class SiteAPIErrorDialogFragment
     public static final String KEY_URL = "url";
     public static final String KEY_MESSAGE = "message";
 
-    SiteAPI.SiteAPIException mSiteAPIException;
+    SiteAPIException mSiteAPIException;
 
     public SiteAPIErrorDialogFragment()
     {
         mSiteAPIException = null;
     }
 
-    public SiteAPIErrorDialogFragment(SiteAPI.SiteAPIException exception)
+    public SiteAPIErrorDialogFragment(SiteAPIException exception)
     {
         mSiteAPIException = exception;
     }

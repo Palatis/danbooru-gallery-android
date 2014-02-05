@@ -64,7 +64,7 @@ import tw.idv.palatis.danboorugallery.database.PostsTable;
 import tw.idv.palatis.danboorugallery.model.Host;
 import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.model.Tag;
-import tw.idv.palatis.danboorugallery.siteapi.SiteAPI;
+import tw.idv.palatis.danboorugallery.siteapi.SiteAPIException;
 import tw.idv.palatis.danboorugallery.util.PostListAdapter;
 import tw.idv.palatis.danboorugallery.util.SiteSession;
 import tw.idv.palatis.danboorugallery.util.TagCursor;
@@ -403,7 +403,7 @@ public class PostListFragment
         }
 
         @Override
-        public void onError(SiteAPI.SiteAPIException error)
+        public void onError(SiteAPIException error)
         {
             try
             {

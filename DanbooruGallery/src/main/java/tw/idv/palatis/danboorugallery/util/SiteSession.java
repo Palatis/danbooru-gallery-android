@@ -45,6 +45,7 @@ import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.model.Tag;
 import tw.idv.palatis.danboorugallery.picasso.Picasso;
 import tw.idv.palatis.danboorugallery.siteapi.SiteAPI;
+import tw.idv.palatis.danboorugallery.siteapi.SiteAPIException;
 
 /**
  * This is a singleton class manage the connections and data from hosts.
@@ -345,7 +346,7 @@ public class SiteSession
                     }
                 }
             }
-            catch (SiteAPI.SiteAPIException ex)
+            catch (SiteAPIException ex)
             {
                 Log.d(TAG, "SiteAPI thrown an exception.", ex);
             }
@@ -471,7 +472,7 @@ public class SiteSession
         private boolean mForced;
         private long mPostCreatedAt;
         private int mProgress = 0;
-        private SiteAPI.SiteAPIException mErrorThrowable;
+        private SiteAPIException mErrorThrowable;
         private LoadingCallback mCallback;
 
         public FetchPostRunnable(long post_created_at, boolean forced, LoadingCallback callback)
@@ -545,7 +546,7 @@ public class SiteSession
 
                     sHandler.post(mProgressUpdateRunnable);
                 }
-                catch (SiteAPI.SiteAPIException ex)
+                catch (SiteAPIException ex)
                 {
                     mErrorThrowable = ex;
                     sHandler.post(mOnErrorRunnable);
@@ -569,7 +570,7 @@ public class SiteSession
         public void onPreExecute();
         public void onProgressUpdate(int progress);
         public void onPostExecute();
-        public void onError(SiteAPI.SiteAPIException error);
+        public void onError(SiteAPIException error);
     }
 
     private static final LoadingCallback sDummyLoadingCallback = new LoadingCallback() {
@@ -580,6 +581,6 @@ public class SiteSession
         @Override
         public void onPostExecute() { }
         @Override
-        public void onError(SiteAPI.SiteAPIException error) { }
+        public void onError(SiteAPIException error) { }
     };
 }
