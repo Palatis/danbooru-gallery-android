@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.os.Build;
 import android.os.CancellationSignal;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -301,15 +302,17 @@ public class SiteSession
         else
             pattern = "";
 
-        if (signal.isCanceled())
-            return new TagCursor(sEmptyTags);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+            if (signal.isCanceled())
+                return new TagCursor(sEmptyTags);
 
         Lock lock = sHostsLock.readLock();
         lock.lock();
         List<HostStatus> hosts = new ArrayList<>(sHosts);
         lock.unlock();
-        if (signal.isCanceled())
-            return new TagCursor(sEmptyTags);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+            if (signal.isCanceled())
+                return new TagCursor(sEmptyTags);
 
         SparseArray<Tag> allTags = new SparseArray<>();
         for (HostStatus status : hosts)
@@ -319,8 +322,9 @@ public class SiteSession
             if (!host.enabled)
                 continue;
 
-            if (signal.isCanceled())
-                break;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+                if (signal.isCanceled())
+                    break;
 
             if (!NetworkChangeReceiver.isConnectedOrConnecting())
                 break;
@@ -330,8 +334,9 @@ public class SiteSession
                 List<Tag> tags = host.getAPI().searchTags(host, pattern);
                 for (Tag tag : tags)
                 {
-                    if (signal.isCanceled())
-                        break;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+                        if (signal.isCanceled())
+                            break;
 
                     Tag oldTag = allTags.get(tag.name.hashCode());
                     if (oldTag != null)
