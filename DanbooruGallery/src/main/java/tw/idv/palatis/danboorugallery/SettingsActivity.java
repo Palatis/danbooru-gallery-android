@@ -276,7 +276,6 @@ public class SettingsActivity
         {
             preference = findPreference(DanbooruGallerySettings.KEY_PREF_TRANSLATOR);
             getPreferenceScreen().removePreference(preference);
-
         }
 
         preference = findPreference(DanbooruGallerySettings.KEY_PREF_VERSION);
