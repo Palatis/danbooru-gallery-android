@@ -126,13 +126,9 @@ public class GelbooruAPI
 
             return posts;
         }
-        catch (IOException ex)
+        catch (ParserConfigurationException | SAXException | IOException ex)
         {
             throw new SiteAPIException(this, connection, ex);
-        }
-        catch (ParserConfigurationException | SAXException ex)
-        {
-            throw new SiteAPIException(ex);
         }
         finally
         {
@@ -142,9 +138,9 @@ public class GelbooruAPI
     }
 
     // this is used to format the created_at attribute in XML
-    // it is here because Android frees Locale.ENGLISH when formatter destroyed,
+    // it is here because Android frees Locale.ENGLISH when sDateFormat destroyed,
     // resulting reloading of locale data every time which is SLOW.
-    static private DateFormat formatter = new SimpleDateFormat( "EEE MMM dd HH:mm:ss Z yyyy", Locale.ENGLISH );
+    static private DateFormat sDateFormat = new SimpleDateFormat( "EEE MMM dd HH:mm:ss Z yyyy", Locale.ENGLISH );
 
     private Post parseXMLElementToPost(Host host, Element item)
     {
@@ -164,7 +160,7 @@ public class GelbooruAPI
         Date date;
         try
         {
-            date = formatter.parse(item.getAttribute(GelbooruPost.KEY_POST_CREATED_AT));
+            date = sDateFormat.parse(item.getAttribute(GelbooruPost.KEY_POST_CREATED_AT));
         }
         catch (ParseException e)
         {
