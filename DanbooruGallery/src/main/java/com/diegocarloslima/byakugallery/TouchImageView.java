@@ -323,7 +323,7 @@ public class TouchImageView extends ImageView {
             mCropScale = mMinScale;
             mMinScale = temp;
         }
-        mMaxScale = mMinScale * 6.0f;
+        mMaxScale = mCropScale * 4.0f;
 
         mMatrix.reset();
         mMatrix.postScale(mMinScale, mMinScale);
