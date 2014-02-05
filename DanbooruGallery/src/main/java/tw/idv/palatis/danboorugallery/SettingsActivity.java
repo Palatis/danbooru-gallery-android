@@ -539,7 +539,7 @@ public class SettingsActivity
         public void onCreate(Bundle savedInstanceState)
         {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_screen_layout);
+            addPreferencesFromResource(R.xml.pref_detail);
 
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
