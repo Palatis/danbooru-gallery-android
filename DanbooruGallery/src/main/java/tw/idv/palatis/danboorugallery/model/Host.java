@@ -126,40 +126,6 @@ public class Host
         mAPI = api;
         mSecret = mAPI.hashSecret(mLogin, mPassword);
     }
-//
-//    public static Host getFromBundle(Bundle bundle)
-//    {
-//        if (bundle != null)
-//            return new Host(
-//                bundle.getInt(KEY_HOST_DATABASE_ID, INVALID_ID),
-//                bundle.getBoolean(KEY_HOST_ENABLED),
-//                bundle.getString(KEY_HOST_NAME),
-//                bundle.getString(KEY_HOST_URL),
-//                bundle.getString(KEY_HOST_LOGIN),
-//                bundle.getString(KEY_HOST_PASSWORD),
-//                bundle.getInt(KEY_HOST_API),
-//                bundle.getInt(KEY_HOST_PAGE_LIMIT_STRICT),
-//                bundle.getInt(KEY_HOST_PAGE_LIMIT_RELAXED)
-//            );
-//        return null;
-//    }
-//
-//    public static Host getFromIntent(Intent intent)
-//    {
-//        if (intent != null)
-//            return new Host(
-//                intent.getIntExtra(KEY_HOST_DATABASE_ID, INVALID_ID),
-//                intent.getBooleanExtra(KEY_HOST_ENABLED, false),
-//                intent.getStringExtra(KEY_HOST_NAME),
-//                intent.getStringExtra(KEY_HOST_URL),
-//                intent.getStringExtra(KEY_HOST_LOGIN),
-//                intent.getStringExtra(KEY_HOST_PASSWORD),
-//                intent.getIntExtra(KEY_HOST_API, -1),
-//                intent.getIntExtra(KEY_HOST_PAGE_LIMIT_STRICT, -1),
-//                intent.getIntExtra(KEY_HOST_PAGE_LIMIT_RELAXED, -1)
-//            );
-//        return null;
-//    }
 
     public static Host getFromCursor(Cursor cursor)
     {
@@ -175,34 +141,6 @@ public class Host
             cursor.getInt(cursor.getColumnIndexOrThrow(KEY_HOST_PAGE_LIMIT_RELAXED))
         );
     }
-//
-//    public Bundle putToBundle(Bundle bundle)
-//    {
-//        bundle.putInt(KEY_HOST_DATABASE_ID, id);
-//        bundle.putBoolean(KEY_HOST_ENABLED, enabled);
-//        bundle.putString(KEY_HOST_NAME, name);
-//        bundle.putString(KEY_HOST_URL, url);
-//        bundle.putString(KEY_HOST_LOGIN, mLogin);
-//        bundle.putString(KEY_HOST_PASSWORD, mPassword);
-//        bundle.putInt(KEY_HOST_API, mAPI.getApiId());
-//        bundle.putInt(KEY_HOST_PAGE_LIMIT_STRICT, pageLimitStrict);
-//        bundle.putInt(KEY_HOST_PAGE_LIMIT_RELAXED, pageLimitRelaxed);
-//        return bundle;
-//    }
-//
-//    public Intent putToIntent(Intent intent)
-//    {
-//        intent.putExtra(KEY_HOST_DATABASE_ID, id);
-//        intent.putExtra(KEY_HOST_ENABLED, enabled);
-//        intent.putExtra(KEY_HOST_NAME, name);
-//        intent.putExtra(KEY_HOST_URL, url);
-//        intent.putExtra(KEY_HOST_LOGIN, mLogin);
-//        intent.putExtra(KEY_HOST_PASSWORD, mPassword);
-//        intent.putExtra(KEY_HOST_API, mAPI.getApiId());
-//        intent.putExtra(KEY_HOST_PAGE_LIMIT_STRICT, pageLimitStrict);
-//        intent.putExtra(KEY_HOST_PAGE_LIMIT_RELAXED, pageLimitRelaxed);
-//        return intent;
-//    }
 
     @Override
     public String toString()
