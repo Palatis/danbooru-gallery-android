@@ -1,15 +1,14 @@
 # Danbooru Gallery for Android
 ==============================
-
 Danbooru Gallery is an Android application that allows you to browse danbooru style image-boards from your mobile phone or tablet.
 
 If you have comments, suggestions, or problems, please file an issue in the issue tracker:
 https://github.com/Palatis/danbooru-gallery-android/issues
+
 Thank you for helping us improve this program :-)
 
 ## Features
 -----------
-
 1. booruing multiple boorus at once!
 2. search for tags
 3. filters: rating and image size
@@ -24,17 +23,14 @@ Thank you for helping us improve this program :-)
 
 ## Downloads
 ------------
-
 * https://github.com/Palatis/danbooru-gallery-android/releases
 
 ## Source Repository
 --------------------
-
 * https://github.com/Palatis/danbooru-gallery-android
 
 ## TODOs
 --------
-
 * tagging
 * set wallpaper (?)
 * posting (least priority)
@@ -42,7 +38,6 @@ Thank you for helping us improve this program :-)
 
 ## Screenshots
 --------------
-
 ![main screen](https://raw.github.com/Palatis/danbooru-gallery-android/master/screenshots/main_screen.png)
 ![drawer hosts](https://raw.github.com/Palatis/danbooru-gallery-android/master/screenshots/drawer_hosts.png)
 ![drawer filters](https://raw.github.com/Palatis/danbooru-gallery-android/master/screenshots/drawer_filters.png)
