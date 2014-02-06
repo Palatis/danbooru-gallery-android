@@ -110,7 +110,11 @@ public class ShimmieAPI
             int limit = host.getPageLimit(DanbooruGallerySettings.getBandwidthUsageType());
             int page = startFrom / limit + 1;
 
-            String url = String.format(URL_POSTS_FORMAT, host.url, page, URLEncoder.encode(TextUtils.join(" ", tags), "UTF-8"), limit);
+            String strtags = URLEncoder.encode(TextUtils.join(" ", tags), "UTF-8");
+            if (TextUtils.isEmpty(strtags))
+                strtags = "*";
+
+            String url = String.format(URL_POSTS_FORMAT, host.url, page, strtags, limit);
             Log.v(TAG, String.format("URL: %s", url));
             connection = SiteAPI.openConnection(new URL(url));
             if (!host.getLogin().isEmpty())
