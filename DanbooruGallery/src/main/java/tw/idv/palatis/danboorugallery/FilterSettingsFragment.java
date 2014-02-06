@@ -219,10 +219,23 @@ public class FilterSettingsFragment
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_filters);
 
-        bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_FILTER_WIDTH), 0);
-        bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_FILTER_HEIGHT), 0);
-        bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_FILTER_RATING_SAFE), true);
-        bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_FILTER_RATING_QUESTIONABLE), false);
-        bindPreferenceSummaryToValue(findPreference(DanbooruGallerySettings.KEY_PREF_FILTER_RATING_EXPLICIT), false);
+        Preference preference = null;
+
+        preference = findPreference(DanbooruGallerySettings.KEY_PREF_FILTER_WIDTH);
+        preference.setLayoutResource(R.layout.listitem_filter);
+        bindPreferenceSummaryToValue(preference, 0);
+        preference = findPreference(DanbooruGallerySettings.KEY_PREF_FILTER_HEIGHT);
+        preference.setLayoutResource(R.layout.listitem_filter);
+        bindPreferenceSummaryToValue(preference, 0);
+
+        preference = findPreference(DanbooruGallerySettings.KEY_PREF_FILTER_RATING_SAFE);
+        preference.setLayoutResource(R.layout.listitem_filter);
+        bindPreferenceSummaryToValue(preference, true);
+        preference = findPreference(DanbooruGallerySettings.KEY_PREF_FILTER_RATING_QUESTIONABLE);
+        preference.setLayoutResource(R.layout.listitem_filter);
+        bindPreferenceSummaryToValue(preference, false);
+        preference = findPreference(DanbooruGallerySettings.KEY_PREF_FILTER_RATING_EXPLICIT);
+        preference.setLayoutResource(R.layout.listitem_filter);
+        bindPreferenceSummaryToValue(preference, false);
     }
 }
