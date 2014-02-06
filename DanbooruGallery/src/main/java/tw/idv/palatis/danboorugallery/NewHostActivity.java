@@ -23,6 +23,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -70,7 +71,7 @@ public class NewHostActivity
                 {
                     Intent intent = new Intent(NewHostActivity.this, PostListActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    navigateUpTo(intent);
+                    NavUtils.navigateUpTo(NewHostActivity.this, intent);
                 }
             });
         }
@@ -84,23 +85,20 @@ public class NewHostActivity
         //
         // http://developer.android.com/guide/components/fragments.html
         //
-        if (savedInstanceState == null)
+        Bundle arguments = savedInstanceState;
+        if (arguments == null)
         {
-            Bundle arguments = savedInstanceState;
-            if (arguments == null)
-            {
-                arguments = new Bundle();
-                arguments.putInt(
-                    Host.TABLE_NAME + Host.KEY_HOST_DATABASE_ID,
-                    getIntent().getIntExtra(Host.TABLE_NAME + Host.KEY_HOST_DATABASE_ID, -1));
-            }
-            NewHostFragment fragment = new NewHostFragment();
-            fragment.setArguments(arguments);
-            getFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.new_host_inputs_container, fragment)
-                    .commit();
+            arguments = new Bundle();
+            arguments.putInt(
+                Host.TABLE_NAME + Host.KEY_HOST_DATABASE_ID,
+                getIntent().getIntExtra(Host.TABLE_NAME + Host.KEY_HOST_DATABASE_ID, -1));
         }
+        NewHostFragment fragment = new NewHostFragment();
+        fragment.setArguments(arguments);
+        getFragmentManager()
+            .beginTransaction()
+            .add(R.id.new_host_inputs_container, fragment)
+            .commit();
     }
 
     @Override
@@ -126,7 +124,7 @@ public class NewHostActivity
             //
             Intent intent = new Intent(this, PostListActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            navigateUpTo(intent);
+            NavUtils.navigateUpTo(this, intent);
             return true;
         }
 
