@@ -170,11 +170,20 @@ public class MoebooruAPI
             int len = json_posts.length();
             List<Post> posts = new ArrayList<>(len);
             for (int j = 0;j < len; ++j)
-                posts.add(parseJSONObjectToPost(host, json_posts.getJSONObject(j)));
+            {
+                try
+                {
+                    posts.add(parseJSONObjectToPost(host, json_posts.getJSONObject(j)));
+                }
+                catch (JSONException | ParseException ex)
+                {
+                    throw new SiteAPIException(this, connection, ex);
+                }
+            }
 
             return posts;
         }
-        catch (IOException | ParseException | JSONException ex)
+        catch (IOException | JSONException ex)
         {
             throw new SiteAPIException(this, connection, ex);
         }
