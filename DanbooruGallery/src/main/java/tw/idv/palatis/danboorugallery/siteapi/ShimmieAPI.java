@@ -256,7 +256,7 @@ public class ShimmieAPI
                               int file_size, String file_url, String file_url_large, String file_url_preview,
                               String[] tags, String rating,
                               // this class
-                              String uploader_name, String md5, int score)
+                              String md5, String uploader_name, int score)
         {
             super(host, post_id, image_width, image_height, created_at, updated_at,
                 file_size, file_url, file_url_large, file_url_preview,
