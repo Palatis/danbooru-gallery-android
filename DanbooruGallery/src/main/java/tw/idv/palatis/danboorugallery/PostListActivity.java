@@ -306,6 +306,7 @@ public class PostListActivity
         if (item instanceof Cursor)
         {
             final Cursor cursor = (Cursor)item;
+            final int host_id = cursor.getInt(HostsTable.INDEX_HOST_DATABASE_ID);
             PopupMenu popup = new PopupMenu(PostListActivity.this, view);
             popup.inflate(R.menu.popupmenu_host_item);
             popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener()
@@ -313,7 +314,6 @@ public class PostListActivity
                 @Override
                 public boolean onMenuItemClick(MenuItem menuItem)
                 {
-                    int host_id = cursor.getInt(HostsTable.INDEX_HOST_DATABASE_ID);
                     final Host host = SiteSession.getHostById(host_id);
                     int id = menuItem.getItemId();
                     switch (id)
