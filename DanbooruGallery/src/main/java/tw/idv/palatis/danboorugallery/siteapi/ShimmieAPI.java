@@ -54,6 +54,7 @@ import tw.idv.palatis.danboorugallery.database.PostsTable;
 import tw.idv.palatis.danboorugallery.model.Host;
 import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.model.Tag;
+import tw.idv.palatis.danboorugallery.util.ParseUtils;
 
 public class ShimmieAPI
     extends SiteAPI
@@ -172,12 +173,12 @@ public class ShimmieAPI
 
         return new ShimmiePost(
             host,
-            Integer.parseInt(item.getAttribute(ShimmiePost.KEY_POST_ID)),
-            Integer.parseInt(item.getAttribute(ShimmiePost.KEY_POST_IMAGE_WIDTH)),
-            Integer.parseInt(item.getAttribute(ShimmiePost.KEY_POST_IMAGE_HEIGHT)),
+            ParseUtils.parseInt(item.getAttribute(ShimmiePost.KEY_POST_ID)),
+            ParseUtils.parseInt(item.getAttribute(ShimmiePost.KEY_POST_IMAGE_WIDTH), -1),
+            ParseUtils.parseInt(item.getAttribute(ShimmiePost.KEY_POST_IMAGE_HEIGHT), -1),
             date,
             date,
-            0, // no file size
+            -1, // no file size
             file_url,
             file_url,
             file_url_preview,
@@ -185,7 +186,7 @@ public class ShimmieAPI
             "e", // item.getAttribute(ShimmiePost.KEY_POST_RATING), // rating always "u"... we don't recognize that.
             item.getAttribute(ShimmiePost.KEY_POST_MD5),
             item.getAttribute(ShimmiePost.KEY_POST_UPLOADER_NAME),
-            Integer.parseInt(item.getAttribute(ShimmiePost.KEY_POST_SCORE))
+            ParseUtils.parseInt(item.getAttribute(ShimmiePost.KEY_POST_SCORE))
         );
     }
 

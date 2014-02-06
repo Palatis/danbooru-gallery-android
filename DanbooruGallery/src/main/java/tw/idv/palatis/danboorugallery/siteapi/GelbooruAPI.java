@@ -54,6 +54,7 @@ import tw.idv.palatis.danboorugallery.database.PostsTable;
 import tw.idv.palatis.danboorugallery.model.Host;
 import tw.idv.palatis.danboorugallery.model.Post;
 import tw.idv.palatis.danboorugallery.model.Tag;
+import tw.idv.palatis.danboorugallery.util.ParseUtils;
 
 public class GelbooruAPI
     extends SiteAPI
@@ -166,9 +167,9 @@ public class GelbooruAPI
 
         return new GelbooruPost(
             host,
-            Integer.parseInt(item.getAttribute(GelbooruPost.KEY_POST_ID)),
-            Integer.parseInt(item.getAttribute(GelbooruPost.KEY_POST_IMAGE_WIDTH)),
-            Integer.parseInt(item.getAttribute(GelbooruPost.KEY_POST_IMAGE_HEIGHT)),
+            ParseUtils.parseInt(item.getAttribute(GelbooruPost.KEY_POST_ID)),
+            ParseUtils.parseInt(item.getAttribute(GelbooruPost.KEY_POST_IMAGE_WIDTH), -1),
+            ParseUtils.parseInt(item.getAttribute(GelbooruPost.KEY_POST_IMAGE_HEIGHT), -1),
             date,
             date,
             0, // no file size
@@ -178,8 +179,8 @@ public class GelbooruAPI
             TextUtils.split(item.getAttribute(GelbooruPost.KEY_POST_TAG_STRING).trim(), " "),
             item.getAttribute(GelbooruPost.KEY_POST_RATING),
             item.getAttribute(GelbooruPost.KEY_POST_MD5),
-            Integer.parseInt(item.getAttribute(GelbooruPost.KEY_POST_UPLOADER_ID)),
-            Integer.parseInt(item.getAttribute(GelbooruPost.KEY_POST_SCORE))
+            ParseUtils.parseInt(item.getAttribute(GelbooruPost.KEY_POST_UPLOADER_ID)),
+            ParseUtils.parseInt(item.getAttribute(GelbooruPost.KEY_POST_SCORE))
         );
     }
 
