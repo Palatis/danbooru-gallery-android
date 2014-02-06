@@ -389,7 +389,7 @@ public class PostListActivity
     @Override
     public boolean onSearchRequested()
     {
-        return !mPostListFragment.onSearchRequested() && super.onSearchRequested();
+        return mPostListFragment != null && !mPostListFragment.onSearchRequested();
     }
 
     @Override
