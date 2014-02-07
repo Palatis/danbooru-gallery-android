@@ -258,8 +258,8 @@ public class PostsTable
         finally
         {
             sDatabase.endTransaction();
-            sDatabase.execSQL("VACUUM;");
         }
+        sDatabase.execSQL("VACUUM;");
         sDataSetObservable.notifyInvalidated();
     }
 
