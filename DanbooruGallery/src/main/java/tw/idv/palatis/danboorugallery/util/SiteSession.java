@@ -210,49 +210,55 @@ public class SiteSession
             args.add(Integer.toString(Math.abs(height)));
         }
 
-        // when all rating ticked, nothing to be done.
-        // only build query when one or two rating filters are ticked
         if (s || q || e)
         {
-            if (sb.length() != 0)
-                sb.append("AND ");
+            // when all rating ticked, nothing to be done.
+            // only build query when one or two rating filters are ticked
+            if (!(s && q && e))
+            {
+                if (sb.length() != 0)
+                    sb.append("AND ");
 
-            // if only one filter ticked, use the ticked one.
-            if (s && !q && !e)
-            {
-                sb.append(Post.KEY_POST_RATING).append(" == ?");
-                args.add("s");
-            }
-            else if (!s && q && !e)
-            {
-                sb.append(Post.KEY_POST_RATING).append(" == ?");
-                args.add("q");
-            }
-            else if (!s && !q && e)
-            {
-                sb.append(Post.KEY_POST_RATING).append(" == ?");
-                args.add("e");
-            }
-            // if two filters ticked, use the unticked one.
-            else if (!s && q && e)
-            {
-                sb.append(Post.KEY_POST_RATING).append(" != ?");
-                args.add("s");
-            }
-            else if (s && !q && e)
-            {
-                sb.append(Post.KEY_POST_RATING).append(" != ?");
-                args.add("q");
-            }
-            else if (s && q && !e)
-            {
-                sb.append(Post.KEY_POST_RATING).append(" != ?");
-                args.add("e");
+                // if only one filter ticked, use the ticked one.
+                if (s && !q && !e)
+                {
+                    sb.append(Post.KEY_POST_RATING).append(" == ?");
+                    args.add("s");
+                }
+                else if (!s && q && !e)
+                {
+                    sb.append(Post.KEY_POST_RATING).append(" == ?");
+                    args.add("q");
+                }
+                else if (!s && !q && e)
+                {
+                    sb.append(Post.KEY_POST_RATING).append(" == ?");
+                    args.add("e");
+                }
+                // if two filters ticked, use the unticked one.
+                else if (!s && q && e)
+                {
+                    sb.append(Post.KEY_POST_RATING).append(" != ?");
+                    args.add("s");
+                }
+                else if (s && !q && e)
+                {
+                    sb.append(Post.KEY_POST_RATING).append(" != ?");
+                    args.add("q");
+                }
+                else if (s && q && !e)
+                {
+                    sb.append(Post.KEY_POST_RATING).append(" != ?");
+                    args.add("e");
+                }
             }
         }
         // if all are unticked, use the "NOT IN" statement
         else // if (!s && !q && !e)
         {
+            if (sb.length() != 0)
+                sb.append("AND ");
+
             sb.append(Post.KEY_POST_RATING).append(" NOT IN (?,?,?)");
             args.add("s");
             args.add("q");
