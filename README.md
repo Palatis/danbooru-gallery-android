@@ -46,3 +46,7 @@ Thank you for helping us improve this program :-)
 ![detail](https://raw.github.com/Palatis/danbooru-gallery-android/master/screenshots/detail.png)
 ![share](https://raw.github.com/Palatis/danbooru-gallery-android/master/screenshots/share.png)
 ![tags](https://raw.github.com/Palatis/danbooru-gallery-android/master/screenshots/tags.png)
+
+## Screencasts
+--------------
+[![v0.7.0](http://img.youtube.com/vi/tIusnJK6kXI/0.jpg)](http://www.youtube.com/watch?v=tIusnJK6kXI)
