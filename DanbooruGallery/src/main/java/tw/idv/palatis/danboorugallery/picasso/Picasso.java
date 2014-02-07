@@ -167,15 +167,6 @@ public class Picasso
                     sExecutor.setMaximumPoolSize(2);
             }
         }
-
-        Log.d(TAG,
-            "Thread count for executors: prefetch = " + sExecutorPrefetch.getCorePoolSize() +
-                ", preview = " + sExecutorPreview.getCorePoolSize() +
-                ", general = " + sExecutor.getCorePoolSize());
-        Log.d(TAG,
-            "Maximum thread count for executors: prefetch = " + sExecutorPrefetch.getMaximumPoolSize() +
-                ", preview = " + sExecutorPreview.getMaximumPoolSize() +
-                ", general = " + sExecutor.getMaximumPoolSize());
     }
 
     public static com.squareup.picasso.Picasso with(Context context)
