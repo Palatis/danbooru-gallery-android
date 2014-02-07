@@ -21,10 +21,8 @@ package tw.idv.palatis.danboorugallery;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -60,7 +58,8 @@ public class NewHostActivity
                 public void onClick(View view)
                 {
                     NewHostFragment fragment = (NewHostFragment) getFragmentManager().findFragmentById(R.id.new_host_inputs_container);
-                    fragment.saveHostToDatabase();
+                    if (fragment != null)
+                        fragment.saveHostToDatabase();
                 }
             });
             button = (Button)findViewById(R.id.dialog_new_host_button_cancel);
@@ -105,7 +104,8 @@ public class NewHostActivity
     public boolean onCreateOptionsMenu(Menu menu)
     {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.new_host_inputs_container);
-        fragment.onCreateOptionsMenu(menu, getMenuInflater());
+        if (fragment != null)
+            fragment.onCreateOptionsMenu(menu, getMenuInflater());
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -129,16 +129,8 @@ public class NewHostActivity
         }
 
         Fragment fragment = getFragmentManager().findFragmentById(R.id.new_host_inputs_container);
-        if (fragment.onOptionsItemSelected(item))
-            return true;
-        Log.d(TAG, item.getTitle().toString() + " clicked");
+        if (fragment != null)
+            return fragment.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig)
-    {
-        super.onConfigurationChanged(newConfig);
-        Log.d(TAG, "onConfigurationChanged");
     }
 }
