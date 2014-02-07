@@ -364,7 +364,6 @@ public class DanbooruLegacyAPI
         @Override
         public String getDownloadFilename()
         {
-            Log.d(TAG, String.format("%1$d - %2$s.%3$s", post_id, TextUtils.join(" ", tags), file_ext));
             return String.format("%1$d - %2$s.%3$s", post_id, TextUtils.join(" ", tags), file_ext);
         }
 
