@@ -100,17 +100,24 @@ public class NewHostFragment
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id)
             {
                 SiteAPI api = (SiteAPI)adapterView.getAdapter().getItem(position);
-                int value;
+                int value = 0;
+                Object selectedItem;
 
-                value = Integer.parseInt(mSpinnerPageLimitsRelaxed.getSelectedItem().toString());
+                selectedItem = mSpinnerPageLimitsRelaxed.getSelectedItem();
+                if (selectedItem != null)
+                    value = Integer.parseInt(selectedItem.toString());
                 SiteAPI.PageLimitAdapter pageLimitAdapterRelaxed = new PageLimitsAdapter(inflater, api, SiteAPI.PAGE_LIMIT_TYPE_RELAXED);
                 mSpinnerPageLimitsRelaxed.setAdapter(pageLimitAdapterRelaxed);
-                mSpinnerPageLimitsRelaxed.setSelection(pageLimitAdapterRelaxed.indexOf(value));
+                if (selectedItem != null)
+                    mSpinnerPageLimitsRelaxed.setSelection(pageLimitAdapterRelaxed.indexOf(value));
 
-                value = Integer.parseInt(mSpinnerPageLimitsStrict.getSelectedItem().toString());
+                selectedItem = mSpinnerPageLimitsStrict.getSelectedItem();
+                if (selectedItem != null)
+                    value = Integer.parseInt(selectedItem.toString());
                 SiteAPI.PageLimitAdapter pageLimitAdapterStrict = new PageLimitsAdapter(inflater, api, SiteAPI.PAGE_LIMIT_TYPE_STRICT);
                 mSpinnerPageLimitsStrict.setAdapter(pageLimitAdapterStrict);
-                mSpinnerPageLimitsStrict.setSelection(pageLimitAdapterStrict.indexOf(value));
+                if (selectedItem != null)
+                    mSpinnerPageLimitsStrict.setSelection(pageLimitAdapterStrict.indexOf(value));
             }
 
             @Override
@@ -131,25 +138,17 @@ public class NewHostFragment
                 mEditTextUrl.setText(host.url);
                 mEditTextLogin.setText(host.getLogin());
                 mEditTextPassword.setText(host.getPassword());
-                mSpinnerSiteAPI.setSelection(adapter.indexOf(host.getAPI()));
 
-                SiteAPI.PageLimitAdapter pageLimitAdapterStrict = new PageLimitsAdapter(inflater, host.getAPI(), SiteAPI.PAGE_LIMIT_TYPE_STRICT);
+                SiteAPI api = host.getAPI();
+                mSpinnerSiteAPI.setSelection(adapter.indexOf(api));
+
+                SiteAPI.PageLimitAdapter pageLimitAdapterStrict = new PageLimitsAdapter(inflater, api, SiteAPI.PAGE_LIMIT_TYPE_STRICT);
                 mSpinnerPageLimitsStrict.setAdapter(pageLimitAdapterStrict);
                 mSpinnerPageLimitsStrict.setSelection(pageLimitAdapterStrict.indexOf(host.pageLimitStrict));
 
-                SiteAPI.PageLimitAdapter pageLimitAdapterRelaxed = new PageLimitsAdapter(inflater, host.getAPI(), SiteAPI.PAGE_LIMIT_TYPE_RELAXED);
+                SiteAPI.PageLimitAdapter pageLimitAdapterRelaxed = new PageLimitsAdapter(inflater, api, SiteAPI.PAGE_LIMIT_TYPE_RELAXED);
                 mSpinnerPageLimitsRelaxed.setAdapter(pageLimitAdapterRelaxed);
                 mSpinnerPageLimitsRelaxed.setSelection(pageLimitAdapterRelaxed.indexOf(host.pageLimitRelaxed));
-            }
-            else
-            {
-                SiteAPI dummyapi = SiteAPI.getDummyAPI();
-
-                SiteAPI.PageLimitAdapter pageLimitAdapterRelaxed = new PageLimitsAdapter(inflater, dummyapi, SiteAPI.PAGE_LIMIT_TYPE_RELAXED);
-                mSpinnerPageLimitsRelaxed.setAdapter(pageLimitAdapterRelaxed);
-
-                SiteAPI.PageLimitAdapter pageLimitAdapterStrict = new PageLimitsAdapter(inflater, dummyapi, SiteAPI.PAGE_LIMIT_TYPE_STRICT);
-                mSpinnerPageLimitsStrict.setAdapter(pageLimitAdapterStrict);
             }
         }
 
