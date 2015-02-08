@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!-- Danbooru Gallery Android - an danbooru-style imageboard browser -->
+<!--     Copyright (C) 2014  Victor Tseng -->
+<!-- -->
+<!--     This program is free software: you can redistribute it and/or modify -->
+<!--     it under the terms of the GNU General Public License as published by -->
+<!--     the Free Software Foundation, either version 3 of the License, or -->
+<!--     (at your option) any later version. -->
+<!-- -->
+<!--     This program is distributed in the hope that it will be useful, -->
+<!--     but WITHOUT ANY WARRANTY; without even the implied warranty of -->
+<!--     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the -->
+<!--     GNU General Public License for more details. -->
+<!-- -->
+<!--     You should have received a copy of the GNU General Public License -->
+<!--     along with this program. If not, see <http://www.gnu.org/licenses/> -->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
+    tools:context="tw.idv.palatis.danboorugallery.PostDetailActivity"
+    tools:ignore="MergeRootFrame">
+
+    <com.diegocarloslima.byakugallery.GalleryViewPager
+        android:id="@+id/post_detail_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <LinearLayout
+        android:id="@+id/post_detail_content_controls"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/screen_background_dark_transparent">
+
+        <TextView
+            android:id="@+id/post_detail_info"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:padding="?android:attr/scrollbarSize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageButton
+                android:id="@+id/post_detail_button_autoplay"
+                android:layout_centerHorizontal="true"
+                android:padding="8dp"
+                android:src="@android:drawable/ic_media_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/post_detail_button_autoplay" />
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

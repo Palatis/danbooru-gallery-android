@@ -2,15 +2,44 @@
 
 buildscript {
     repositories {
-        mavenCentral()
+        jcenter()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:+'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+def getVersionCode = { ->
+    try {
+        def code = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'tag', '--list'
+            standardOutput = code
+        }
+        return code.toString().split("\n").size()
+    } catch (ignored) {
+        return -1;
+    }
+}
+
+def getVersionName = { ->
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'describe', '--tags', '--long'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim()
+    } catch (ignored) {
+        return "v0.0.0-00000000";
     }
 }
 
 allprojects {
     repositories {
-        mavenCentral()
+        jcenter()
     }
 }

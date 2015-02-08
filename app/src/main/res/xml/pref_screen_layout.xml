@@ -1,0 +1,60 @@
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!-- Danbooru Gallery Android - an danbooru-style imageboard browser -->
+<!--     Copyright (C) 2014  Victor Tseng -->
+<!-- -->
+<!--     This program is free software: you can redistribute it and/or modify -->
+<!--     it under the terms of the GNU General Public License as published by -->
+<!--     the Free Software Foundation, either version 3 of the License, or -->
+<!--     (at your option) any later version. -->
+<!-- -->
+<!--     This program is distributed in the hope that it will be useful, -->
+<!--     but WITHOUT ANY WARRANTY; without even the implied warranty of -->
+<!--     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the -->
+<!--     GNU General Public License for more details. -->
+<!-- -->
+<!--     You should have received a copy of the GNU General Public License -->
+<!--     along with this program. If not, see <http://www.gnu.org/licenses/> -->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <tw.idv.palatis.danboorugallery.android.preference.IntListPreference
+        android:key="pref_columns_portrait"
+        android:title="@string/pref_title_columns_portrait"
+        android:defaultValue="3"
+        android:entries="@array/pref_columns_titles"
+        android:entryValues="@array/pref_columns_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <tw.idv.palatis.danboorugallery.android.preference.IntListPreference
+        android:key="pref_columns_landscape"
+        android:title="@string/pref_title_columns_landscape"
+        android:defaultValue="5"
+        android:entries="@array/pref_columns_titles"
+        android:entryValues="@array/pref_columns_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <CheckBoxPreference
+        android:key="pref_sticky_grid_header"
+        android:title="@string/pref_title_sticky_grid_header"
+        android:summaryOn="@string/pref_description_sticky_grid_header_true"
+        android:summaryOff="@string/pref_description_sticky_grid_header_false"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:key="pref_show_post_id"
+        android:title="@string/pref_title_show_post_id"
+        android:summaryOn="@string/pref_description_show_post_id_true"
+        android:summaryOff="@string/pref_description_show_post_id_false"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:key="pref_show_image_resolution"
+        android:title="@string/pref_title_show_image_resolution"
+        android:summaryOn="@string/pref_description_show_image_resolution_true"
+        android:summaryOff="@string/pref_description_show_image_resolution_false"
+        android:defaultValue="true" />
+
+</PreferenceScreen>

@@ -1,0 +1,30 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion "21.1.2"
+
+    defaultConfig {
+        applicationId "tw.idv.palatis.danboorugallery"
+        minSdkVersion 16
+        targetSdkVersion 21
+        versionCode getVersionCode()
+        versionName getVersionName()
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.squareup.okhttp:okhttp:+'
+    compile 'com.squareup.picasso:picasso:+'
+    compile 'com.android.support:support-v13:+'
+    compile 'com.android.support:appcompat-v7:+'
+    compile 'com.squareup.okhttp:okhttp-urlconnection:+'
+    compile 'com.tonicartos:stickygridheaders:+'
+}

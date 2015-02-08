@@ -1,0 +1,115 @@
+<resources>
+    <string name="title_activity_settings">Settings</string>
+
+    <string name="pref_header_screen_layout">Screen Layout</string>
+
+    <string name="pref_title_columns_portrait">Number of columns to show in portrait mode</string>
+    <string name="pref_title_columns_landscape">Number of columns to show in landscape mode</string>
+    <string-array name="pref_columns_titles">
+        <item>1 column</item>
+        <item>2 columns</item>
+        <item>3 columns</item>
+        <item>4 columns</item>
+        <item>5 columns</item>
+        <item>6 columns</item>
+        <item>7 columns</item>
+        <item>8 columns</item>
+        <item>9 columns</item>
+        <item>10 columns</item>
+    </string-array>
+    <string-array name="pref_columns_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </string-array>
+
+    <string name="pref_title_sticky_grid_header">Sticky grid header</string>
+    <string name="pref_description_sticky_grid_header_true">Grid header sticks at the top of the list</string>
+    <string name="pref_description_sticky_grid_header_false">Don\'t stick the grid header at the top of the list</string>
+
+    <string name="pref_title_show_post_id">Show post id</string>
+    <string name="pref_description_show_post_id_true">Display the id at the top of the thumbnail.</string>
+    <string name="pref_description_show_post_id_false">Don\'t display the id at the top of the thumbnail.</string>
+
+    <string name="pref_title_show_image_resolution">Show image resolution</string>
+    <string name="pref_description_show_image_resolution_true">Display the dimension of the image at the bottom of the thumbnail.</string>
+    <string name="pref_description_show_image_resolution_false">Don\'t display the dimension of the image at the bottom of the thumbnail.</string>
+
+    <string name="pref_header_detail_view">Detail view</string>
+
+    <string name="pref_title_autoplay_delay">Autoplay delay</string>
+    <string-array name="pref_autoplay_delay_titles">
+        <item>3 seconds</item>
+        <item>5 seconds</item>
+        <item>8 seconds</item>
+        <item>10 seconds</item>
+        <item>15 seconds</item>
+        <item>30 seconds</item>
+        <item>1 minute</item>
+        <item>2 minutes</item>
+        <item>5 minutes</item>
+    </string-array>
+    <string-array name="pref_autoplay_delay_values">
+        <item>3000</item>
+        <item>5000</item>
+        <item>8000</item>
+        <item>10000</item>
+        <item>15000</item>
+        <item>30000</item>
+        <item>60000</item>
+        <item>120000</item>
+        <item>300000</item>
+    </string-array>
+
+    <string name="pref_title_download_fullsize">Download full-size image</string>
+    <string name="pref_description_download_fullsize_true">Download full-size image in detail view</string>
+    <string name="pref_description_download_fullsize_false">Download sample-size image in detail view</string>
+
+    <string name="pref_header_network_policy">Network Policy</string>
+
+    <string name="pref_title_strict_bandwidth_usage">Strict bandwidth usage</string>
+    <string name="pref_description_strict_bandwidth_usage_true">Enforced bandwidth limit, won\'t push that hard.</string>
+    <string name="pref_description_strict_bandwidth_usage_false">Relaxed bandwidth usage, try hard to stay in sync with upstream.</string>
+
+    <string name="pref_title_aggressive_prefetch_preview">Aggressively prefetch preview image</string>
+    <string name="pref_description_aggressive_prefetch_preview_true">Prefetch preview images</string>
+    <string name="pref_description_aggressive_prefetch_preview_false">Don\'t prefetch preview images</string>
+
+    <string name="pref_header_advanced">Advanced</string>
+
+    <string name="pref_title_async_image_loader_indicator">Async image loader indicator</string>
+    <string name="pref_description_image_loader_indicator_true">Show a small triangle indicate where the image came from.</string>
+    <string name="pref_description_image_loader_indicator_false">Don\'t show the indicator.</string>
+
+    <string name="pref_title_clear_cache">Clear cache</string>
+    <string name="pref_description_clear_cache_calculating">Calculating...\nStorage: %1$.3f MB / Limit: %2$.3f MB\nMemory: %3$.3f MB / Limit: %4$.3f MB\nCached posts: %5$d</string>
+    <string name="pref_description_clear_cache_done">Storage: %1$.3f MB / Limit: %2$.3f MB\nMemory: %3$.3f MB / Limit: %4$.3f MB\nCached posts: %5$d</string>
+
+    <string name="pref_header_about">About</string>
+
+    <string name="pref_title_copyright">Copyright © 2014</string>
+    <string name="pref_description_copyright">by Palatis (Victor Tseng) &lt;palatis@gmail.com&gt;</string>
+    <string name="pref_description_copyright_mailto">mailto:palatis@gmail.com?subject=About%20Danbooru%20Gallery&amp;body=I%20have%20something%20about%20this%20app%20to%20tell%20you%20about!</string>
+
+    <!-- if "pref_title_translater" is empty, this entry will not show in settings. -->
+    <string name="pref_title_translator"><!-- Translated: --></string>
+    <string name="pref_description_translator"><!-- by John Doe &lt;jone_doe@mail.nowhere.com&gt; --></string>
+    <string name="pref_description_translator_mailto"><!-- mailto:jone_doe@mail.nowhere.com --></string>
+
+    <string name="pref_title_website">Project Website</string>
+    <string name="pref_description_website">Go to project website: http://code.google.com/p/danbooru-gallery-android/</string>
+    <!-- This is the actual URL, do not edit or it may fail to bring up the browser. -->
+    <string name="pref_description_website_url">http://code.google.com/p/danbooru-gallery-android/</string>
+
+    <!-- 1: versionCode, 2: versionName -->
+    <string name="pref_title_version">Version %2$s</string>
+    <string name="pref_description_version">build %1$d</string>
+
+</resources>

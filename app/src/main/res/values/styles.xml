@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!-- Danbooru Gallery Android - an danbooru-style imageboard browser -->
+<!--     Copyright (C) 2014  Victor Tseng -->
+<!-- -->
+<!--     This program is free software: you can redistribute it and/or modify -->
+<!--     it under the terms of the GNU General Public License as published by -->
+<!--     the Free Software Foundation, either version 3 of the License, or -->
+<!--     (at your option) any later version. -->
+<!-- -->
+<!--     This program is distributed in the hope that it will be useful, -->
+<!--     but WITHOUT ANY WARRANTY; without even the implied warranty of -->
+<!--     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the -->
+<!--     GNU General Public License for more details. -->
+<!-- -->
+<!--     You should have received a copy of the GNU General Public License -->
+<!--     along with this program. If not, see <http://www.gnu.org/licenses/> -->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<resources>
+
+    <style name="AppTheme.Fullscreen" parent="android:Theme.NoTitleBar">
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@android:drawable/screen_background_dark_transparent</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="metaButtonBarStyle">@style/ButtonBar</item>
+        <item name="metaButtonBarButtonStyle">@style/ButtonBarButton</item>
+    </style>
+
+    <!-- Backward-compatible version of ?android:attr/buttonBarStyle -->
+    <style name="ButtonBar">
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingRight">2dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:background">@android:drawable/bottom_bar</item>
+    </style>
+
+    <!-- Backward-compatible version of ?android:attr/buttonBarButtonStyle -->
+    <style name="ButtonBarButton" />
+
+</resources>

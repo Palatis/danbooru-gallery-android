@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<!-- Danbooru Gallery Android - an danbooru-style imageboard browser -->
+<!--     Copyright (C) 2014  Victor Tseng -->
+<!-- -->
+<!--     This program is free software: you can redistribute it and/or modify -->
+<!--     it under the terms of the GNU General Public License as published by -->
+<!--     the Free Software Foundation, either version 3 of the License, or -->
+<!--     (at your option) any later version. -->
+<!-- -->
+<!--     This program is distributed in the hope that it will be useful, -->
+<!--     but WITHOUT ANY WARRANTY; without even the implied warranty of -->
+<!--     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the -->
+<!--     GNU General Public License for more details. -->
+<!-- -->
+<!--     You should have received a copy of the GNU General Public License -->
+<!--     along with this program. If not, see <http://www.gnu.org/licenses/> -->
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+
+<resources>
+
+    <string name="app_name">Danbooru Gallery</string>
+    <string name="title_post_detail">Post Detail</string>
+    <string name="title_new_host">New Booru</string>
+    <string name="title_edit_host">Edit Booru</string>
+
+    <string name="gallery_grid_loading_started">Loading more posts...</string>
+    <string name="gallery_grid_loading_finished">Done!</string>
+    <string name="gallery_grid_item_title1">#%1$d</string>
+    <string name="gallery_grid_item_title2">%1$d x %2$d</string>
+
+    <string name="post_detail_button_autoplay">Play/Pause</string>
+
+    <string name="menu_post_list_settings">Settings</string>
+    <string name="menu_post_detail_browser">View in browser...</string>
+    <string name="menu_post_detail_share">Share...</string>
+    <string name="menu_post_detail_download">Download</string>
+    <string name="menu_post_detail_tags">Tags</string>
+
+    <string name="popupmenu_host_item_edit">Edit</string>
+    <string name="popupmenu_host_item_delete">Delete</string>
+
+    <string name="dialog_tags_title">#%1$d</string>
+
+    <string name="error_nomedia_create_failed">Cannot create .nomedia file, cache directory might populate your gallery badly.</string>
+
+    <string name="tags_search_hint">Search for tags...</string>
+    <!-- 1: id, 2: name, 3: post_count, 4: search_count, 5: hosts -->
+    <string name="tags_search_item_title">%2$s (%3$d)</string>
+    <string name="tags_search_item_summary">Exists in: %5$s\nSearched %4$d times.</string>
+    <string name="tags_search_item_host_separator">, </string>
+    <string name="menu_post_list_filters">Filters</string>
+    <string name="pref_title_filter_rating_questionable">Questionable</string>
+    <string name="pref_title_filter_rating_explicit">Explicit</string>
+    <string name="pref_header_rating">Rating</string>
+
+    <!--  1. host.name, 2. host.url,     3. host.getAPI().getName(), -->
+    <!--  4. post_id,   5. image_width,  6. image_height,   7. created_at,  8. updated_at,-->
+    <!--  9. rating,   10. uploader_id, 11. uploader_name, 12. md5,        13. file_ext-->
+    <!-- 14. score,    15. score_up,    16. score_down -->
+    <string name="api_danbooru_post_description">From: %1$s (%3$s)\n# %4$d (%14$d +%15$d -%16$d) [%9$s]\nSize: %5$d x %6$d\nBy: %11$s (%10$s)\nCreated: %7$s\nMD5: %12$s\nFormat: %13$s</string>
+
+    <!--  1. host.name, 2. host.url,     3. host.getAPI().getName(), -->
+    <!--  4. post_id,   5. image_width,  6. image_height,   7. created_at,  8. updated_at,-->
+    <!--  9. rating,   10. uploader_id,                    11. md5,        12. file_ext-->
+    <!-- 13. score -->
+    <string name="api_gelbooru_post_description">From: %1$s (%3$s)\n# %4$d (%13$d) [%9$s]\nSize: %5$d x %6$d\nBy: %10$d\nCreated: %7$s\nMD5: %11$s\nFormat: %12$s</string>
+    <string name="api_moebooru_post_description">From: %1$s (%3$s)\n# %4$d (%13$d) [%9$s]\nSize: %5$d x %6$d\nBy: %10$d\nCreated: %7$s\nMD5: %11$s\nFormat: %12$s</string>
+    <string name="api_danboorulegacy_post_description">From: %1$s (%3$s)\n# %4$d (%13$d) [%9$s]\nSize: %5$d x %6$d\nBy: %10$d\nCreated: %7$s\nMD5: %11$s\nFormat: %12$s</string>
+    <!--  1. host.name, 2. host.url,     3. host.getAPI().getName(), -->
+    <!--  4. post_id,   5. image_width,  6. image_height,   7. created_at,  8. updated_at,-->
+    <!--  9. rating,                    10. uploader_name, 11. md5,        12. file_ext-->
+    <!-- 13. score -->
+    <string name="api_shimmie_post_description">From: %1$s (%3$s)\n# %4$d (%13$d) [%9$s]\nSize: %5$d x %6$d\nBy: %10$s\nCreated: %7$s\nMD5: %11$s\nFormat: %12$s</string>
+
+
+    <!-- 1. SiteAPI.getName() -->
+    <string name="dialog_error_siteapi">Error from %1$s</string>
+    <string name="dialog_error_siteapi_noapi">Unknown Error</string>
+    <string name="dialog_error_cause">Cause:</string>
+    <string name="dialog_error_url">URL:</string>
+    <string name="dialog_error_message">Message:</string>
+    <string name="dialog_error_help">Why am I seeing this message?\nhttp://code.google.com/p/danbooru-gallery-android/wiki/FrequentlyAskedQuestions</string>
+
+</resources>
